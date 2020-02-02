@@ -1,0 +1,47 @@
+on: push
+name: CI/CD
+jobs:
+  test:
+    strategy:
+      matrix:
+        python-version: [3.7, 3.8]
+        platform: [ubuntu-latest]
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install poetry
+        run: |
+          pip install -U pip
+          pip install poetry
+      - name: Install depencies
+        env:
+          POETRY_VIRTUALENVS_CREATE: false
+        run: poetry install
+      - name: Test
+        env:
+          DJANGO_SETTINGS_MODULE: adm_portal.settings.dev
+        run: make test-all
+  build_push:
+    needs: test
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Docker Login
+        run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PW }}
+      - name: Docker Build & Push
+        env:
+          REGISTRY: acci
+          REPOSITORY: adm-portal
+          TAG: ${{ github.sha }}
+        run: |
+          docker image build -t $REGISTRY/$REPOSITORY:$TAG .
+          docker push $REGISTRY/$REPOSITORY:$TAG
+          echo "::set-output name=image::$REGISTRY/$REPOSITORY:$TAG"
+
