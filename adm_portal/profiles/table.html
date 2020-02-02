@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            {% for c in column_names %}
+                <th scope="col">{{ c }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in profiles %}
+        <tr>
+            {% for i, v in p.items %}
+<!--                todo: use user email instead of profile ID -->
+                {% if i == "id" %}
+                    <th scope="row">{{ v }}</th>
+                {% else %}
+                    <td> {{ v }} </td>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+        </tr>
+    </tbody>
+</table>
+{% endblock %}
