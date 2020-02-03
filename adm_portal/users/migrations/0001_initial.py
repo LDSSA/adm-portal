@@ -2,6 +2,8 @@
 
 from django.db import migrations, models
 
+import users.models
+
 
 class Migration(migrations.Migration):
 
@@ -11,25 +13,21 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name="Profile",
+            name="User",
             fields=[
                 ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
-                ("full_name", models.CharField(max_length=100)),
-                ("profession", models.CharField(max_length=50)),
+                ("password", models.CharField(max_length=128, verbose_name="password")),
+                ("last_login", models.DateTimeField(blank=True, null=True, verbose_name="last login")),
                 (
-                    "gender",
+                    "uuid",
                     models.CharField(
-                        choices=[("f", "Female"), ("m", "Male"), ("other", "Other/Prefer not to say")], max_length=10
+                        default=users.models.get_default_uuid, editable=False, max_length=32, unique=True
                     ),
                 ),
-                (
-                    "ticket_type",
-                    models.CharField(
-                        choices=[("student", "Student"), ("regular", "Regular"), ("company", "Company")], max_length=15
-                    ),
-                ),
+                ("email", models.EmailField(max_length=254, unique=True)),
                 ("updated_at", models.DateTimeField(auto_now=True)),
                 ("created_at", models.DateTimeField(auto_now_add=True)),
             ],
+            options={"abstract": False},
         )
     ]
