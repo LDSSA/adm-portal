@@ -13,7 +13,7 @@ $ pip3 install poetry
 
 ```bash
 $ python3 -m venv .venv
-$ source .ven/bin/activate          
+$ source .venv/bin/activate          
 $ poetry install
 ```
 
