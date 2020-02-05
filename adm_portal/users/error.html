@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="row justify-content-md-center">
+    <div class="col col-sm-5 col-sm-5 col-lg-3">
+        <div class="alert alert-danger" role="alert">
+            {{ msg }} <a href="{{ url }}" class="alert-link">Click here to go back</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

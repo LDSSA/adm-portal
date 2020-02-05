@@ -1,0 +1,73 @@
+from django.contrib.auth import authenticate, login, logout
+from django.db import IntegrityError
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import redirect
+from django.template import loader
+
+from .models import User
+
+
+def _get_signup_view(request: HttpRequest) -> HttpResponse:
+    if request.user.is_authenticated:
+        return redirect("/")
+
+    template = loader.get_template("./signup.html")
+    return HttpResponse(template.render({}, request))
+
+
+def _post_signup_view(request: HttpRequest) -> HttpResponse:
+    email = request.POST["email"]
+    password = request.POST["password"]
+
+    try:
+        user = User.objects.create_user(email=email, password=password)
+    except IntegrityError:
+        ctx = {"msg": "this e-mail address is already taken", "url": "/users/signup"}
+        template = loader.get_template("./error.html")
+        return HttpResponse(template.render(ctx, request), status=409)
+
+    login(request, user)
+    # todo: send confirmation email?
+
+    return redirect("/")
+
+
+def signup_view(request: HttpRequest) -> HttpResponse:
+    if request.method == "GET":
+        return _get_signup_view(request)
+    return _post_signup_view(request)
+
+
+def _get_login_view(request: HttpRequest) -> HttpResponse:
+    if request.user.is_authenticated:
+        return redirect("/")
+
+    template = loader.get_template("./login.html")
+    return HttpResponse(template.render({}, request))
+
+
+def _post_login_view(request: HttpRequest) -> HttpResponse:
+    email = request.POST["email"]
+    password = request.POST["password"]
+
+    user = authenticate(request, email=email, password=password)
+    if user is None:
+        ctx = {"msg": "Login Error", "url": "/users/login"}
+        template = loader.get_template("./error.html")
+        return HttpResponse(template.render(ctx, request), status=400)
+
+    login(request, user)
+
+    return redirect("/")
+
+
+def login_view(request: HttpRequest) -> HttpResponse:
+    if request.method == "GET":
+        return _get_login_view(request)
+    return _post_login_view(request)
+
+
+# @require_http_methods(["POST"])
+def logout_view(request: HttpRequest) -> HttpResponse:
+    logout(request)
+    return redirect("/users/login")

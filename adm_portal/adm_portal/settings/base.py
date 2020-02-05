@@ -46,7 +46,7 @@ ROOT_URLCONF = "adm_portal.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": ["templates", "profiles"],
+        "DIRS": ["templates", "users", "profiles"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -58,6 +58,8 @@ TEMPLATES = [
         },
     }
 ]
+
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 WSGI_APPLICATION = "adm_portal.wsgi.application"
 

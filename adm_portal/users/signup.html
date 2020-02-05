@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="row justify-content-md-center">
+    <div class="col col-sm-5 col-sm-5 col-lg-3">
+        <form action="/users/signup" class="form-signin" method="POST" role="form">
+            {% csrf_token %}
+            <img class="mb-4" src="/static/ldssa_logo.png" alt="" width="72" height="72">
+            <h1 class="h3 mb-3 font-weight-normal">please create an account</h1>
+
+            <label for="inputEmail" class="sr-only">Email address</label>
+            <input type="email" name="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+
+            <label for="inputPassword" class="sr-only">Password</label>
+            <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
+
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Create Account</button>
+            <p class="mt-5 mb-3 text-muted">&copy; 2020</p>
+        </form>
+        <h5>Already registered? <br><a href="/users/login">Click Here to Log In</a></h5>
+    </div>
+</div>
+
+{% endblock %}
