@@ -8,6 +8,7 @@ authors = ["spin14 <acci.valverde@gmail.com>"]
 python = "^3.7"
 Django = "^3.0"
 gunicorn = "^20.0"
+requests = "^2.22.0"
 
 [tool.poetry.dev-dependencies]
 mypy = "^0.761.0"

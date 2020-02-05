@@ -8,7 +8,7 @@ test-all:
 	@ flake8 adm_portal
 	@ mypy adm_portal
 	@ cd adm_portal && python manage.py makemigrations --check --dry-run && cd ..
-	@ cd adm_portal && python manage.py test && cd ..
+	@ cd adm_portal && python manage.py test --exclude-tag=integration && cd ..
 
 docker-build:
 	@ echo "Building docker image"
@@ -16,7 +16,7 @@ docker-build:
 
 docker-run:
 	@ echo "Running docker image"
-	@ docker container run -d -p 8000:8000 --name adm-portal-dev -e DJANGO_SETTINGS_MODULE -e SECRET_KEY adm-portal
+	@ docker container run -d -p 8000:8000 --name adm-portal-dev -e DJANGO_SETTINGS_MODULE -e SECRET_KEY -e ELASTICEMAIL_API_KEY adm-portal
 
 docker-stop:
 	@ echo "Stopping docker image"

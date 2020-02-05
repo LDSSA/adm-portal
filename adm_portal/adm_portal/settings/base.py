@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     #
     "users",
     "profiles",
+    "email_client",
 ]
 
 MIDDLEWARE = [
@@ -84,3 +85,7 @@ STATIC_URL = "/static/"
 AUTHENTICATION_BACKENDS = ["users.backends.EmailModelBackend"]
 
 AUTH_USER_MODEL = "users.User"
+
+# Custom settings
+ELASTICEMAIL_API_URL = "https://api.elasticemail.com/v2/email/send"
+ELASTICEMAIL_API_FROM = "mariacristinavfdominguez@gmail.com"
