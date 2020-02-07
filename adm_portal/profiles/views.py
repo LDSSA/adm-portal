@@ -2,6 +2,8 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.template import loader
 
+from interface import get_storage_client
+
 from .forms import ProfileForm
 from .models import Profile
 
@@ -47,3 +49,16 @@ def profile_view(request: HttpRequest) -> HttpResponse:
     context = {"form": form}
 
     return HttpResponse(template.render(context, request))
+
+
+# this is just an example for the view to come
+# to consider: auth, file size, how to build key (use user id or something like that)
+def upload_file_view(request: HttpRequest) -> HttpResponse:
+    if request.method == "GET":
+        template = loader.get_template("./file_upload.html")
+        return HttpResponse(template.render({}, request))
+
+    file = request.FILES["file"]
+
+    get_storage_client().save(file.name, file)
+    return HttpResponse("Success")
