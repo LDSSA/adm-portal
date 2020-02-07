@@ -23,5 +23,7 @@ class User(AbstractBaseUser):
 
     email = models.EmailField(blank=False, null=False, unique=True)
 
+    is_staff = models.BooleanField(default=False, null=False)
+
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)

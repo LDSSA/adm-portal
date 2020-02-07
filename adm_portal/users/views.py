@@ -9,7 +9,9 @@ from .models import User
 
 def _get_signup_view(request: HttpRequest) -> HttpResponse:
     if request.user.is_authenticated:
-        return redirect("/")
+        if request.user.is_staff:
+            return redirect("/staff/home")
+        return redirect("/candidate/home")
 
     template = loader.get_template("./signup.html")
     return HttpResponse(template.render({}, request))
@@ -29,7 +31,7 @@ def _post_signup_view(request: HttpRequest) -> HttpResponse:
     login(request, user)
     # todo: send confirmation email?
 
-    return redirect("/")
+    return redirect("/candidate/home")
 
 
 def signup_view(request: HttpRequest) -> HttpResponse:
@@ -40,7 +42,9 @@ def signup_view(request: HttpRequest) -> HttpResponse:
 
 def _get_login_view(request: HttpRequest) -> HttpResponse:
     if request.user.is_authenticated:
-        return redirect("/")
+        if request.user.is_staff:
+            return redirect("/staff/home")
+        return redirect("/candidate/home")
 
     template = loader.get_template("./login.html")
     return HttpResponse(template.render({}, request))
@@ -58,7 +62,9 @@ def _post_login_view(request: HttpRequest) -> HttpResponse:
 
     login(request, user)
 
-    return redirect("/")
+    if user.is_staff:
+        return redirect("/staff/home")
+    return redirect("/candidate/home")
 
 
 def login_view(request: HttpRequest) -> HttpResponse:
@@ -70,4 +76,4 @@ def login_view(request: HttpRequest) -> HttpResponse:
 # @require_http_methods(["POST"])
 def logout_view(request: HttpRequest) -> HttpResponse:
     logout(request)
-    return redirect("/users/login")
+    return redirect("/account/login")

@@ -15,16 +15,19 @@ def todo_view(request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    # account
     path("account/signup", signup_view, name="accounts-signup"),
     path("account/login", login_view, name="accounts-login"),
     path("account/logout", logout_view, name="accounts-logout"),
-    path("instructor/home", todo_view, name="instructor-home"),
-    path("instructor/profiles", todo_view, name="instructor-profiles-list"),
-    path("instructor/profiles/<int:profile_id>/", todo_view, name="instructor-profiles-id"),
-    path("instructor/applications", todo_view, name="instructor-applications-list"),
-    path("instructor/applications/<int:application_id>", todo_view, name="instructor-applications-id"),
-    path("instructor/payments", todo_view, name="instructor-payments-list"),
-    path("instructor/payments/<int:payment_id>", todo_view, name="instructor-payments-id"),
+    # staff
+    path("staff/home", todo_view, name="staff-home"),
+    path("staff/profiles", todo_view, name="staff-profiles-list"),
+    path("staff/profiles/<int:profile_id>/", todo_view, name="staff-profiles-id"),
+    path("staff/applications", todo_view, name="staff-applications-list"),
+    path("staff/applications/<int:application_id>", todo_view, name="staff-applications-id"),
+    path("staff/payments", todo_view, name="staff-payments-list"),
+    path("staff/payments/<int:payment_id>", todo_view, name="staff-payments-id"),
+    # candidate
     path("candidate/home", todo_view, name="candidate-home"),
     path("candidate/profile", todo_view, name="candidate-profile"),
     path("candidate/python-test", todo_view, name="candidate-python-test"),
