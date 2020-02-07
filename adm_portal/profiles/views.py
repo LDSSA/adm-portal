@@ -1,32 +1,49 @@
-from typing import Any, Dict, List
-
+from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.template import loader
 
+from .forms import ProfileForm
 from .models import Profile
 
 
 def profiles_view(request: HttpRequest) -> HttpResponse:
-    context = get_context()
-    template = loader.get_template(_TEMPLATE_NAME)
+    column_names = [
+        "ID",  # todo: fix me, probably show user email
+        "Full Name",
+        "Profession",
+        "Gender",
+        "Ticket Type",
+        "Updated At",
+        "Created At",
+    ]
+
+    context = {"column_names": column_names, "profiles": list(Profile.objects.all().values())}
+
+    template = loader.get_template("./table.html")
 
     return HttpResponse(template.render(context, request))
 
 
-def get_context() -> Dict[str, Any]:
-    profiles = list(Profile.objects.all().values())
+@login_required(login_url="/users/login")
+def profile_view(request: HttpRequest) -> HttpResponse:
+    profile, _ = Profile.objects.get_or_create(user=request.user)
 
-    return {"column_names": _COL_NAMES, "profiles": profiles}
+    # if this is a POST request we need to process the form data
+    if request.method == "POST":
+        # create a form instance and populate it with data from the request
+        form = ProfileForm(request.POST, instance=profile)
 
+        # check whether it's valid:
+        if form.is_valid():
+            form.save()
+            return HttpResponse("Profile updated!")
 
-_COL_NAMES: List[str] = [
-    "ID",  # todo: fix me, probably show user email
-    "Full Name",
-    "Profession",
-    "Gender",
-    "Ticket Type",
-    "Updated At",
-    "Created At",
-]
+    # if this is a GET (or any other method) we'll create a form
+    # pre-filled with the current user's profile info
+    else:
+        form = ProfileForm(instance=profile)
 
-_TEMPLATE_NAME = "./table.html"
+    template = loader.get_template("./profile.html")
+    context = {"form": form}
+
+    return HttpResponse(template.render(context, request))

@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container">
+    <h2 class="mb-3">Profile</h2>
+    <form>
+        <div class="form-group row">
+          <label for="fullName" class="col-sm-2 col-form-label">Full Name</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="fullName" placeholder="Full Name" value="{{ profile.full_name }}">
+          </div>
+        </div>
+        <div class="form-group row">
+            <label for="profession" class="col-sm-2 col-form-label">Profession</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="profession" placeholder="Profession" value="{{ profile.profession }}">
+            </div>
+          </div>
+        <fieldset class="form-group">
+          <div class="row">
+            <legend class="col-form-label col-sm-2 pt-0">Gender</legend>
+            <div class="col-sm-10">
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="gridRadios" id="gender1" value="f">
+                <label class="form-check-label" for="gender1">
+                  Female
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="gridRadios" id="gender2" value="m" checked>
+                <label class="form-check-label" for="gender2">
+                  Male
+                </label>
+              </div>
+              <div class="form-check disabled">
+                <input class="form-check-input" type="radio" name="gridRadios" id="gender3" value="other">
+                <label class="form-check-label" for="gender3">
+                  Other / Prefer not to say
+                </label>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+        <fieldset class="form-group">
+            <div class="row">
+              <legend class="col-form-label col-sm-2 pt-0">Ticket type</legend>
+              <div class="col-sm-10">
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="gridRadios" id="ticket1" value="student">
+                  <label class="form-check-label" for="ticket1">
+                    Student
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="gridRadios" id="ticket2" value="regular">
+                  <label class="form-check-label" for="ticket2">
+                    Regular
+                  </label>
+                </div>
+                <div class="form-check disabled">
+                  <input class="form-check-input" type="radio" name="gridRadios" id="ticket3" value="company">
+                  <label class="form-check-label" for="ticket3">
+                    Company
+                  </label>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+        <div class="form-group row">
+          <div class="col-sm-10">
+            <button type="submit" class="btn btn-primary">Save profile</button>
+          </div>
+        </div>
+    </form>
+</div>
+
+{% endblock %}
