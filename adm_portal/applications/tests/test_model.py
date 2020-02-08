@@ -48,7 +48,34 @@ class TestApplicationModel(TestCase):
         with self.assertRaises(expected_exception=PythonTestSubmissionsNotOpenException):
             self.a4.new_python_test_submission(submission=PythonTestSubmission())
 
-    def test_best_python_score(self) -> None:
+    def test_python_test_status(self) -> None:
+        now = datetime.now()
+
+        self.assertEqual(self.a1.python_test_status, "to do")
+
+        one_hour_ago = now - timedelta(hours=1)
+        self.a2.python_test_downloaded_at = one_hour_ago
+        self.a2.save()
+        PythonTestSubmission.objects.create(application=self.a2, score=1)
+        PythonTestSubmission.objects.create(application=self.a2, score=90)
+        self.assertEqual(self.a2.python_test_status, "ongoing")
+
+        three_hours_ago = now - timedelta(hours=3)
+        self.a3.python_test_downloaded_at = three_hours_ago
+        self.a3.save()
+        PythonTestSubmission.objects.create(application=self.a3, score=1)
+        PythonTestSubmission.objects.create(application=self.a3, score=75)
+        self.assertEqual(self.a3.python_test_status, "finished")
+
+        three_hours_ago = now - timedelta(hours=3)
+        self.a4.python_test_downloaded_at = three_hours_ago
+        self.a4.save()
+        PythonTestSubmission.objects.create(application=self.a4, score=1)
+        PythonTestSubmission.objects.create(application=self.a4, score=20)
+        PythonTestSubmission.objects.create(application=self.a4, score=69)
+        self.assertEqual(self.a4.python_test_status, "finished")
+
+    def test_python_test_best_score(self) -> None:
         PythonTestSubmission.objects.create(application=self.a1, score=10)
         PythonTestSubmission.objects.create(application=self.a1, score=89)
         PythonTestSubmission.objects.create(application=self.a1, score=51)
@@ -56,6 +83,21 @@ class TestApplicationModel(TestCase):
         PythonTestSubmission.objects.create(application=self.a2, score=94)
         PythonTestSubmission.objects.create(application=self.a2, score=1)
 
-        self.assertEqual(self.a1.best_python_test_score, 89)
-        self.assertEqual(self.a2.best_python_test_score, 94)
-        self.assertEqual(self.a3.best_python_test_score, None)
+        self.assertEqual(self.a1.python_test_best_score, 89)
+        self.assertEqual(self.a2.python_test_best_score, 94)
+        self.assertEqual(self.a3.python_test_best_score, None)
+
+    def test_python_test_passed(self) -> None:
+        PythonTestSubmission.objects.create(application=self.a1, score=10)
+        PythonTestSubmission.objects.create(application=self.a1, score=75)
+        PythonTestSubmission.objects.create(application=self.a1, score=51)
+
+        PythonTestSubmission.objects.create(application=self.a2, score=94)
+        PythonTestSubmission.objects.create(application=self.a2, score=1)
+
+        PythonTestSubmission.objects.create(application=self.a3, score=74)
+
+        self.assertTrue(self.a1.python_test_passed)
+        self.assertTrue(self.a2.python_test_passed)
+        self.assertFalse(self.a3.python_test_passed)
+        self.assertFalse(self.a4.python_test_passed)
