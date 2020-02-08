@@ -9,7 +9,7 @@ from profiles.models import Profile
 
 @require_http_methods(["GET"])
 def candidate_home_view(request: HttpRequest) -> HttpResponse:
-    template = loader.get_template("./templates/home.html")
+    template = loader.get_template("./candidate_templates/home.html")
     application, _ = Application.objects.get_or_create(user=request.user)
     ctx = {"user": request.user, "application": application}
     return HttpResponse(template.render(ctx, request))
@@ -29,7 +29,7 @@ def candidate_profile_view(request: HttpRequest) -> HttpResponse:
             return HttpResponseRedirect("/candidate/profile/edit")
         form = ProfileForm(instance=profile)
 
-    template = loader.get_template("./templates/profile.html")
+    template = loader.get_template("./candidate_templates/profile.html")
     context = {"form": form}
 
     return HttpResponse(template.render(context, request))
@@ -53,14 +53,14 @@ def candidate_profile_edit(request: HttpRequest) -> HttpResponse:
     else:
         form = ProfileForm(instance=profile)
 
-    template = loader.get_template("./templates/profile_edit.html")
+    template = loader.get_template("./candidate_templates/profile_edit.html")
     context = {"form": form}
 
     return HttpResponse(template.render(context, request))
 
 
 def candidate_python_test_view(request: HttpRequest) -> HttpResponse:
-    template = loader.get_template("./templates/python_test.html")
+    template = loader.get_template("./candidate_templates/python_test.html")
     application, _ = Application.objects.get_or_create(user=request.user)
     ctx = {
         "status": application.python_test_status,
