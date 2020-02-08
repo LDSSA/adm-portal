@@ -13,7 +13,7 @@ def _get_signup_view(request: HttpRequest) -> HttpResponse:
             return redirect("/staff/home")
         return redirect("/candidate/home")
 
-    template = loader.get_template("./signup.html")
+    template = loader.get_template("./user_templates/signup.html")
     return HttpResponse(template.render({}, request))
 
 
@@ -25,7 +25,7 @@ def _post_signup_view(request: HttpRequest) -> HttpResponse:
         user = User.objects.create_user(email=email, password=password)
     except IntegrityError:
         ctx = {"msg": "this e-mail address is already taken", "url": "/account/signup"}
-        template = loader.get_template("./error.html")
+        template = loader.get_template("./user_templates/error.html")
         return HttpResponse(template.render(ctx, request), status=409)
 
     login(request, user)
@@ -46,7 +46,7 @@ def _get_login_view(request: HttpRequest) -> HttpResponse:
             return redirect("/staff/home")
         return redirect("/candidate/home")
 
-    template = loader.get_template("./login.html")
+    template = loader.get_template("./user_templates/login.html")
     return HttpResponse(template.render({}, request))
 
 
@@ -57,7 +57,7 @@ def _post_login_view(request: HttpRequest) -> HttpResponse:
     user = authenticate(request, email=email, password=password)
     if user is None:
         ctx = {"msg": "Login Error", "url": "/account/login"}
-        template = loader.get_template("./error.html")
+        template = loader.get_template("./user_templates/error.html")
         return HttpResponse(template.render(ctx, request), status=400)
 
     login(request, user)
