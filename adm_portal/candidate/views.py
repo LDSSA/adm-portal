@@ -59,7 +59,7 @@ def candidate_profile_edit(request: HttpRequest) -> HttpResponse:
     return HttpResponse(template.render(context, request))
 
 
-def candidate_python_test_view(request: HttpRequest) -> HttpResponse:
+def candidate_coding_test_view(request: HttpRequest) -> HttpResponse:
     template = loader.get_template("./candidate_templates/coding_test.html")
     application, _ = Application.objects.get_or_create(user=request.user)
     ctx = {
