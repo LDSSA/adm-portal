@@ -59,16 +59,16 @@ def candidate_profile_edit(request: HttpRequest) -> HttpResponse:
     return HttpResponse(template.render(context, request))
 
 
-def candidate_python_test_view(request: HttpRequest) -> HttpResponse:
-    template = loader.get_template("./templates/python_test.html")
+def candidate_coding_test_view(request: HttpRequest) -> HttpResponse:
+    template = loader.get_template("./templates/coding_test.html")
     application, _ = Application.objects.get_or_create(user=request.user)
     ctx = {
-        "status": application.python_test_status,
-        "passed": application.python_test_passed,
+        "status": application.coding_test_status,
+        "passed": application.coding_test_passed,
         "failed": (
-            not application.python_test_passed
-            and application.python_test_downloaded_at is not None
-            and not application.python_test_submission_is_open
+            not application.coding_test_passed
+            and application.coding_test_downloaded_at is not None
+            and not application.coding_test_submission_is_open
         ),
     }
     return HttpResponse(template.render(ctx, request))

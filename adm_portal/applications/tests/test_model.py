@@ -4,9 +4,9 @@ from django.test import TestCase
 
 from applications.models import (
     Application,
-    PythonTestSubmission,
-    PythonTestSubmissionsClosedException,
-    PythonTestSubmissionsNotOpenException,
+    CodingTestSubmission,
+    CodingTestSubmissionsClosedException,
+    CodingTestSubmissionsNotOpenException,
 )
 from users.models import User
 
@@ -23,81 +23,81 @@ class TestApplicationModel(TestCase):
         self.a3 = Application.objects.create(user=self.u3)
         self.a4 = Application.objects.create(user=self.u4)
 
-    def test_new_python_test_submission(self) -> None:
+    def test_new_coding_test_submission(self) -> None:
         now = datetime.now()
 
         one_hour_ago = now - timedelta(hours=1)
-        self.a1.python_test_downloaded_at = one_hour_ago
+        self.a1.coding_test_downloaded_at = one_hour_ago
         self.a1.save()
 
-        self.a1.new_python_test_submission(submission=PythonTestSubmission())
+        self.a1.new_coding_test_submission(submission=CodingTestSubmission())
 
         two_hours_ago = now - timedelta(hours=2)
-        self.a2.python_test_downloaded_at = two_hours_ago
+        self.a2.coding_test_downloaded_at = two_hours_ago
         self.a2.save()
 
-        self.a2.new_python_test_submission(submission=PythonTestSubmission())
+        self.a2.new_coding_test_submission(submission=CodingTestSubmission())
 
         two_hours_and_five_minutes_ago = now - timedelta(hours=2, minutes=5)
-        self.a3.python_test_downloaded_at = two_hours_and_five_minutes_ago
+        self.a3.coding_test_downloaded_at = two_hours_and_five_minutes_ago
         self.a3.save()
 
-        with self.assertRaises(expected_exception=PythonTestSubmissionsClosedException):
-            self.a3.new_python_test_submission(submission=PythonTestSubmission())
+        with self.assertRaises(expected_exception=CodingTestSubmissionsClosedException):
+            self.a3.new_coding_test_submission(submission=CodingTestSubmission())
 
-        with self.assertRaises(expected_exception=PythonTestSubmissionsNotOpenException):
-            self.a4.new_python_test_submission(submission=PythonTestSubmission())
+        with self.assertRaises(expected_exception=CodingTestSubmissionsNotOpenException):
+            self.a4.new_coding_test_submission(submission=CodingTestSubmission())
 
-    def test_python_test_status(self) -> None:
+    def test_coding_test_status(self) -> None:
         now = datetime.now()
 
-        self.assertEqual(self.a1.python_test_status, "to do")
+        self.assertEqual(self.a1.coding_test_status, "to do")
 
         one_hour_ago = now - timedelta(hours=1)
-        self.a2.python_test_downloaded_at = one_hour_ago
+        self.a2.coding_test_downloaded_at = one_hour_ago
         self.a2.save()
-        PythonTestSubmission.objects.create(application=self.a2, score=1)
-        PythonTestSubmission.objects.create(application=self.a2, score=90)
-        self.assertEqual(self.a2.python_test_status, "ongoing")
+        CodingTestSubmission.objects.create(application=self.a2, score=1)
+        CodingTestSubmission.objects.create(application=self.a2, score=90)
+        self.assertEqual(self.a2.coding_test_status, "ongoing")
 
         three_hours_ago = now - timedelta(hours=3)
-        self.a3.python_test_downloaded_at = three_hours_ago
+        self.a3.coding_test_downloaded_at = three_hours_ago
         self.a3.save()
-        PythonTestSubmission.objects.create(application=self.a3, score=1)
-        PythonTestSubmission.objects.create(application=self.a3, score=75)
-        self.assertEqual(self.a3.python_test_status, "finished")
+        CodingTestSubmission.objects.create(application=self.a3, score=1)
+        CodingTestSubmission.objects.create(application=self.a3, score=75)
+        self.assertEqual(self.a3.coding_test_status, "finished")
 
         three_hours_ago = now - timedelta(hours=3)
-        self.a4.python_test_downloaded_at = three_hours_ago
+        self.a4.coding_test_downloaded_at = three_hours_ago
         self.a4.save()
-        PythonTestSubmission.objects.create(application=self.a4, score=1)
-        PythonTestSubmission.objects.create(application=self.a4, score=20)
-        PythonTestSubmission.objects.create(application=self.a4, score=69)
-        self.assertEqual(self.a4.python_test_status, "finished")
+        CodingTestSubmission.objects.create(application=self.a4, score=1)
+        CodingTestSubmission.objects.create(application=self.a4, score=20)
+        CodingTestSubmission.objects.create(application=self.a4, score=69)
+        self.assertEqual(self.a4.coding_test_status, "finished")
 
-    def test_python_test_best_score(self) -> None:
-        PythonTestSubmission.objects.create(application=self.a1, score=10)
-        PythonTestSubmission.objects.create(application=self.a1, score=89)
-        PythonTestSubmission.objects.create(application=self.a1, score=51)
+    def test_coding_test_best_score(self) -> None:
+        CodingTestSubmission.objects.create(application=self.a1, score=10)
+        CodingTestSubmission.objects.create(application=self.a1, score=89)
+        CodingTestSubmission.objects.create(application=self.a1, score=51)
 
-        PythonTestSubmission.objects.create(application=self.a2, score=94)
-        PythonTestSubmission.objects.create(application=self.a2, score=1)
+        CodingTestSubmission.objects.create(application=self.a2, score=94)
+        CodingTestSubmission.objects.create(application=self.a2, score=1)
 
-        self.assertEqual(self.a1.python_test_best_score, 89)
-        self.assertEqual(self.a2.python_test_best_score, 94)
-        self.assertEqual(self.a3.python_test_best_score, None)
+        self.assertEqual(self.a1.coding_test_best_score, 89)
+        self.assertEqual(self.a2.coding_test_best_score, 94)
+        self.assertEqual(self.a3.coding_test_best_score, None)
 
-    def test_python_test_passed(self) -> None:
-        PythonTestSubmission.objects.create(application=self.a1, score=10)
-        PythonTestSubmission.objects.create(application=self.a1, score=75)
-        PythonTestSubmission.objects.create(application=self.a1, score=51)
+    def test_coding_test_passed(self) -> None:
+        CodingTestSubmission.objects.create(application=self.a1, score=10)
+        CodingTestSubmission.objects.create(application=self.a1, score=75)
+        CodingTestSubmission.objects.create(application=self.a1, score=51)
 
-        PythonTestSubmission.objects.create(application=self.a2, score=94)
-        PythonTestSubmission.objects.create(application=self.a2, score=1)
+        CodingTestSubmission.objects.create(application=self.a2, score=94)
+        CodingTestSubmission.objects.create(application=self.a2, score=1)
 
-        PythonTestSubmission.objects.create(application=self.a3, score=74)
+        CodingTestSubmission.objects.create(application=self.a3, score=74)
 
-        self.assertTrue(self.a1.python_test_passed)
-        self.assertTrue(self.a2.python_test_passed)
-        self.assertFalse(self.a3.python_test_passed)
-        self.assertFalse(self.a4.python_test_passed)
+        self.assertTrue(self.a1.coding_test_passed)
+        self.assertTrue(self.a2.coding_test_passed)
+        self.assertFalse(self.a3.coding_test_passed)
+        self.assertFalse(self.a4.coding_test_passed)
