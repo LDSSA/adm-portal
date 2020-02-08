@@ -9,7 +9,7 @@ from profiles.models import Profile
 
 @require_http_methods(["GET"])
 def candidate_home_view(request: HttpRequest) -> HttpResponse:
-    template = loader.get_template("./home.html")
+    template = loader.get_template("./templates/home.html")
     application, _ = Application.objects.get_or_create(user=request.user)
     ctx = {"user": request.user, "application": application}
     return HttpResponse(template.render(ctx, request))
