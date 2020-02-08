@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     "users",
     "profiles",
     "email_client",
+    "applications",
 ]
 
 MIDDLEWARE = [
@@ -61,7 +62,7 @@ TEMPLATES = [
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
-WSGI_APPLICATION = "adm_portal.wsgi.application"
+WSGI_APPLICATION = "adm_portal.wsgi.applications"
 
 DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": os.path.join(BASE_DIR, "db.sqlite3")}}
 

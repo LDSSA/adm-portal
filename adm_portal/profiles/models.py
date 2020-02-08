@@ -3,7 +3,7 @@ from django.db import models
 
 # todo: add more fields, this model is incomplete
 class Profile(models.Model):
-    user = models.ForeignKey("users.User", on_delete=models.CASCADE)
+    user = models.OneToOneField("users.User", on_delete=models.CASCADE)
 
     full_name = models.CharField(blank=False, null=False, max_length=100)
 

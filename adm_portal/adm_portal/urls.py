@@ -2,6 +2,7 @@ from typing import Any
 
 from django.contrib import admin
 from django.http import HttpRequest, HttpResponse
+from django.shortcuts import redirect
 from django.urls import path
 
 from users.views import login_view, logout_view, signup_view
@@ -16,9 +17,10 @@ def todo_view(request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
 urlpatterns = [
     path("admin/", admin.site.urls),
     # account
-    path("account/signup", signup_view, name="accounts-signup"),
+    path("", lambda req: redirect("account/login")),
     path("account/login", login_view, name="accounts-login"),
     path("account/logout", logout_view, name="accounts-logout"),
+    path("account/signup", signup_view, name="accounts-signup"),
     # staff
     path("staff/home", todo_view, name="staff-home"),
     path("staff/profiles", todo_view, name="staff-profiles-list"),
