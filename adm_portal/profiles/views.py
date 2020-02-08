@@ -1,4 +1,3 @@
-from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.template import loader
 
@@ -26,7 +25,6 @@ def profiles_view(request: HttpRequest) -> HttpResponse:
     return HttpResponse(template.render(context, request))
 
 
-@login_required(login_url="/users/login")
 def profile_view(request: HttpRequest) -> HttpResponse:
     profile, _ = Profile.objects.get_or_create(user=request.user)
 
@@ -55,7 +53,7 @@ def profile_view(request: HttpRequest) -> HttpResponse:
 # to consider: auth, file size, how to build key (use user id or something like that)
 def upload_file_view(request: HttpRequest) -> HttpResponse:
     if request.method == "GET":
-        template = loader.get_template("./file_upload.html")
+        template = loader.get_template("./home.html")
         return HttpResponse(template.render({}, request))
 
     file = request.FILES["file"]

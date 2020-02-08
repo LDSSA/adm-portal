@@ -1,10 +1,12 @@
-from typing import Any
+from typing import Any, Callable, NamedTuple
 
 from django.contrib import admin
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
 from django.urls import path
 
+from candidate.views import candidate_home_view
+from users.decorators import requires_candidate_login, requires_staff_login
 from users.views import login_view, logout_view, signup_view
 
 
@@ -14,27 +16,42 @@ def todo_view(request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
     )
 
 
+class Route(NamedTuple):
+    route: str
+    view: Callable[[Any], Any]
+    name: str
+
+
+staff_routes = [
+    Route(route="staff/home", view=todo_view, name="staff-home"),
+    Route(route="staff/profiles", view=todo_view, name="staff-profiles-list"),
+    Route(route="staff/profiles/<int:profile_id>/", view=todo_view, name="staff-profiles-id"),
+    Route(route="staff/applications", view=todo_view, name="staff-applications-list"),
+    Route(route="staff/applications/<int:application_id>", view=todo_view, name="staff-applications-id"),
+    Route(route="staff/payments", view=todo_view, name="staff-payments-list"),
+    Route(route="staff/payments/<int:payment_id>", view=todo_view, name="staff-payments-id"),
+]
+
+candidate_routes = [
+    Route(route="candidate/home", view=candidate_home_view, name="candidate-home"),
+    Route(route="candidate/profile", view=todo_view, name="candidate-profile"),
+    Route(route="candidate/python-test", view=todo_view, name="candidate-python-test"),
+    Route(route="candidate/slu-1", view=todo_view, name="candidate-slu-1"),
+    Route(route="candidate/slu-2", view=todo_view, name="candidate-slu-2"),
+    Route(route="candidate/slu-3", view=todo_view, name="candidate-slu-3"),
+    Route(route="candidate/payment", view=todo_view, name="candidate-payment"),
+]
+
 urlpatterns = [
+    path("", lambda req: redirect("account/login")),
+    # admin
     path("admin/", admin.site.urls),
     # account
-    path("", lambda req: redirect("account/login")),
     path("account/login", login_view, name="accounts-login"),
     path("account/logout", logout_view, name="accounts-logout"),
     path("account/signup", signup_view, name="accounts-signup"),
     # staff
-    path("staff/home", todo_view, name="staff-home"),
-    path("staff/profiles", todo_view, name="staff-profiles-list"),
-    path("staff/profiles/<int:profile_id>/", todo_view, name="staff-profiles-id"),
-    path("staff/applications", todo_view, name="staff-applications-list"),
-    path("staff/applications/<int:application_id>", todo_view, name="staff-applications-id"),
-    path("staff/payments", todo_view, name="staff-payments-list"),
-    path("staff/payments/<int:payment_id>", todo_view, name="staff-payments-id"),
+    *[path(r.route, requires_staff_login(r.view), name=r.name) for r in staff_routes],
     # candidate
-    path("candidate/home", todo_view, name="candidate-home"),
-    path("candidate/profile", todo_view, name="candidate-profile"),
-    path("candidate/python-test", todo_view, name="candidate-python-test"),
-    path("candidate/slu-1", todo_view, name="candidate-slu-1"),
-    path("candidate/slu-2", todo_view, name="candidate-slu-2"),
-    path("candidate/slu-3", todo_view, name="candidate-slu-3"),
-    path("candidate/payment", todo_view, name="candidate-payment"),
+    *[path(r.route, requires_candidate_login(r.view), name=r.name) for r in candidate_routes],
 ]

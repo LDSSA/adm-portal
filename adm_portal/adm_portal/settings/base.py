@@ -47,7 +47,7 @@ ROOT_URLCONF = "adm_portal.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": ["templates", "users", "profiles"],
+        "DIRS": ["templates", "users", "profiles", "candidate"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -62,7 +62,7 @@ TEMPLATES = [
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
-WSGI_APPLICATION = "adm_portal.wsgi.applications"
+WSGI_APPLICATION = "adm_portal.wsgi.application"
 
 DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": os.path.join(BASE_DIR, "db.sqlite3")}}
 
