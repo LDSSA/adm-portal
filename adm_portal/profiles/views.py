@@ -3,10 +3,10 @@ from django.template import loader
 
 from interface import get_storage_client
 
-from .forms import ProfileForm
 from .models import Profile
 
 
+# old example of rendering all the profiles
 def profiles_view(request: HttpRequest) -> HttpResponse:
     column_names = [
         "ID",  # todo: fix me, probably show user email
@@ -21,30 +21,6 @@ def profiles_view(request: HttpRequest) -> HttpResponse:
     context = {"column_names": column_names, "profiles": list(Profile.objects.all().values())}
 
     template = loader.get_template("./table.html")
-
-    return HttpResponse(template.render(context, request))
-
-
-def profile_view(request: HttpRequest) -> HttpResponse:
-    profile, _ = Profile.objects.get_or_create(user=request.user)
-
-    # if this is a POST request we need to process the form data
-    if request.method == "POST":
-        # create a form instance and populate it with data from the request
-        form = ProfileForm(request.POST, instance=profile)
-
-        # check whether it's valid:
-        if form.is_valid():
-            form.save()
-            return HttpResponse("Profile updated!")
-
-    # if this is a GET (or any other method) we'll create a form
-    # pre-filled with the current user's profile info
-    else:
-        form = ProfileForm(instance=profile)
-
-    template = loader.get_template("./profile.html")
-    context = {"form": form}
 
     return HttpResponse(template.render(context, request))
 

@@ -1,0 +1,29 @@
+{% extends './base.html' %}
+
+{% block content %}
+
+<div class="container">
+    <h2 class="mb-3">Profile</h2>
+    <form method="post" novalidate>
+        {% csrf_token %}
+    
+        {% for hidden_field in form.hidden_fields %}
+        {{ hidden_field }}
+        {% endfor %}
+        
+        <fieldset disabled>
+            {% for field in form.visible_fields %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.help_text %}
+                <small class="form-text text-muted">{{ field.help_text }}</small>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </fieldset>
+        <button type="submit" class="btn btn-primary">Edit profile</button>
+    </form>
+</div>
+
+{% endblock %}

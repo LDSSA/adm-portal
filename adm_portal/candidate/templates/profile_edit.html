@@ -1,10 +1,10 @@
-{% extends 'base.html' %}
+{% extends './base.html' %}
 
 {% block content %}
 
 <div class="container">
     <h2 class="mb-3">Profile</h2>
-    <form action="/profile/" method="post" novalidate>
+    <form method="post" novalidate>
         {% csrf_token %}
     
         {% for hidden_field in form.hidden_fields %}
