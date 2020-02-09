@@ -10,7 +10,7 @@
                 <div class="alert alert-secondary" role="alert">
                     This test is <strong>{{ status }}</strong>.
                 </div>
-                {% if submissions_closes_at %}
+                {% if submissions_closes_at and status == "ongoing"%}
                 <div class="alert alert-warning" role="alert">
                     You have until <strong>{{ submissions_closes_at }}</strong> to submit solutions!
                 </div>
@@ -21,7 +21,7 @@
                 </div>
                 {% endif %}
                 {% if failed %}
-                <div class="alert danger" role="alert">
+                <div class="alert alert-danger" role="alert">
                     You have failed!
                 </div>
                 {% endif %}
@@ -69,7 +69,7 @@
                     {% for s in submissions %}
                     <tr>
                         <td>
-                            {% if s.score >= 33 %}
+                            {% if s.score >= 75 %}
                             <span class="badge badge-success">Passed</span>
                             {% else %}
                             <span class="badge badge-danger">Failed</span>
