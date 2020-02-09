@@ -1,7 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpRequest, HttpResponse
-from django.shortcuts import redirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.template import loader
 
 from .models import User
@@ -10,8 +9,8 @@ from .models import User
 def _get_signup_view(request: HttpRequest) -> HttpResponse:
     if request.user.is_authenticated:
         if request.user.is_staff:
-            return redirect("/staff/home")
-        return redirect("/candidate/home")
+            return HttpResponseRedirect("/staff/home")
+        return HttpResponseRedirect("/candidate/home")
 
     template = loader.get_template("./user_templates/signup.html")
     return HttpResponse(template.render({}, request))
@@ -31,7 +30,7 @@ def _post_signup_view(request: HttpRequest) -> HttpResponse:
     login(request, user)
     # todo: send confirmation email?
 
-    return redirect("/candidate/home")
+    return HttpResponseRedirect("/candidate/home")
 
 
 def signup_view(request: HttpRequest) -> HttpResponse:
@@ -43,8 +42,8 @@ def signup_view(request: HttpRequest) -> HttpResponse:
 def _get_login_view(request: HttpRequest) -> HttpResponse:
     if request.user.is_authenticated:
         if request.user.is_staff:
-            return redirect("/staff/home")
-        return redirect("/candidate/home")
+            return HttpResponseRedirect("/staff/home")
+        return HttpResponseRedirect("/candidate/home")
 
     template = loader.get_template("./user_templates/login.html")
     return HttpResponse(template.render({}, request))
@@ -63,8 +62,8 @@ def _post_login_view(request: HttpRequest) -> HttpResponse:
     login(request, user)
 
     if user.is_staff:
-        return redirect("/staff/home")
-    return redirect("/candidate/home")
+        return HttpResponseRedirect("/staff/home")
+    return HttpResponseRedirect("/candidate/home")
 
 
 def login_view(request: HttpRequest) -> HttpResponse:
@@ -76,4 +75,4 @@ def login_view(request: HttpRequest) -> HttpResponse:
 # @require_http_methods(["POST"])
 def logout_view(request: HttpRequest) -> HttpResponse:
     logout(request)
-    return redirect("/account/login")
+    return HttpResponseRedirect("/account/login")

@@ -29,3 +29,6 @@ class MockFeatureFlagsClient(FeatureFlagsClient):
 
     def accepting_payment_profs(self) -> bool:
         return self._accepting_payment_profs
+
+
+# https://configcat.com/#pricing

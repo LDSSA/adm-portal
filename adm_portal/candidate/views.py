@@ -1,10 +1,16 @@
+from datetime import datetime
+
+from django.conf import settings
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.views.decorators.http import require_http_methods
 
-from applications.models import Application
+from applications.files import get_coding_test_url_from_s3, upload_coding_test_solution
+from applications.models import Application, CodingTestSubmission
+from interface import get_feature_flag_client
 from profiles.forms import ProfileForm
 from profiles.models import Profile
+from users.models import to_user_data
 
 
 @require_http_methods(["GET"])
@@ -64,11 +70,47 @@ def candidate_coding_test_view(request: HttpRequest) -> HttpResponse:
     application, _ = Application.objects.get_or_create(user=request.user)
     ctx = {
         "status": application.coding_test_status,
+        "submissions_closes_at": application.coding_test_submission_closes_at,
         "passed": application.coding_test_passed,
         "failed": (
             not application.coding_test_passed
             and application.coding_test_downloaded_at is not None
             and not application.coding_test_submission_is_open
         ),
+        "best_score": application.coding_test_best_score,
+        "download_enabled": True,  # todo use feature flag?
+        "upload_enabled": (
+            application.coding_test_submission_is_open and get_feature_flag_client().accepting_test_submissions()
+        ),
+        "submissions": CodingTestSubmission.objects.filter(application=application).order_by("-updated_at"),
     }
     return HttpResponse(template.render(ctx, request))
+
+
+@require_http_methods(["GET"])
+def candidate_coding_test_download_view(request: HttpRequest) -> HttpResponse:
+    url = get_coding_test_url_from_s3(settings.STORAGE_CLIENT_NAMESPACE)
+    application = Application.objects.get(user=request.user)
+    if application.coding_test_downloaded_at is None:
+        application.coding_test_downloaded_at = datetime.now()
+        application.save()
+
+    return HttpResponseRedirect(url)
+
+
+@require_http_methods(["POST"])
+def candidate_coding_test_upload_view(request: HttpRequest) -> HttpResponse:
+    file = request.FILES["file"]
+
+    upload_key = upload_coding_test_solution(to_user_data(request.user), file)
+    submission = CodingTestSubmission(file_location=upload_key)
+    application = Application.objects.get(user=request.user)
+    application.new_coding_test_submission(submission)
+    # call lambda to evaluate the submission
+    from random import randrange
+
+    submission.score = randrange(100)
+    submission.save()
+    #
+
+    return HttpResponseRedirect("/candidate/coding-test")

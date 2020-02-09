@@ -77,11 +77,11 @@ LANGUAGE_CODE = "en-us"
 
 TIME_ZONE = "UTC"
 
-USE_I18N = True
+USE_I18N = False
 
-USE_L10N = True
+USE_L10N = False
 
-USE_TZ = True
+USE_TZ = False
 
 STATIC_URL = "/static/"
 
@@ -96,3 +96,6 @@ ELASTICEMAIL_API_FROM = "mariacristinavfdominguez@gmail.com"
 # one of: "LOCAL", "S3"
 STORAGE_CLIENT = "S3"
 STORAGE_CLIENT_NAMESPACE = "ldssa-adm-portal"
+
+# one of: "CODE",
+FF_CLIENT = "CODE"

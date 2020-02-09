@@ -44,15 +44,15 @@ class Application(models.Model):
     coding_test_downloaded_at = models.DateTimeField(null=True, default=None)
 
     @property
-    def _coding_test_submission_closes_at(self) -> Optional[datetime]:
+    def coding_test_submission_closes_at(self) -> Optional[datetime]:
         if self.coding_test_downloaded_at is None:
             return None
         return self.coding_test_downloaded_at + self._coding_test_real_duration
 
     def _coding_test_raise_if_submission_not_open(self) -> None:
-        if self._coding_test_submission_closes_at is None:
+        if self.coding_test_submission_closes_at is None:
             raise CodingTestSubmissionsNotOpenException
-        if self._coding_test_submission_closes_at < datetime.now():
+        if self.coding_test_submission_closes_at < datetime.now():
             raise CodingTestSubmissionsClosedException
 
     @property

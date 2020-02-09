@@ -2,21 +2,92 @@
 
 {% block content %}
 
-<div class="row justify-content-md-center">
+<div class="row justify-content-center">
     <div class="col col-sm-10 col-md-8 col-lg-7">
-        <div class="alert alert-secondary" role="alert">
-            This test is <strong>{{ status }}</strong>.
+
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <div class="alert alert-secondary" role="alert">
+                    This test is <strong>{{ status }}</strong>.
+                </div>
+                {% if submissions_closes_at %}
+                <div class="alert alert-warning" role="alert">
+                    You have until <strong>{{ submissions_closes_at }}</strong> to submit solutions!
+                </div>
+                {% endif %}
+                {% if passed %}
+                <div class="alert alert-success" role="alert">
+                    You have passed with {{ best_score }}/100!
+                </div>
+                {% endif %}
+                {% if failed %}
+                <div class="alert danger" role="alert">
+                    You have failed!
+                </div>
+                {% endif %}
+            </div>
         </div>
-        {% if passed %}
-        <div class="alert alert-success" role="alert">
-            You have passed!
+
+        <div class="row">
+            <div class="col-md-6 text-center">
+                <div class="card">
+                    <div class="card-body">
+                        <p class="card-text">Once you download the coding test for the <strong>first time</strong> you have <strong>two hours</strong> to submit solutions!</p>
+                        <a href="/candidate/coding-test/download" class="btn btn-primary btn-lg {% if not download_enabled %} disabled {% endif %}" role="button" aria-pressed="true" target="_blank">Download Test</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 text-center">
+                <div class="card">
+                    <div class="card-body">
+                        <form action="/candidate/coding-test/upload" enctype="multipart/form-data" method="POST">
+                            {% csrf_token %}
+                            <input type="file" name="file" id="inputFile" class="form-control" {% if not upload_enabled %} disabled {% endif %} required>
+                            <button class="btn btn-lg btn-primary" type="submit" {% if not upload_enabled %} disabled {% endif %}>Upload Solution</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
-        {% endif %}
-        {% if failed %}
-        <div class="alert danger" role="alert">
-            You have failed!
+
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <br>
+                <h4>Submissions</h4>
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">Result</th>
+                        <th scope="col">ID</th>
+                        <th scope="col">Submitted At</th>
+                        <th scope="col">Score</th>
+                        <th scope="col">Source</th>
+                        <th scope="col">FeedBack</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for s in submissions %}
+                    <tr>
+                        <td>
+                            {% if s.score >= 33 %}
+                            <span class="badge badge-success">Passed</span>
+                            {% else %}
+                            <span class="badge badge-danger">Failed</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ s.id }}</td>
+                        <td>{{ s.created_at }}</td>
+                        <td>{{ s.score }}</td>
+                        <td> <a href="/candidate/home" class="badge badge-primary">Download</a></td>
+                        <td> <a href="/candidate/home" class="badge badge-info">Open</a></td>
+                        <td>{{ s.feedback }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
-        {% endif %}
+
     </div>
 </div>
 

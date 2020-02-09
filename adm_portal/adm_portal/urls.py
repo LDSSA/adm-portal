@@ -6,6 +6,8 @@ from django.shortcuts import redirect
 from django.urls import path
 
 from candidate.views import (
+    candidate_coding_test_download_view,
+    candidate_coding_test_upload_view,
     candidate_coding_test_view,
     candidate_home_view,
     candidate_profile_edit,
@@ -42,6 +44,16 @@ candidate_routes = [
     Route(route="candidate/profile", view=candidate_profile_view, name="candidate-profile"),
     Route(route="candidate/profile/edit", view=candidate_profile_edit, name="candidate-profile-edit"),
     Route(route="candidate/coding-test", view=candidate_coding_test_view, name="candidate-coding-test"),
+    Route(
+        route="candidate/coding-test/download",
+        view=candidate_coding_test_download_view,
+        name="candidate-coding-test-download",
+    ),
+    Route(
+        route="candidate/coding-test/upload",
+        view=candidate_coding_test_upload_view,
+        name="candidate-coding-test-upload",
+    ),
     Route(route="candidate/profile", view=todo_view, name="candidate-profile"),
     Route(route="candidate/slu-1", view=todo_view, name="candidate-slu-1"),
     Route(route="candidate/slu-2", view=todo_view, name="candidate-slu-2"),
