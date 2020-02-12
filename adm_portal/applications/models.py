@@ -15,7 +15,7 @@ class CodingTestSubmission(models.Model):
     file_location = models.TextField(null=False)
 
     score = models.IntegerField(default=0, null=False)
-    feedback = models.TextField(default="", null=False)
+    feedback_location = models.TextField(null=False)
 
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)

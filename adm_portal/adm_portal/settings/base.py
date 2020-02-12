@@ -99,3 +99,8 @@ STORAGE_CLIENT_NAMESPACE = "ldssa-adm-portal"
 
 # one of: "CODE",
 FF_CLIENT = "CODE"
+
+# one of: "HTTP", "FAKE"
+GRADER_CLIENT = "FAKE"
+GRADER_CLIENT_URL = ""  # required when GRADER_CLIENT = "HTTP"
+GRADER_CLIENT_AUTH_TOKE = ""  # required when GRADER_CLIENT = "HTTP"

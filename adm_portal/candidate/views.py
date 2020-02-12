@@ -7,7 +7,7 @@ from django.views.decorators.http import require_http_methods
 
 from applications.files import get_coding_test_url_from_s3, upload_coding_test_solution
 from applications.models import Application, CodingTestSubmission
-from interface import get_feature_flag_client
+from interface import get_feature_flag_client, get_grader_client
 from profiles.forms import ProfileForm
 from profiles.models import Profile
 from users.models import to_user_data
@@ -103,14 +103,18 @@ def candidate_coding_test_upload_view(request: HttpRequest) -> HttpResponse:
     file = request.FILES["file"]
 
     upload_key = upload_coding_test_solution(to_user_data(request.user), file)
-    submission = CodingTestSubmission(file_location=upload_key)
+
+    submission_result = get_grader_client().grade(
+        assignment_id="coding_test",
+        user_uuid=request.user.uuid,
+        submission_s3_bucket=settings.STORAGE_CLIENT_NAMESPACE,
+        submission_s3_key=upload_key,
+    )
+
+    submission = CodingTestSubmission(
+        file_location=upload_key, score=submission_result.score, feedback_location=submission_result.feedback_s3_key
+    )
     application = Application.objects.get(user=request.user)
     application.new_coding_test_submission(submission)
-    # call lambda to evaluate the submission
-    from random import randrange
-
-    submission.score = randrange(100)
-    submission.save()
-    #
 
     return HttpResponseRedirect("/candidate/coding-test")
