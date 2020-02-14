@@ -1,5 +1,4 @@
 import uuid
-from typing import NamedTuple
 
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.db import models
@@ -28,14 +27,3 @@ class User(AbstractBaseUser):
 
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
-
-
-class UserData(NamedTuple):
-    id: str
-    uuid: str
-    email: str
-    is_staff: bool
-
-
-def to_user_data(u: User) -> UserData:
-    return UserData(id=u.id, uuid=u.uuid, email=u.email, is_staff=u.is_staff)

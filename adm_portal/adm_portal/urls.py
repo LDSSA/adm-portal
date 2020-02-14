@@ -7,6 +7,8 @@ from django.urls import path
 
 from candidate.views import (
     candidate_coding_test_download_view,
+    candidate_coding_test_feedback_download_view,
+    candidate_coding_test_submission_download_view,
     candidate_coding_test_upload_view,
     candidate_coding_test_view,
     candidate_home_view,
@@ -25,7 +27,7 @@ def todo_view(request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
 
 class Route(NamedTuple):
     route: str
-    view: Callable[[Any], Any]
+    view: Callable[..., Any]
     name: str
 
 
@@ -53,6 +55,16 @@ candidate_routes = [
         route="candidate/coding-test/upload",
         view=candidate_coding_test_upload_view,
         name="candidate-coding-test-upload",
+    ),
+    Route(
+        route="candidate/coding-test/submission/<int:coding_test_id>",
+        view=candidate_coding_test_submission_download_view,
+        name="candidate-coding-submission-download",
+    ),
+    Route(
+        route="candidate/coding-test/feedback/<int:coding_test_id>",
+        view=candidate_coding_test_feedback_download_view,
+        name="candidate-coding-feedback-download",
     ),
     Route(route="candidate/profile", view=todo_view, name="candidate-profile"),
     Route(route="candidate/slu-1", view=todo_view, name="candidate-slu-1"),

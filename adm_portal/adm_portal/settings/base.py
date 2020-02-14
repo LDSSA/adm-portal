@@ -93,7 +93,7 @@ AUTH_USER_MODEL = "users.User"
 ELASTICEMAIL_API_URL = "https://api.elasticemail.com/v2/email/send"
 ELASTICEMAIL_API_FROM = "mariacristinavfdominguez@gmail.com"
 
-# one of: "LOCAL", "S3"
+# one of: "S3", "LOCAL"
 STORAGE_CLIENT = "S3"
 STORAGE_CLIENT_NAMESPACE = "ldssa-adm-portal"
 

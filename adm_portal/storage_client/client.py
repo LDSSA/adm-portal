@@ -1,6 +1,6 @@
 import logging
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, Optional
 
 import boto3
 from boto3.exceptions import Boto3Error
@@ -21,6 +21,14 @@ class StorageClient(ABC):
     def save(self, key: str, file: Any) -> None:
         pass
 
+    @abstractmethod
+    def get_html_url(self, key: str) -> str:
+        pass
+
+    @abstractmethod
+    def get_attachment_url(self, key: str, *, content_type: Optional[str] = None) -> str:
+        pass
+
 
 class AWSS3StorageClient(StorageClient):
     def __init__(self, bucket_name: str) -> None:
@@ -35,6 +43,34 @@ class AWSS3StorageClient(StorageClient):
             logger.info(f"s3 upload error: {e}")
             raise StorageClientException(e)
 
+    def get_html_url(self, key: str) -> str:
+        try:
+            return boto3.client("s3").generate_presigned_url(
+                ClientMethod="get_object",
+                Params={"Bucket": self.bucket_name, "Key": key, "ResponseContentType": "text/html"},
+                ExpiresIn=30,
+            )
+        except Boto3Error as e:
+            logger.error(f"s3 url gen error: {e}")
+            raise StorageClientException(e)
+
+    def get_attachment_url(self, key: str, *, content_type: Optional[str] = None) -> str:
+        content_type = content_type or "application/octet-stream"
+        try:
+            return boto3.client("s3").generate_presigned_url(
+                ClientMethod="get_object",
+                Params={
+                    "Bucket": self.bucket_name,
+                    "Key": key,
+                    "ResponseContentDisposition": f"attachment; filename={key}",
+                    "ResponseContentType": content_type,
+                },
+                ExpiresIn=30,
+            )
+        except Boto3Error as e:
+            logger.error(f"s3 url gen error: {e}")
+            raise e
+
 
 class LocalStorageClient(StorageClient):
     def __init__(self, workspace: str) -> None:
@@ -47,3 +83,9 @@ class LocalStorageClient(StorageClient):
                     destination.write(chunk)
         except StorageClientException as e:
             raise StorageClientException(e)
+
+    def get_html_url(self, key: str) -> str:
+        raise NotImplementedError
+
+    def get_attachment_url(self, key: str, *, content_type: Optional[str] = None) -> str:
+        raise NotImplementedError
