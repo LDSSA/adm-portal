@@ -14,6 +14,7 @@ from candidate.views import (
     candidate_home_view,
     candidate_profile_edit,
     candidate_profile_view,
+    candidate_before_coding_test_view,
 )
 from users.decorators import requires_candidate_login, requires_staff_login
 from users.views import login_view, logout_view, signup_view
@@ -45,6 +46,7 @@ candidate_routes = [
     Route(route="candidate/home", view=candidate_home_view, name="candidate-home"),
     Route(route="candidate/profile", view=candidate_profile_view, name="candidate-profile"),
     Route(route="candidate/profile/edit", view=candidate_profile_edit, name="candidate-profile-edit"),
+    Route(route="candidate/before-coding-test", view=candidate_before_coding_test_view, name="before-candidate-coding-test"),
     Route(route="candidate/coding-test", view=candidate_coding_test_view, name="candidate-coding-test"),
     Route(
         route="candidate/coding-test/download",

@@ -63,16 +63,30 @@ def candidate_profile_edit(request: HttpRequest) -> HttpResponse:
     return HttpResponse(template.render(context, request))
 
 
+def candidate_before_coding_test_view(request: HttpRequest) -> HttpResponse:
+    if request.method == "GET":
+        template = loader.get_template("./candidate_templates/before_coding_test.html")
+        return HttpResponse(template.render({}, request))
+
+    application = Application.objects.get(user=request.user)
+    if application.coding_test_downloaded_at is None:
+        application.coding_test_downloaded_at = datetime.now()
+        application.save()
+
+    return HttpResponseRedirect("/candidate/coding-test")
+
+
 def candidate_coding_test_view(request: HttpRequest) -> HttpResponse:
-    template = loader.get_template("./candidate_templates/coding_test.html")
     application, _ = Application.objects.get_or_create(user=request.user)
+    if application.coding_test_downloaded_at is None:
+        return HttpResponseRedirect("/candidate/before-coding-test")
+
     ctx = {
         "status": application.coding_test_status,
         "submissions_closes_at": application.coding_test_submission_closes_at,
         "passed": application.coding_test_passed,
         "failed": (
             not application.coding_test_passed
-            and application.coding_test_downloaded_at is not None
             and not application.coding_test_submission_is_open
         ),
         "best_score": application.coding_test_best_score,
@@ -82,6 +96,7 @@ def candidate_coding_test_view(request: HttpRequest) -> HttpResponse:
         ),
         "submissions": CodingTestSubmission.objects.filter(application=application).order_by("-updated_at"),
     }
+    template = loader.get_template("./candidate_templates/coding_test.html")
     return HttpResponse(template.render(ctx, request))
 
 

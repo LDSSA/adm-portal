@@ -1,0 +1,22 @@
+{% extends './base.html' %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col col-sm-10 col-md-8 col-lg-7">
+        <div class="jumbotron">
+            <h1 class="display-4">Welcome to the coding test!</h1>
+            <p class="lead">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi varius porttitor finibus. Nulla tristique mi a enim posuere, vitae facilisis nunc tincidunt.</p>
+            <hr class="my-4">
+            <p>In varius dapibus efficitur. Vivamus sit amet arcu vitae lectus sollicitudin venenatis.</p>
+            <p class="lead">
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">I understood and I'm ready</button>
+            </form>
+            </p>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
