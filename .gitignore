@@ -26,3 +26,6 @@ venv/
 
 # db
 db.sqlite3
+
+# env vars
+.env.sh

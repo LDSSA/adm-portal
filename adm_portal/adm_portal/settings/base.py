@@ -105,4 +105,4 @@ GRADER_CLIENT = "HTTP"
 # GRADER_CLIENT_URL is required when GRADER_CLIENT = "HTTP"
 GRADER_CLIENT_URL = "https://mflpriku65.execute-api.eu-west-1.amazonaws.com/Prod/"
 # required when GRADER_CLIENT = "HTTP"
-GRADER_CLIENT_AUTH_TOKE = os.environ["AUTH_TOKEN"]
+GRADER_CLIENT_AUTH_TOKE = os.environ.get("AUTH_TOKEN")
