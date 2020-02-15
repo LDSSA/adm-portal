@@ -33,7 +33,7 @@ class GraderClientHttp(GraderClient):
         self, assignment_id: str, user_uuid: str, submission_s3_bucket: str, submission_s3_key: str
     ) -> SubmissionResult:
         url = self.url
-        headers = {"Authorization": f"Bearer {self.auth_token}", "Content-Type": "application/json"}
+        headers = {"Authorization": f"{self.auth_token}", "Content-Type": "application/json"}
         body = {
             "assignmentID": assignment_id,
             "userUUID": user_uuid,
