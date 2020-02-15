@@ -13,7 +13,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS: typing.List[str] = []
+ALLOWED_HOSTS: typing.List[str] = ["*"]
 
 
 # Application definition
