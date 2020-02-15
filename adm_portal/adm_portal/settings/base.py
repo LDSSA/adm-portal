@@ -101,7 +101,7 @@ STORAGE_CLIENT_NAMESPACE = "ldssa-adm-portal"
 FF_CLIENT = "CODE"
 
 # one of: "HTTP", "FAKE"
-GRADER_CLIENT = "HTTP"
+GRADER_CLIENT = "FAKE"
 # GRADER_CLIENT_URL is required when GRADER_CLIENT = "HTTP"
 GRADER_CLIENT_URL = "https://mflpriku65.execute-api.eu-west-1.amazonaws.com/Prod/"
 # required when GRADER_CLIENT = "HTTP"

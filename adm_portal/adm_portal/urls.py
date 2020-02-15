@@ -5,17 +5,17 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
 from django.urls import path
 
-from candidate.views import (
+from candidate.application_views import (
+    candidate_before_coding_test_view,
     candidate_coding_test_download_view,
-    candidate_coding_test_feedback_download_view,
-    candidate_coding_test_submission_download_view,
     candidate_coding_test_upload_view,
     candidate_coding_test_view,
-    candidate_home_view,
-    candidate_profile_edit,
-    candidate_profile_view,
-    candidate_before_coding_test_view,
+    candidate_slu_upload_view,
+    candidate_slu_view,
+    candidate_submission_download_view,
+    candidate_submission_feedback_download_view,
 )
+from candidate.views import candidate_home_view, candidate_profile_edit, candidate_profile_view
 from users.decorators import requires_candidate_login, requires_staff_login
 from users.views import login_view, logout_view, signup_view
 
@@ -44,9 +44,15 @@ staff_routes = [
 
 candidate_routes = [
     Route(route="candidate/home", view=candidate_home_view, name="candidate-home"),
+    # profile
     Route(route="candidate/profile", view=candidate_profile_view, name="candidate-profile"),
     Route(route="candidate/profile/edit", view=candidate_profile_edit, name="candidate-profile-edit"),
-    Route(route="candidate/before-coding-test", view=candidate_before_coding_test_view, name="before-candidate-coding-test"),
+    # coding test
+    Route(
+        route="candidate/before-coding-test",
+        view=candidate_before_coding_test_view,
+        name="before-candidate-coding-test",
+    ),
     Route(route="candidate/coding-test", view=candidate_coding_test_view, name="candidate-coding-test"),
     Route(
         route="candidate/coding-test/download",
@@ -54,24 +60,29 @@ candidate_routes = [
         name="candidate-coding-test-download",
     ),
     Route(
-        route="candidate/coding-test/upload",
+        route="candidate/coding-test/upload/",
         view=candidate_coding_test_upload_view,
         name="candidate-coding-test-upload",
     ),
+    # slu
+    Route(route="candidate/slu/<slug:submission_type>", view=candidate_slu_view, name="candidate-slu"),
     Route(
-        route="candidate/coding-test/submission/<int:coding_test_id>",
-        view=candidate_coding_test_submission_download_view,
+        route="candidate/slu/upload/<slug:submission_type>",
+        view=candidate_slu_upload_view,
+        name="candidate-coding-test-upload",
+    ),
+    # submissions
+    Route(
+        route="candidate/submission/<slug:submission_type>/<int:submission_id>",
+        view=candidate_submission_download_view,
         name="candidate-coding-submission-download",
     ),
     Route(
-        route="candidate/coding-test/feedback/<int:coding_test_id>",
-        view=candidate_coding_test_feedback_download_view,
+        route="candidate/submission/feedback/<slug:submission_type>/<int:submission_id>",
+        view=candidate_submission_feedback_download_view,
         name="candidate-coding-feedback-download",
     ),
     Route(route="candidate/profile", view=todo_view, name="candidate-profile"),
-    Route(route="candidate/slu-1", view=todo_view, name="candidate-slu-1"),
-    Route(route="candidate/slu-2", view=todo_view, name="candidate-slu-2"),
-    Route(route="candidate/slu-3", view=todo_view, name="candidate-slu-3"),
     Route(route="candidate/payment", view=todo_view, name="candidate-payment"),
 ]
 

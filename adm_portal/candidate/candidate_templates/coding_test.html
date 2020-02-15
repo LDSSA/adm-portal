@@ -17,7 +17,7 @@
                 {% endif %}
                 {% if passed %}
                 <div class="alert alert-success" role="alert">
-                    You have passed with {{ best_score }}/100!
+                    You have passed with {{ best_score }}/{{ submission_type.max_score }}!
                 </div>
                 {% endif %}
                 {% if failed %}
@@ -40,7 +40,7 @@
             <div class="col-md-6 text-center">
                 <div class="card">
                     <div class="card-body">
-                        <form action="/candidate/coding-test/upload" enctype="multipart/form-data" method="POST">
+                        <form action="/candidate/coding-test/upload/" enctype="multipart/form-data" method="POST">
                             {% csrf_token %}
                             <input type="file" name="file" id="inputFile" class="form-control" {% if not upload_enabled %} disabled {% endif %} required>
                             <button class="btn btn-lg btn-primary" type="submit" {% if not upload_enabled %} disabled {% endif %}>Upload Solution</button>
@@ -50,43 +50,7 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-md-12 text-center">
-                <br>
-                <h4>Submissions</h4>
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th scope="col">Result</th>
-                        <th scope="col">ID</th>
-                        <th scope="col">Submitted At</th>
-                        <th scope="col">Score</th>
-                        <th scope="col">Source</th>
-                        <th scope="col">FeedBack</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for s in submissions %}
-                    <tr>
-                        <td>
-                            {% if s.score >= 75 %}
-                            <span class="badge badge-success">Passed</span>
-                            {% else %}
-                            <span class="badge badge-danger">Failed</span>
-                            {% endif %}
-                        </td>
-                        <td>{{ s.id }}</td>
-                        <td>{{ s.created_at }}</td>
-                        <td>{{ s.score }}</td>
-                        <td> <a href="/candidate/coding-test/submission/{{ s.id }}" class="badge badge-primary" target="_blank">Download</a></td>
-                        <td> <a href="/candidate/coding-test/feedback/{{ s.id }}" class="badge badge-info">Open</a></td>
-                        <td>{{ s.feedback }}</td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        {% include "./submissions_table.html" %}
 
     </div>
 </div>
