@@ -23,7 +23,14 @@ from candidate.payments_views import (
 )
 from candidate.views import candidate_home_view, candidate_profile_edit, candidate_profile_view
 from users.decorators import requires_candidate_login, requires_staff_login
-from users.views import login_view, logout_view, signup_view
+from users.views import (
+    confirm_email_view,
+    login_view,
+    logout_view,
+    reset_password_view,
+    signup_view,
+    start_reset_password_view,
+)
 
 
 def todo_view(request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
@@ -36,6 +43,16 @@ class Route(NamedTuple):
     route: str
     view: Callable[..., Any]
     name: str
+
+
+account_routs = [
+    Route(route="account/login", view=login_view, name="accounts-login"),
+    Route(route="account/logout", view=logout_view, name="accounts-logout"),
+    Route(route="account/signup", view=signup_view, name="accounts-signup"),
+    Route(route="account/confirm-email", view=confirm_email_view, name="accounts-confirm-email"),
+    Route(route="account/start-reset-password", view=start_reset_password_view, name="accounts-start-reset-password"),
+    Route(route="account/reset-password", view=reset_password_view, name="accounts-reset-password"),
+]
 
 
 staff_routes = [
@@ -112,9 +129,7 @@ urlpatterns = [
     # admin
     path("admin/", admin.site.urls),
     # account
-    path("account/login", login_view, name="accounts-login"),
-    path("account/logout", logout_view, name="accounts-logout"),
-    path("account/signup", signup_view, name="accounts-signup"),
+    *[path(r.route, r.view, name=r.name) for r in account_routs],
     # staff
     *[path(r.route, requires_staff_login(r.view), name=r.name) for r in staff_routes],
     # candidate

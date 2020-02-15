@@ -1,9 +1,26 @@
 import uuid
+from typing import Any
 
-from django.contrib.auth.base_user import AbstractBaseUser
+from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.db import models
 
-from .managers import UserManager
+
+class UserManager(BaseUserManager):
+    def create_user(self, **kwargs: Any):
+        email_ = kwargs["email"]
+        password = kwargs["password"]
+        is_staff = kwargs.get("is_staff", False)
+        email_confirmed = kwargs.get("email_confirmed", False)
+        email = self.normalize_email(email_)
+        user = self.model(email=email, is_staff=is_staff, email_confirmed=email_confirmed)
+        user.set_password(password)
+        user.save(using=self._db)
+        if not user.email_confirmed:
+            UserConfirmEmail.objects.create(user=user)
+        return user
+
+    def create_staff_user(self, **kwargs: str):
+        return self.create_user(is_staff=True, email_confirmed=True, **kwargs)
 
 
 def get_default_uuid():
@@ -24,6 +41,27 @@ class User(AbstractBaseUser):
     email = models.EmailField(blank=False, null=False, unique=True)
 
     is_staff = models.BooleanField(default=False, null=False)
+    email_confirmed = models.BooleanField(default=False, null=False)
 
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+
+class UserToken(models.Model):
+    user = models.OneToOneField("users.User", on_delete=models.CASCADE)
+
+    token = models.CharField(max_length=32, editable=False, null=False, unique=True, default=get_default_uuid)
+
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        abstract = True
+
+
+class UserConfirmEmail(UserToken):
+    pass
+
+
+class UserResetPassword(UserToken):
+    pass
