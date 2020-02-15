@@ -53,9 +53,7 @@ def candidate_coding_test_view(request: HttpRequest) -> HttpResponse:
 
 @require_http_methods(["GET"])
 def candidate_coding_test_download_view(request: HttpRequest) -> HttpResponse:
-    url = get_storage_client().get_attachment_url(
-        "ldssa_coding_test_2020.ipynb", content_type="application/vnd.jupyter"
-    )
+    url = get_storage_client().get_attachment_url("coding_test.ipynb", content_type="application/vnd.jupyter")
     application = Application.objects.get(user=request.user)
     if application.coding_test_started_at is None:
         application.coding_test_started_at = datetime.now()
