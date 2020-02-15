@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     "profiles",
     "email_client",
     "applications",
+    "payments",
 ]
 
 MIDDLEWARE = [

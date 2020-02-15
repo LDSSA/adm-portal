@@ -1,7 +1,7 @@
 from django.db import models
 
 
-# todo: add more fields, this model is incomplete
+# todo: add more fields, this model is incomplete, add NIF
 class Profile(models.Model):
     user = models.OneToOneField("users.User", on_delete=models.CASCADE)
 
@@ -24,5 +24,8 @@ class Profile(models.Model):
     )
 
     updated_at = models.DateTimeField(auto_now=True)
-
     created_at = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def is_student(self):
+        return self.ticket_type == "student"

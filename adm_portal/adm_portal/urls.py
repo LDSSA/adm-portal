@@ -15,6 +15,11 @@ from candidate.application_views import (
     candidate_submission_download_view,
     candidate_submission_feedback_download_view,
 )
+from candidate.payments_views import (
+    candidate_payment_proof_upload_view,
+    candidate_payment_view,
+    candidate_student_id_upload_view,
+)
 from candidate.views import candidate_home_view, candidate_profile_edit, candidate_profile_view
 from users.decorators import requires_candidate_login, requires_staff_login
 from users.views import login_view, logout_view, signup_view
@@ -82,8 +87,18 @@ candidate_routes = [
         view=candidate_submission_feedback_download_view,
         name="candidate-coding-feedback-download",
     ),
-    Route(route="candidate/profile", view=todo_view, name="candidate-profile"),
-    Route(route="candidate/payment", view=todo_view, name="candidate-payment"),
+    # payment
+    Route(route="candidate/payment", view=candidate_payment_view, name="candidate-payment"),
+    Route(
+        route="candidate/payment/upload-payment-proof",
+        view=candidate_payment_proof_upload_view,
+        name="candidate-payment-proof-upload",
+    ),
+    Route(
+        route="candidate/payment/upload-student-id",
+        view=candidate_student_id_upload_view,
+        name="candidate-student-id-upload",
+    ),
 ]
 
 urlpatterns = [

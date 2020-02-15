@@ -1,4 +1,6 @@
 import logging
+import os
+import uuid
 from abc import ABC, abstractmethod
 from typing import Any, Optional
 
@@ -17,6 +19,11 @@ class StorageClientException(Exception):
 
 
 class StorageClient(ABC):
+    @staticmethod
+    def key_append_uuid(key: str) -> str:
+        key_basename, key_ext = os.path.splitext(key)
+        return f"{key_basename}_{uuid.uuid4()}{key_ext}"
+
     @abstractmethod
     def save(self, key: str, file: Any) -> None:
         pass

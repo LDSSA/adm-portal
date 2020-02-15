@@ -1,0 +1,108 @@
+{% extends './base.html' %}
+
+{% block content %}
+
+<div class="container">
+    <h2 class="py-5">Payment</h2>
+
+    <div class="row">
+    <div class="col-md-4 order-md-2 mb-4">
+        <h4 class="d-flex justify-content-between align-items-center mb-3">
+            <span class="text-muted">Payment details</span>
+        </h4>
+        <ul class="list-group mb-3">
+            <li class="list-group-item d-flex justify-content-between lh-condensed">
+            <div>
+                <h6 class="my-0">NIB</h6>
+            </div>
+            <span class="text-muted">0036 0000 9910 5926 0261 4</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between lh-condensed">
+            <div>
+                <h6 class="my-0">Amount</h6>
+            </div>
+            <span class="text-muted">{{ payment.value|floatformat }}€</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between lh-condensed">
+            <div>
+                <h6 class="my-0">Due date</h6>
+            </div>
+            <span class="text-muted">{{ payment.due_date|date:"Y-m-d" }}</span>
+            </li>
+        </ul>
+        </div>
+
+        <div class="col-md-8 order-md-1">
+        <h4 class="mb-3">Documents</h4>
+        
+        <div class="card mb-4">
+            <h5 class="card-header">Payment proof</h5>
+            
+            {% if payment_proofs %}
+            <div class="card-body">
+                <h5 class="card-title">Submitted</h5>
+                {% for doc in payment_proofs %}
+                <p><a href="#" class="card-link">{{ doc.file_location }}</a></p>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <div class="card-body">
+                <h5 class="card-title">Submit new</h5>
+                <form action="/candidate/payment/upload-payment-proof" enctype="multipart/form-data" method="POST" class="mb-0">
+                    {% csrf_token %}
+                    <div class="custom-file mb-3">
+                        <input type="file" class="custom-file-input" id="paymentInputFile" name="file" required>
+                        <label class="custom-file-label" for="paymentInputFile">Choose file</label>
+                    </div>
+                    <script>
+                        $('#paymentInputFile').on('change',function(e){
+                            var fileName = e.target.files[0].name;
+                            $(this).next('.custom-file-label').html(fileName);
+                        })
+                    </script>
+                    <button class="btn btn-primary" type="submit">Upload file</button>
+                </form>
+            </div>
+        </div>
+
+
+        {% if profile.is_student %}
+        <div class="card mb-4">
+            <h5 class="card-header">Student ID</h5>
+
+            {% if student_ids %}
+            <div class="card-body">
+                <h5 class="card-title">Submitted</h5>
+                {% for doc in student_ids %}
+                <p><a href="#" class="card-link">{{ doc.file_location }}</a></p>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="card-body">
+                <h5 class="card-title">Submit new</h5>
+                <form action="/candidate/payment/upload-student-id" enctype="multipart/form-data" method="POST" class="mb-0">
+                    {% csrf_token %}
+                    <div class="custom-file mb-3">
+                        <input type="file" class="custom-file-input" id="studentIdInputFile" name="file" required>
+                        <label class="custom-file-label" for="studentIdInputFile">Choose file</label>
+                    </div>
+                    <script>
+                        $('#studentIdInputFile').on('change',function(e){
+                            var fileName = e.target.files[0].name;
+                            $(this).next('.custom-file-label').html(fileName);
+                        })
+                    </script>
+                    <button class="btn btn-primary" type="submit">Upload file</button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+    </div>
+</div>
+
+
+{% endblock %}
