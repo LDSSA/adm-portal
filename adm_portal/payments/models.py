@@ -2,6 +2,7 @@ import os
 from logging import getLogger
 
 from django.db import models
+
 from profiles.models import Profile
 
 logger = getLogger(__name__)
@@ -44,7 +45,7 @@ class Payment(models.Model):
             ("waiting_for_documents", "Waiting for candidate documents"),
             ("pending_verification", "Pending verification"),
             ("accepted", "Accepted"),
-            ("rejected", "Rejected")
+            ("rejected", "Rejected"),
         ],
     )
 
@@ -58,7 +59,7 @@ class Payment(models.Model):
     @property
     def has_payment_proof_document(self):
         return len(self.get_payment_proof_documents) > 0
-    
+
     @property
     def get_student_id_documents(self):
         return Document.objects.filter(payment=self, doc_type="student_id").order_by("-updated_at")
@@ -70,11 +71,11 @@ class Payment(models.Model):
     @property
     def is_status_accepted(self):
         return self.status == "accepted"
-    
+
     @property
     def is_status_rejected(self):
         return self.status == "rejected"
-    
+
     @property
     def is_status_pending_verification(self):
         return self.status == "pending_verification"
@@ -82,7 +83,7 @@ class Payment(models.Model):
     @property
     def is_status_waiting_for_documents(self):
         return self.status == "waiting_for_documents"
-    
+
     def add_document(self, document: Document) -> None:
         logger.info(f"payment_id={self.id}: new document uploaded")
         document.payment = self
@@ -91,7 +92,7 @@ class Payment(models.Model):
         # now we need to update the payment status to "pending_verification"
         # unless the candidate is a student and is missing the other proof (payment proof or student id)
         profile = Profile.objects.get(user=self.user)
-        
+
         if profile.is_student:
             has_missing_student_id = document.doc_type == "payment_proof" and not self.has_student_id_document
             has_missing_payment_proof = document.doc_type == "student_id" and not self.has_payment_proof_document
