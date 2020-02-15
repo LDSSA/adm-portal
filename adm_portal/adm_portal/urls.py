@@ -16,6 +16,7 @@ from candidate.application_views import (
     candidate_submission_feedback_download_view,
 )
 from candidate.payments_views import (
+    candidate_document_download_view,
     candidate_payment_proof_upload_view,
     candidate_payment_view,
     candidate_student_id_upload_view,
@@ -89,6 +90,11 @@ candidate_routes = [
     ),
     # payment
     Route(route="candidate/payment", view=candidate_payment_view, name="candidate-payment"),
+    Route(
+        route="candidate/payment/download-document/<int:document_id>",
+        view=candidate_document_download_view,
+        name="candidate-payment-document-download",
+    ),
     Route(
         route="candidate/payment/upload-payment-proof",
         view=candidate_payment_proof_upload_view,

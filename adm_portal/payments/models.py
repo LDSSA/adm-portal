@@ -1,3 +1,4 @@
+import os
 from logging import getLogger
 
 from django.db import models
@@ -19,6 +20,10 @@ class Document(models.Model):
 
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def filename(self):
+        return os.path.basename(self.file_location)
 
 
 class Payment(models.Model):
@@ -46,8 +51,8 @@ class Payment(models.Model):
 
     @property
     def get_payment_proof_documents(self):
-        return Document.objects.filter(payment=self, doc_type="payment_proof")
+        return Document.objects.filter(payment=self, doc_type="payment_proof").order_by("-updated_at")
 
     @property
     def get_student_id_documents(self):
-        return Document.objects.filter(payment=self, doc_type="student_id")
+        return Document.objects.filter(payment=self, doc_type="student_id").order_by("-updated_at")

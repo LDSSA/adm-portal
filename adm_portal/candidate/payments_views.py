@@ -24,6 +24,15 @@ def candidate_payment_view(request: HttpRequest) -> HttpResponse:
     return HttpResponse(template.render(context, request))
 
 
+@require_http_methods(["GET"])
+def candidate_document_download_view(request: HttpRequest, document_id: int) -> HttpResponse:
+    payment = Payment.objects.get(user=request.user)
+    document = Document.objects.get(id=document_id, payment=payment)
+    url = get_storage_client().get_attachment_url(document.file_location)
+
+    return HttpResponseRedirect(url)
+
+
 @require_http_methods(["POST"])
 def candidate_payment_proof_upload_view(request: HttpRequest) -> HttpResponse:
     return _candidate_document_upload(request, document_type="payment_proof")

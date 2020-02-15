@@ -42,7 +42,7 @@
             <div class="card-body">
                 <h5 class="card-title">Submitted</h5>
                 {% for doc in payment_proofs %}
-                <p><a href="#" class="card-link">{{ doc.file_location }}</a></p>
+                <p><a href="/candidate/payment/download-document/{{ doc.id }}" class="card-link">{{ doc.filename }}</a></p>
                 {% endfor %}
             </div>
             {% endif %}
@@ -75,7 +75,7 @@
             <div class="card-body">
                 <h5 class="card-title">Submitted</h5>
                 {% for doc in student_ids %}
-                <p><a href="#" class="card-link">{{ doc.file_location }}</a></p>
+                <p><a href="/candidate/payment/download-document/{{ doc.id }}" class="card-link">{{ doc.filename }}</a></p>
                 {% endfor %}
             </div>
             {% endif %}

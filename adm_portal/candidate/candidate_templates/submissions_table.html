@@ -10,7 +10,7 @@
                 <th scope="col">Submitted At</th>
                 <th scope="col">Score</th>
                 <th scope="col">Source</th>
-                <th scope="col">FeedBack</th>
+                <th scope="col">Feedback</th>
             </tr>
             </thead>
             <tbody>
@@ -28,7 +28,6 @@
                 <td>{{ s.score }}</td>
                 <td> <a href="/candidate/submission/{{ submission_type.uname }}/{{ s.id }}" class="badge badge-primary" target="_blank">Download</a></td>
                 <td> <a href="/candidate/submission/feedback/{{ submission_type.uname }}/{{ s.id }}" class="badge badge-info">Open</a></td>
-                <td>{{ s.feedback }}</td>
             </tr>
             {% endfor %}
             </tbody>

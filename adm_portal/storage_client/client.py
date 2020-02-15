@@ -22,7 +22,7 @@ class StorageClient(ABC):
     @staticmethod
     def key_append_uuid(key: str) -> str:
         key_basename, key_ext = os.path.splitext(key)
-        return f"{key_basename}_{uuid.uuid4()}{key_ext}"
+        return f"{key_basename}_{uuid.uuid4().hex}{key_ext}"
 
     @abstractmethod
     def save(self, key: str, file: Any) -> None:
