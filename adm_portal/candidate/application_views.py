@@ -6,7 +6,7 @@ from django.template import loader
 from django.views.decorators.http import require_http_methods
 
 from applications.models import Application, Submission, SubmissionTypes
-from interface import get_feature_flag_client, get_grader_client, get_storage_client
+from interface import interface
 
 # coding test views
 
@@ -41,7 +41,7 @@ def candidate_coding_test_view(request: HttpRequest) -> HttpResponse:
         "best_score": application.coding_test_best_score,
         "download_enabled": True,  # todo use feature flag?
         "upload_enabled": (
-            application.coding_test_submission_is_open and get_feature_flag_client().accepting_test_submissions()
+            application.coding_test_submission_is_open and interface.feature_flag_client.accepting_test_submissions()
         ),
         "submissions": Submission.objects.filter(
             application=application, submission_type=submission_type.uname
@@ -53,7 +53,7 @@ def candidate_coding_test_view(request: HttpRequest) -> HttpResponse:
 
 @require_http_methods(["GET"])
 def candidate_coding_test_download_view(request: HttpRequest) -> HttpResponse:
-    url = get_storage_client().get_attachment_url("coding_test.ipynb", content_type="application/vnd.jupyter")
+    url = interface.storage_client.get_attachment_url("coding_test.ipynb", content_type="application/vnd.jupyter")
     application = Application.objects.get(user=request.user)
     if application.coding_test_started_at is None:
         application.coding_test_started_at = datetime.now()
@@ -68,9 +68,9 @@ def candidate_coding_test_upload_view(request: HttpRequest) -> HttpResponse:
     submission_type = "coding_test"
     now_str = datetime.now().strftime("%m_%d_%Y__%H_%M_%S")
     upload_key = f"{submission_type}/{request.user.uuid}/{file.name}@{now_str}"
-    get_storage_client().save(upload_key, file)
+    interface.storage_client.save(upload_key, file)
 
-    submission_result = get_grader_client().grade(
+    submission_result = interface.grader_client.grade(
         assignment_id=submission_type,
         user_uuid=request.user.uuid,
         submission_s3_bucket=settings.STORAGE_CLIENT_NAMESPACE,
@@ -114,9 +114,9 @@ def candidate_slu_upload_view(request: HttpRequest, submission_type: str) -> Htt
     file = request.FILES["file"]
     now_str = datetime.now().strftime("%m_%d_%Y__%H_%M_%S")
     upload_key = f"{submission_type}/{request.user.uuid}/{file.name}@{now_str}"
-    get_storage_client().save(upload_key, file)
+    interface.storage_client.save(upload_key, file)
 
-    submission_result = get_grader_client().grade(
+    submission_result = interface.grader_client.grade(
         assignment_id=submission_type,
         user_uuid=request.user.uuid,
         submission_s3_bucket=settings.STORAGE_CLIENT_NAMESPACE,
@@ -146,7 +146,7 @@ def candidate_submission_download_view(request: HttpRequest, submission_type: st
         )
     except Submission.DoesNotExist:
         raise Http404
-    url = get_storage_client().get_attachment_url(submission.file_location, content_type="application/vnd.jupyter")
+    url = interface.storage_client.get_attachment_url(submission.file_location, content_type="application/vnd.jupyter")
 
     return HttpResponseRedirect(url)
 
@@ -161,6 +161,6 @@ def candidate_submission_feedback_download_view(
         )
     except Submission.DoesNotExist:
         raise Http404
-    url = get_storage_client().get_html_url(submission.feedback_location)
+    url = interface.storage_client.get_html_url(submission.feedback_location)
 
     return HttpResponseRedirect(url)

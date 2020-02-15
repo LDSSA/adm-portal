@@ -4,6 +4,8 @@ from django.http import Http404, HttpRequest, HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.views.decorators.http import require_http_methods
 
+from interface import interface
+
 from .models import User, UserConfirmEmail, UserResetPassword
 
 
@@ -115,9 +117,11 @@ def start_reset_password_view(request: HttpRequest) -> HttpResponse:
     try:
         user = User.objects.get(email=email)
         reset_password, _ = UserResetPassword.objects.get_or_create(user=user)
-        reset_email_url = f"{request.get_host()}/account/reset-password?token={reset_password.token}"
-        print(reset_email_url)
-        print(f"reset password url: {reset_email_url}")
+        reset_pw_url = f"{request.get_host()}/account/reset-password?token={reset_password.token}"
+        interface.email_client.send_reset_password_email(to=email, reset_pw_url=reset_pw_url)
+        print(reset_pw_url)
+
+        print(f"reset password url: {reset_pw_url}")
         # todo: send email (for now we print to test)
         # we must not send emails when testing these views,
         # so either we get mock clients from interface end env=dev

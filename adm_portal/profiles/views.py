@@ -1,7 +1,7 @@
 from django.http import HttpRequest, HttpResponse
 from django.template import loader
 
-from interface import get_storage_client
+from interface import interface
 
 from .models import Profile
 
@@ -34,5 +34,5 @@ def upload_file_view(request: HttpRequest) -> HttpResponse:
 
     file = request.FILES["file"]
 
-    get_storage_client().save(file.name, file)
+    interface.storage_client.save(file.name, file)
     return HttpResponse("Success")

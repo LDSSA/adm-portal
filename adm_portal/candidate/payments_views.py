@@ -2,7 +2,7 @@ from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.views.decorators.http import require_http_methods
 
-from interface import get_storage_client
+from interface import interface
 from payments.models import Document, Payment
 from profiles.models import Profile
 from storage_client import StorageClient
@@ -28,7 +28,7 @@ def candidate_payment_view(request: HttpRequest) -> HttpResponse:
 def candidate_document_download_view(request: HttpRequest, document_id: int) -> HttpResponse:
     payment = Payment.objects.get(user=request.user)
     document = Document.objects.get(id=document_id, payment=payment)
-    url = get_storage_client().get_attachment_url(document.file_location)
+    url = interface.storage_client.get_attachment_url(document.file_location)
 
     return HttpResponseRedirect(url)
 
@@ -48,7 +48,7 @@ def _candidate_document_upload(request: HttpRequest, document_type: str) -> Http
     upload_key = f"payments/{document_type}/{request.user.uuid}/{f.name}"
     upload_key_unique = StorageClient.key_append_uuid(upload_key)
 
-    get_storage_client().save(upload_key_unique, f)
+    interface.storage_client.save(upload_key_unique, f)
 
     document = Document(file_location=upload_key_unique, doc_type=document_type)
     payment = Payment.objects.get(user=request.user)

@@ -91,8 +91,14 @@ AUTHENTICATION_BACKENDS = ["users.backends.EmailModelBackend"]
 AUTH_USER_MODEL = "users.User"
 
 # Custom settings
-ELASTICEMAIL_API_URL = "https://api.elasticemail.com/v2/email/send"
-ELASTICEMAIL_API_FROM = "mariacristinavfdominguez@gmail.com"
+# todo: move these settings to dev/prod and set them up properly
+
+# one of: "LOCAL"
+EMAIL_CLIENT = "LOCAL"
+LOCAL_EMAIL_CLIENT_ROOT = os.path.join(os.path.dirname(BASE_DIR), ".mailbox")
+
+# ELASTICEMAIL_API_URL = "https://api.elasticemail.com/v2/email/send"
+# ELASTICEMAIL_API_FROM = "mariacristinavfdominguez@gmail.com"
 
 # one of: "S3", "LOCAL"
 STORAGE_CLIENT = "S3"
@@ -106,4 +112,4 @@ GRADER_CLIENT = "HTTP"
 # GRADER_CLIENT_URL is required when GRADER_CLIENT = "HTTP"
 GRADER_CLIENT_URL = "https://mflpriku65.execute-api.eu-west-1.amazonaws.com/Prod/"
 # required when GRADER_CLIENT = "HTTP"
-GRADER_CLIENT_AUTH_TOKE = os.environ.get("AUTH_TOKEN")
+GRADER_CLIENT_AUTH_TOKEN = os.environ.get("AUTH_TOKEN")

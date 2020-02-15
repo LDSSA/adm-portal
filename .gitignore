@@ -29,3 +29,6 @@ db.sqlite3
 
 # env vars
 .env.sh
+
+# local email client dumps
+.mailbox
