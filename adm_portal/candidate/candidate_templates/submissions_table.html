@@ -26,8 +26,8 @@
                 <td>{{ s.id }}</td>
                 <td>{{ s.created_at }}</td>
                 <td>{{ s.score }}</td>
-                <td> <a href="/candidate/submission/{{ submission_type.uname }}/{{ s.id }}" class="badge badge-primary" target="_blank">Download</a></td>
-                <td> <a href="/candidate/submission/feedback/{{ submission_type.uname }}/{{ s.id }}" class="badge badge-info">Open</a></td>
+                <td> <a href="/candidate/submission/{{ submission_type.uname }}/{{ s.id }}" class="badge badge-secondary" target="_blank">Open</a></td>
+                <td> <a href="/candidate/submission/feedback/{{ submission_type.uname }}/{{ s.id }}" class="badge badge-secondary">Open</a></td>
             </tr>
             {% endfor %}
             </tbody>

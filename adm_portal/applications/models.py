@@ -16,14 +16,14 @@ class SubmissionTypeStaticInfo(NamedTuple):
 
 class SubmissionTypes:
     coding_test = SubmissionTypeStaticInfo(uname="coding_test", max_score=100, pass_score=75, repo=None)
-    slu_01 = SubmissionTypeStaticInfo(
-        uname="slu_01", max_score=100, pass_score=75, repo="https://github.com/Chi-Acci/adm-portal"
+    slu01 = SubmissionTypeStaticInfo(
+        uname="slu01", max_score=100, pass_score=75, repo="https://github.com/Chi-Acci/adm-portal"
     )
-    slu_02 = SubmissionTypeStaticInfo(
-        uname="slu_02", max_score=100, pass_score=75, repo="https://github.com/Chi-Acci/adm-portal"
+    slu02 = SubmissionTypeStaticInfo(
+        uname="slu02", max_score=100, pass_score=75, repo="https://github.com/Chi-Acci/adm-portal"
     )
-    slu_03 = SubmissionTypeStaticInfo(
-        uname="slu_02", max_score=100, pass_score=75, repo="https://github.com/Chi-Acci/adm-portal"
+    slu03 = SubmissionTypeStaticInfo(
+        uname="slu02", max_score=100, pass_score=75, repo="https://github.com/Chi-Acci/adm-portal"
     )
 
 

@@ -68,3 +68,5 @@ $ python manage.py runserver
 
 
 ### TODO list
+
+- [ ] On the candidate navbar, the `Payment` tab should only show up if the candidate has a payment (i.e, passed the tests and was selected in the selection process)

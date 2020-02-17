@@ -3,7 +3,7 @@
 {% block content %}
 
 <div class="container">
-    <h2 class="py-5">SLU ID</h2>
+    <h2 class="py-5">{{ submission_type.uname|upper }}</h2>
 
     <div class="row">
         <div class="col-md-12 text-center">
@@ -16,22 +16,31 @@
     </div>
 
     <div class="row">
-        <div class="col-md-6 text-center">
-            <div class="card">
-                <div class="card-body">
-                    <p class="card-text">The materials of this SLU are in a git repository!</p>
-                    <a href="{{ submission_type.repo }}" class="btn btn-primary btn-lg" role="button" aria-pressed="true" target="_blank">Go to Repo</a>
+        <div class="col-md-12">
+            <div class="card-deck">
+                <div class="card">
+                    <div class="card-body d-flex flex-column">
+                        <p class="card-text">The materials of this SLU are in a git repository!</p>
+                        <a href="{{ submission_type.repo }}" class="btn btn-primary mt-auto align-self-start" role="button" aria-pressed="true" target="_blank">Go to Repo</a>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div class="col-md-6 text-center">
-            <div class="card">
-                <div class="card-body">
-                    <form action="/candidate/slu/upload/{{ submission_type.uname }}" enctype="multipart/form-data" method="POST">
+                <div class="card">
+                    <div class="card-body d-flex flex-column">
+                    <form action="/candidate/slu/upload/{{ submission_type.uname }}" enctype="multipart/form-data" method="POST" class="m-0 mt-auto">
                         {% csrf_token %}
-                        <input type="file" name="file" id="inputFile" class="form-control" required>
-                        <button class="btn btn-lg btn-primary" type="submit">Upload Solution</button>
+                        <div class="custom-file mb-3">
+                            <input type="file" class="custom-file-input" id="submissionFile" name="file" required>
+                            <label class="custom-file-label" for="submissionFile">Choose file</label>
+                        </div>
+                        <script>
+                            $('#submissionFile').on('change',function(e){
+                                var fileName = e.target.files[0].name;
+                                $(this).next('.custom-file-label').html(fileName);
+                            })
+                        </script>
+                        <button class="btn btn-primary" type="submit" {% if not upload_enabled %} disabled {% endif %}>Upload Solution</button>
                     </form>
+                    </div>
                 </div>
             </div>
         </div>
