@@ -1,0 +1,56 @@
+{% extends './base.html' %}
+
+{% block content %}
+
+<div class="container">
+    <h2 class="py-5">
+        Candidate <a href="/staff/profiles/{{ payment.user.id }}">{{ payment.user.email }}</a> Payment
+        {% if payment.is_status_accepted %}
+            <span class="badge badge-success">{{ payment.get_status_display }}</span>
+        {% elif payment.is_status_rejected %}
+            <span class="badge badge-danger">{{ payment.get_status_display }}</span>
+        {% elif payment.is_status_pending_verification %}
+            <span class="badge badge-info">{{ payment.get_status_display }}</span>
+        {% else %}
+            <span class="badge badge-warning">{{ payment.get_status_display }}</span>
+        {% endif %}
+    </h2>
+    <div class="row justify-content-md-center">
+        <div class="col col-sm-9 col-md-8 col-lg-5">
+            {% for d in docs %}
+                <h3>Doc Type: {{ d.doc_type }}</h3>
+                <img src="{{ d.url }}" class="img-fluid" alt="Responsive image">
+            {% endfor %}
+        </div>
+    </div>
+    <div class="row justify-content-md-center">
+        <div class="col text-center">
+            <form method="post">
+                {% csrf_token %}
+                <label for="rejectMsg">Explain why the the payment proof was refused*</label>
+                <textarea class="form-control" id="rejectMsg" rows="3" required></textarea>
+                <input type="hidden" id="hiddenReject" name="action" value="reject">
+                <button type="submit" class="btn btn-danger">Refuse payment proof</button>
+            </form>
+        </div>
+        <div class="col text-center">
+            <form method="post">
+                {% csrf_token %}
+                <label for="needAddMsg">Explain what additional proof is necessary*</label>
+                <textarea class="form-control" id="needAddMsg" rows="3" required></textarea>
+                <input type="hidden" id="hiddenNeedAdd" name="action" value="ask_additional">
+                <button type="submit" class="btn btn-warning">Request additional proof</button>
+            </form>
+        </div>
+        <div class="col text-center">
+            <form method="post">
+                {% csrf_token %}
+                <label for="acceptMsg">Welcome the candidate</label>
+                <textarea class="form-control" id="acceptMsg" rows="3"></textarea>
+                <input type="hidden" id="hiddenAccept" name="action" value="accept">
+                <button type="submit" class="btn btn-success">Accept existing proof</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

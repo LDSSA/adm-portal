@@ -23,7 +23,7 @@ class SubmissionTypes:
         uname="slu02", max_score=100, pass_score=75, repo="https://github.com/Chi-Acci/adm-portal"
     )
     slu03 = SubmissionTypeStaticInfo(
-        uname="slu02", max_score=100, pass_score=75, repo="https://github.com/Chi-Acci/adm-portal"
+        uname="slu03", max_score=100, pass_score=75, repo="https://github.com/Chi-Acci/adm-portal"
     )
 
 
@@ -90,14 +90,6 @@ class Application(models.Model):
             return False
         return True
 
-    @property
-    def coding_test_status(self) -> str:
-        if self.coding_test_started_at is None:
-            return "to do"
-        if self.coding_test_submission_is_open:
-            return "ongoing"
-        return "finished"
-
     def coding_test_new_submission(self, submission: Submission) -> None:
         try:
             submission.submission_type = SubmissionTypes.coding_test.uname
@@ -111,12 +103,48 @@ class Application(models.Model):
         submission.save()
 
     @property
+    def coding_test_status(self) -> str:
+        if self.coding_test_started_at is None:
+            return "to do"
+        if self.coding_test_submission_is_open:
+            return "ongoing"
+        return "finished"
+
+    @property
     def coding_test_best_score(self) -> Optional[int]:
         return self.query_best_score(submission_type=SubmissionTypes.coding_test)
 
     @property
     def coding_test_passed(self) -> bool:
         return self.query_passed(submission_type=SubmissionTypes.coding_test)
+
+    @property
+    def slu01_best_score(self) -> Optional[int]:
+        return self.query_best_score(submission_type=SubmissionTypes.slu01)
+
+    @property
+    def slu01_passed(self) -> bool:
+        return self.query_passed(submission_type=SubmissionTypes.slu01)
+
+    @property
+    def slu02_best_score(self) -> Optional[int]:
+        return self.query_best_score(submission_type=SubmissionTypes.slu02)
+
+    @property
+    def slu02_passed(self) -> bool:
+        return self.query_passed(submission_type=SubmissionTypes.slu02)
+
+    @property
+    def slu03_best_score(self) -> Optional[int]:
+        return self.query_best_score(submission_type=SubmissionTypes.slu03)
+
+    @property
+    def slu03_passed(self) -> bool:
+        return self.query_passed(submission_type=SubmissionTypes.slu03)
+
+    @property
+    def passed(self) -> bool:
+        return self.coding_test_passed and self.slu01_passed and self.slu02_passed and self.slu03_passed
 
     def query_best_score(self, submission_type: SubmissionTypeStaticInfo) -> Optional[int]:
         return Submission.objects.filter(application=self, submission_type=submission_type.uname).aggregate(

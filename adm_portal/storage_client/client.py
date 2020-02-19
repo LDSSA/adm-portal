@@ -29,7 +29,7 @@ class StorageClient(ABC):
         pass
 
     @abstractmethod
-    def get_html_url(self, key: str) -> str:
+    def get_url(self, key: str, *, content_type: Optional[str] = None) -> str:
         pass
 
     @abstractmethod
@@ -50,13 +50,12 @@ class AWSS3StorageClient(StorageClient):
             logger.info(f"s3 upload error: {e}")
             raise StorageClientException(e)
 
-    def get_html_url(self, key: str) -> str:
+    def get_url(self, key: str, *, content_type: Optional[str] = None) -> str:
+        params = {"Bucket": self.bucket_name, "Key": key}
+        if content_type is not None:
+            params["ResponseContentType"] = content_type
         try:
-            return boto3.client("s3").generate_presigned_url(
-                ClientMethod="get_object",
-                Params={"Bucket": self.bucket_name, "Key": key, "ResponseContentType": "text/html"},
-                ExpiresIn=30,
-            )
+            return boto3.client("s3").generate_presigned_url(ClientMethod="get_object", Params=params, ExpiresIn=30)
         except Boto3Error as e:
             logger.error(f"s3 url gen error: {e}")
             raise StorageClientException(e)
@@ -91,7 +90,7 @@ class LocalStorageClient(StorageClient):
         except StorageClientException as e:
             raise StorageClientException(e)
 
-    def get_html_url(self, key: str) -> str:
+    def get_url(self, key: str, *, content_type: Optional[str] = None) -> str:
         raise NotImplementedError
 
     def get_attachment_url(self, key: str, *, content_type: Optional[str] = None) -> str:

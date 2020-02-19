@@ -48,7 +48,7 @@ ROOT_URLCONF = "adm_portal.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": ["templates", "users", "profiles", "candidate"],
+        "DIRS": ["templates", "users", "profiles", "candidate", "staff"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [

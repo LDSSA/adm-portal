@@ -1,0 +1,49 @@
+{% extends './base.html' %}
+
+{% block content %}
+
+<div class="container">
+    <h2 class="py-5">
+        Candidate Payments
+    </h2>
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">User</th>
+                    <th scope="col">Value</th>
+                    <th scope="col">Currency</th>
+                    <th scope="col">Due Date</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Update At</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for p in payments %}
+                <tr>
+                    <td><a href="/staff/profiles/{{ p.user.id }}">{{ p.user.email }}</a></td>
+                    <td>{{ p.value }}</td>
+                    <td>{{ p.currency }}</td>
+                    <td>{{ p.due_date }}</td>
+                    <td><a href="/staff/payments/{{ p.user.id }}">
+                        {% if p.is_status_accepted %}
+                        <span class="badge badge-success">{{ p.get_status_display }}</span>
+                        {% elif p.is_status_rejected %}
+                        <span class="badge badge-danger">{{ p.get_status_display }}</span>
+                        {% elif p.is_status_pending_verification %}
+                        <span class="badge badge-info">{{ p.get_status_display }}</span>
+                        {% else %}
+                        <span class="badge badge-warning">{{ p.get_status_display }}</span>
+                        {% endif %}
+                    </a></td>
+                    <td>{{ p.updated_at }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

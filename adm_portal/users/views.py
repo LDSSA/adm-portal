@@ -34,12 +34,7 @@ def _post_signup_view(request: HttpRequest) -> HttpResponse:
     email_confirmation_url = (
         f"{request.get_host()}/account/confirm-email?token={UserConfirmEmail.objects.get(user=user).token}"
     )
-    print(f"confirm email url: {email_confirmation_url}")
-    # todo: send email (for now we print to test)
-    # we must not send emails when testing these views,
-    # so either we get mock clients from interface end env=dev
-    # or e patch the email client in the user view tests
-
+    interface.email_client.send_signup_email(to=user.email, email_confirmation_url=email_confirmation_url)
     return HttpResponseRedirect("/candidate/home")
 
 
@@ -119,15 +114,6 @@ def start_reset_password_view(request: HttpRequest) -> HttpResponse:
         reset_password, _ = UserResetPassword.objects.get_or_create(user=user)
         reset_pw_url = f"{request.get_host()}/account/reset-password?token={reset_password.token}"
         interface.email_client.send_reset_password_email(to=email, reset_pw_url=reset_pw_url)
-        print(reset_pw_url)
-
-        print(f"reset password url: {reset_pw_url}")
-        # todo: send email (for now we print to test)
-        # we must not send emails when testing these views,
-        # so either we get mock clients from interface end env=dev
-        # or e patch the email client in the user view tests
-        # send reset email email
-
     except User.DoesNotExist:
         # we will not disclose that such email is not in our db
         pass

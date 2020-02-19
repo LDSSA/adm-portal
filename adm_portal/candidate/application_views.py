@@ -161,6 +161,6 @@ def candidate_submission_feedback_download_view(
         )
     except Submission.DoesNotExist:
         raise Http404
-    url = interface.storage_client.get_html_url(submission.feedback_location)
+    url = interface.storage_client.get_url(submission.feedback_location, content_type="text/html")
 
     return HttpResponseRedirect(url)
