@@ -8,9 +8,6 @@
     
     <div class="row">
         <div class="col-md-12 text-center">
-            <div class="alert alert-secondary" role="alert">
-                This test is <strong>{{ status }}</strong>.
-            </div>
             {% if submissions_closes_at and status == "ongoing"%}
             <div class="alert alert-warning" role="alert">
                 You have until <strong>{{ submissions_closes_at }}</strong> to submit solutions!

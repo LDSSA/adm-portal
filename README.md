@@ -70,6 +70,6 @@ $ python manage.py runserver
 ### TODO list
 
 - [ ] On the candidate navbar, the `Payment` tab should only show up if the candidate has a payment (i.e, passed the tests and was selected in the selection process)
-- [ ] First time we go to a Profile page for a new candidate, the page is ugly (no space betwen nav bar and header)
-- [ ] Remove banner "This test is ongoing" on the Coding test submissison page
+- [x] First time we go to a Profile page for a new candidate, the page is ugly (no space betwen nav bar and header)
+- [x] Remove banner "This test is ongoing" on the Coding test submissison page
 - [ ] Email message is wrong
