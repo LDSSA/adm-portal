@@ -6,12 +6,14 @@ from applications.models import Application
 from profiles.forms import ProfileForm
 from profiles.models import Profile
 
+from .helpers import build_context
+
 
 @require_http_methods(["GET"])
 def candidate_home_view(request: HttpRequest) -> HttpResponse:
     template = loader.get_template("./candidate_templates/home.html")
     application, _ = Application.objects.get_or_create(user=request.user)
-    ctx = {"user": request.user, "application": application}
+    ctx = build_context(request.user, {"user": request.user, "application": application})
     return HttpResponse(template.render(ctx, request))
 
 
@@ -30,7 +32,7 @@ def candidate_profile_view(request: HttpRequest) -> HttpResponse:
         form = ProfileForm(instance=profile)
 
     template = loader.get_template("./candidate_templates/profile.html")
-    context = {"form": form}
+    context = build_context(request.user, {"form": form})
 
     return HttpResponse(template.render(context, request))
 

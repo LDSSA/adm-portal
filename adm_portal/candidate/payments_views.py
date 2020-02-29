@@ -4,22 +4,25 @@ from django.views.decorators.http import require_http_methods
 
 from interface import interface
 from payments.models import Document, Payment
-from profiles.models import Profile
 from storage_client import StorageClient
 
 
 def candidate_payment_view(request: HttpRequest) -> HttpResponse:
-    payment = Payment.objects.filter(user=request.user).first()
-    if not payment:
+    try:
+        payment = request.user.payment
+    except Payment.DoesNotExist:
         return HttpResponse("This candidate has no payment!")
-
-    profile = Profile.objects.get(user=request.user)
 
     payment_proofs = payment.get_payment_proof_documents
     student_ids = payment.get_student_id_documents
 
     template = loader.get_template("./candidate_templates/payment.html")
-    context = {"payment": payment, "profile": profile, "payment_proofs": payment_proofs, "student_ids": student_ids}
+    context = {
+        "payment": payment,
+        "profile": request.user.profile,
+        "payment_proofs": payment_proofs,
+        "student_ids": student_ids,
+    }
 
     return HttpResponse(template.render(context, request))
 

@@ -27,9 +27,11 @@
                       <a class="dropdown-item" href="/candidate/slu/slu03">SLU03</a>
                     </div>
                   </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/candidate/payment">Payment</a>
-                </li>
+                {% if user_has_payment %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/candidate/payment">Payment</a>
+                    </li>
+                {% endif %}
             </ul>
             <ul class="navbar-nav ml-auto">
                 <a class="nav-link" href="/account/logout">Sign out</a>

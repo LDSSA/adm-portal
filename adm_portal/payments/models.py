@@ -1,15 +1,14 @@
 import os
 from logging import getLogger
+from typing import List
 
 from django.db import models
-
-from profiles.models import Profile
 
 logger = getLogger(__name__)
 
 
 class Document(models.Model):
-    payment = models.ForeignKey("payments.Payment", on_delete=models.CASCADE)
+    payment = models.ForeignKey("payments.Payment", on_delete=models.CASCADE, related_name="documents")
 
     file_location = models.TextField(null=False)
 
@@ -24,7 +23,7 @@ class Document(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     @property
-    def filename(self):
+    def filename(self) -> str:
         return os.path.basename(self.file_location)
 
 
@@ -53,35 +52,35 @@ class Payment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     @property
-    def get_payment_proof_documents(self):
-        return Document.objects.filter(payment=self, doc_type="payment_proof").order_by("-updated_at")
+    def get_payment_proof_documents(self) -> List[Document]:
+        return self.documents.filter(doc_type="payment_proof").order_by("-updated_at")
 
     @property
-    def has_payment_proof_document(self):
+    def has_payment_proof_document(self) -> bool:
         return len(self.get_payment_proof_documents) > 0
 
     @property
-    def get_student_id_documents(self):
-        return Document.objects.filter(payment=self, doc_type="student_id").order_by("-updated_at")
+    def get_student_id_documents(self) -> List[Document]:
+        return self.documents.filter(doc_type="student_id").order_by("-updated_at")
 
     @property
-    def has_student_id_document(self):
+    def has_student_id_document(self) -> bool:
         return len(self.get_student_id_documents) > 0
 
     @property
-    def is_status_accepted(self):
+    def is_status_accepted(self) -> bool:
         return self.status == "accepted"
 
     @property
-    def is_status_rejected(self):
+    def is_status_rejected(self) -> bool:
         return self.status == "rejected"
 
     @property
-    def is_status_pending_verification(self):
+    def is_status_pending_verification(self) -> bool:
         return self.status == "pending_verification"
 
     @property
-    def is_status_waiting_for_documents(self):
+    def is_status_waiting_for_documents(self) -> bool:
         return self.status == "waiting_for_documents"
 
     def add_document(self, document: Document) -> None:
@@ -91,9 +90,7 @@ class Payment(models.Model):
 
         # now we need to update the payment status to "pending_verification"
         # unless the candidate is a student and is missing the other proof (payment proof or student id)
-        profile = Profile.objects.get(user=self.user)
-
-        if profile.is_student:
+        if self.user.profile.is_student:
             has_missing_student_id = document.doc_type == "payment_proof" and not self.has_student_id_document
             has_missing_payment_proof = document.doc_type == "student_id" and not self.has_payment_proof_document
             if has_missing_student_id or has_missing_payment_proof:

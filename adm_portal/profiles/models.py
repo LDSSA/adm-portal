@@ -27,5 +27,5 @@ class Profile(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     @property
-    def is_student(self):
+    def is_student(self) -> bool:
         return self.ticket_type == "student"
