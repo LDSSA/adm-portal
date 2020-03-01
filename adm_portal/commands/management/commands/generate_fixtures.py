@@ -95,13 +95,19 @@ class Command(BaseCommand):
         )
 
         # users with payments
-        p0 = Payment.objects.create(
-            user=self._user("user_with_docs"), value=500, currency="£", due_date=datetime.now()
+        prof0 = Profile.objects.create(
+            user=self._user("user_with_docs"), name="User With Pay docs", ticket_type="student", gender="f"
         )
-        Document.objects.create(payment=p0, file_location=_payment_proof_location, doc_type="payment_proof")
-        Document.objects.create(payment=p0, file_location=_student_id_proof_location, doc_type="student_id")
+        pay0 = Payment.objects.create(
+            user=prof0.user, value=500, currency="£", due_date=datetime.now(), status="pending_verification"
+        )
+        Document.objects.create(payment=pay0, file_location=_payment_proof_location, doc_type="payment_proof")
+        Document.objects.create(payment=pay0, file_location=_student_id_proof_location, doc_type="student_id")
 
-        Payment.objects.create(user=self._user("user_without_docs"), value=500, currency="£", due_date=datetime.now())
+        prof1 = Profile.objects.create(
+            user=self._user("user_without_docs"), name="User Without Pay docs", ticket_type="company", gender="m"
+        )
+        Payment.objects.create(user=prof1.user, value=1500, currency="£", due_date=datetime.now())
 
         # randoms
         for i in range(0, 50):
