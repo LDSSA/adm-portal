@@ -69,7 +69,7 @@ $ python manage.py runserver
 
 ### TODO list
 
-- [ ] On the candidate navbar, the `Payment` tab should only show up if the candidate has a payment (i.e, passed the tests and was selected in the selection process). Need to add user_has_payments to all pages
+- [x] On the candidate navbar, the `Payment` tab should only show up if the candidate has a payment (i.e, passed the tests and was selected in the selection process). Need to add user_has_payments to all pages
 - [x] First time we go to a Profile page for a new candidate, the page is ugly (no space betwen nav bar and header)
 - [x] Remove banner "This test is ongoing" on the Coding test submissison page
 - [ ] Email message is wrong

@@ -11,8 +11,14 @@ class UserManager(BaseUserManager):
         password = kwargs["password"]
         is_staff = kwargs.get("is_staff", False)
         email_confirmed = kwargs.get("email_confirmed", False)
+        code_of_conduct_accepted = kwargs.get("code_of_conduct_accepted", False)
         email = self.normalize_email(email_)
-        user = self.model(email=email, is_staff=is_staff, email_confirmed=email_confirmed)
+        user = self.model(
+            email=email,
+            is_staff=is_staff,
+            email_confirmed=email_confirmed,
+            code_of_conduct_accepted=code_of_conduct_accepted,
+        )
         user.set_password(password)
         user.save(using=self._db)
         if not user.email_confirmed:
@@ -20,7 +26,7 @@ class UserManager(BaseUserManager):
         return user
 
     def create_staff_user(self, **kwargs: str):
-        return self.create_user(is_staff=True, email_confirmed=True, **kwargs)
+        return self.create_user(is_staff=True, email_confirmed=True, code_of_conduct_accepted=True, **kwargs)
 
 
 def get_default_uuid():
@@ -42,6 +48,7 @@ class User(AbstractBaseUser):
 
     is_staff = models.BooleanField(default=False, null=False)
     email_confirmed = models.BooleanField(default=False, null=False)
+    code_of_conduct_accepted = models.BooleanField(default=False, null=False)
 
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)

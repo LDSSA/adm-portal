@@ -20,7 +20,12 @@ from candidate.payments_views import (
     candidate_payment_view,
     candidate_student_id_upload_view,
 )
-from candidate.views import candidate_home_view, candidate_profile_edit, candidate_profile_view
+from candidate.views import (
+    candidate_code_of_conduct_view,
+    candidate_home_view,
+    candidate_profile_edit,
+    candidate_profile_view,
+)
 from staff.application_views import staff_applications_view
 from staff.payment_views import staff_payment_view, staff_payments_view
 from staff.profile_views import staff_profiles_view
@@ -70,6 +75,8 @@ staff_routes = [
 
 candidate_routes = [
     Route(route="candidate/home", view=candidate_home_view, name="candidate-home"),
+    # conde of conduct
+    Route(route="candidate/code-of-conduct", view=candidate_code_of_conduct_view, name="candidate-code-of-conduct"),
     # profile
     Route(route="candidate/profile", view=candidate_profile_view, name="candidate-profile"),
     Route(route="candidate/profile/edit", view=candidate_profile_edit, name="candidate-profile-edit"),

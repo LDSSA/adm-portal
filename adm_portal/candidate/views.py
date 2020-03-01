@@ -17,6 +17,7 @@ def candidate_home_view(request: HttpRequest) -> HttpResponse:
     return HttpResponse(template.render(ctx, request))
 
 
+@require_http_methods(["GET", "POST"])
 def candidate_profile_view(request: HttpRequest) -> HttpResponse:
     profile, created = Profile.objects.get_or_create(user=request.user)
 
@@ -37,6 +38,7 @@ def candidate_profile_view(request: HttpRequest) -> HttpResponse:
     return HttpResponse(template.render(context, request))
 
 
+@require_http_methods(["GET", "POST"])
 def candidate_profile_edit(request: HttpRequest) -> HttpResponse:
     profile, _ = Profile.objects.get_or_create(user=request.user)
 
@@ -56,6 +58,19 @@ def candidate_profile_edit(request: HttpRequest) -> HttpResponse:
         form = ProfileForm(instance=profile)
 
     template = loader.get_template("./candidate_templates/profile_edit.html")
-    context = {"form": form}
+    context = build_context(request.user, {"form": form})
 
     return HttpResponse(template.render(context, request))
+
+
+@require_http_methods(["GET", "POST"])
+def candidate_code_of_conduct_view(request: HttpRequest) -> HttpResponse:
+    if request.method == "GET":
+        template = loader.get_template("./candidate_templates/code_of_conduct.html")
+        ctx = build_context(request.user, {"code_of_conduct_accepted": request.user.code_of_conduct_accepted})
+        return HttpResponse(template.render(ctx, request))
+
+    request.user.code_of_conduct_accepted = True
+    request.user.save()
+
+    return HttpResponseRedirect("/candidate/code-of-conduct")

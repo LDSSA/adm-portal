@@ -6,6 +6,8 @@ from interface import interface
 from payments.models import Document, Payment
 from storage_client import StorageClient
 
+from .helpers import build_context
+
 
 def candidate_payment_view(request: HttpRequest) -> HttpResponse:
     try:
@@ -23,6 +25,7 @@ def candidate_payment_view(request: HttpRequest) -> HttpResponse:
         "payment_proofs": payment_proofs,
         "student_ids": student_ids,
     }
+    context = build_context(request.user, context)
 
     return HttpResponse(template.render(context, request))
 

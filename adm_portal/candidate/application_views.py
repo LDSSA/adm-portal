@@ -10,6 +10,8 @@ from applications.domain import Domain
 from applications.models import Application, Submission, SubmissionType, SubmissionTypes
 from interface import interface
 
+from .helpers import build_context
+
 # coding test views
 
 
@@ -17,7 +19,8 @@ from interface import interface
 def candidate_before_coding_test_view(request: HttpRequest) -> HttpResponse:
     if request.method == "GET":
         template = loader.get_template("./candidate_templates/before_coding_test.html")
-        return HttpResponse(template.render({}, request))
+        context = build_context(request.user)
+        return HttpResponse(template.render(context, request))
 
     application = Application.objects.get(user=request.user)
     if application.coding_test_started_at is None:
@@ -34,8 +37,9 @@ def candidate_coding_test_view(request: HttpRequest) -> HttpResponse:
         return HttpResponseRedirect("/candidate/before-coding-test")
 
     submission_type_ = SubmissionTypes.coding_test
+    ctx = build_context(request.user, submission_view_ctx(application, submission_type_))
     template = loader.get_template("./candidate_templates/coding_test.html")
-    return HttpResponse(template.render(submission_view_ctx(application, submission_type_), request))
+    return HttpResponse(template.render(ctx, request))
 
 
 @require_http_methods(["GET"])
@@ -56,8 +60,9 @@ def candidate_coding_test_download_view(request: HttpRequest) -> HttpResponse:
 def candidate_slu_view(request: HttpRequest, submission_type: str) -> HttpResponse:
     application, _ = Application.objects.get_or_create(user=request.user)
     submission_type_ = getattr(SubmissionTypes, submission_type)
+    ctx = build_context(request.user, submission_view_ctx(application, submission_type_))
     template = loader.get_template("./candidate_templates/slu.html")
-    return HttpResponse(template.render(submission_view_ctx(application, submission_type_), request))
+    return HttpResponse(template.render(ctx, request))
 
 
 @require_http_methods(["POST"])
