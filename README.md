@@ -76,5 +76,7 @@ $ python manage.py runserver
 - [ ] We are still using dummy nbgrader notebooks
 - [ ] Review Submission Types (min_score, repo, duration, etc..)
 - [ ] Review "applications_close_at" datetime
-- [ ] edge case: candidate starts test with only one hour until applications close. needs fix 
-- [ ] fix staff applications view (super broken now)
+- [ ] Edge case: candidate starts test with only one hour until applications close
+- [ ] Fix staff applications view (super broken now)
+- [ ] Make page to start coding test pretty
+- [ ] Payments: write function that creates payment from user and profile; at creation time, copy ticket type from profile (new field); allow to replace payment; add to staff frontend the create payment option
