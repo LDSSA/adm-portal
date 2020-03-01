@@ -73,3 +73,8 @@ $ python manage.py runserver
 - [x] First time we go to a Profile page for a new candidate, the page is ugly (no space betwen nav bar and header)
 - [x] Remove banner "This test is ongoing" on the Coding test submissison page
 - [ ] Email message is wrong
+- [ ] We are still using dummy nbgrader notebooks
+- [ ] Review Submission Types (min_score, repo, duration, etc..)
+- [ ] Review "applications_close_at" datetime
+- [ ] edge case: candidate starts test with only one hour until applications close. needs fix 
+- [ ] fix staff applications view (super broken now)

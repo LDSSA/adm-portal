@@ -8,12 +8,11 @@ from django.urls import path
 from candidate.application_views import (
     candidate_before_coding_test_view,
     candidate_coding_test_download_view,
-    candidate_coding_test_upload_view,
     candidate_coding_test_view,
-    candidate_slu_upload_view,
     candidate_slu_view,
     candidate_submission_download_view,
     candidate_submission_feedback_download_view,
+    candidate_submission_upload_view,
 )
 from candidate.payments_views import (
     candidate_document_download_view,
@@ -86,19 +85,14 @@ candidate_routes = [
         view=candidate_coding_test_download_view,
         name="candidate-coding-test-download",
     ),
-    Route(
-        route="candidate/coding-test/upload/",
-        view=candidate_coding_test_upload_view,
-        name="candidate-coding-test-upload",
-    ),
     # slu
     Route(route="candidate/slu/<slug:submission_type>", view=candidate_slu_view, name="candidate-slu"),
-    Route(
-        route="candidate/slu/upload/<slug:submission_type>",
-        view=candidate_slu_upload_view,
-        name="candidate-coding-test-upload",
-    ),
     # submissions
+    Route(
+        route="candidate/submissions/upload/<slug:submission_type>",
+        view=candidate_submission_upload_view,
+        name="candidate-submissions-upload",
+    ),
     Route(
         route="candidate/submission/<slug:submission_type>/<int:submission_id>",
         view=candidate_submission_download_view,

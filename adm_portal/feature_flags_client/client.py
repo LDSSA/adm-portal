@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
+from datetime import datetime
 
 
 class FeatureFlagsClient(ABC):
     @abstractmethod
-    def accepting_test_submissions(self) -> bool:
+    def applications_are_open(self) -> bool:
         pass
 
     @abstractmethod
@@ -12,8 +13,11 @@ class FeatureFlagsClient(ABC):
 
 
 class InCodeFeatureFlagsClient(FeatureFlagsClient):
-    def accepting_test_submissions(self) -> bool:
-        return True
+    applications_open_date = datetime(day=1, month=1, year=2020)
+    applications_close_date = datetime(day=21, month=6, year=2020)
+
+    def applications_are_open(self) -> bool:
+        return self.applications_open_date < datetime.now() < self.applications_close_date
 
     def accepting_payment_profs(self) -> bool:
         return True
@@ -24,7 +28,7 @@ class MockFeatureFlagsClient(FeatureFlagsClient):
         self._accepting_test_submissions = accepting_test_submissions
         self._accepting_payment_profs = accepting_payment_profs
 
-    def accepting_test_submissions(self) -> bool:
+    def applications_are_open(self) -> bool:
         return self._accepting_test_submissions
 
     def accepting_payment_profs(self) -> bool:

@@ -4,7 +4,7 @@ from django.conf import settings
 
 from email_client.client import EmailClient, LocalEmailClient
 from feature_flags_client import FeatureFlagsClient, InCodeFeatureFlagsClient
-from grander_client import GraderClient, GraderClientFakeScores, GraderClientHttp
+from grader_client import GraderClient, GraderClientFakeScores, GraderClientHttp
 from storage_client import AWSS3StorageClient, LocalStorageClient, StorageClient
 
 
