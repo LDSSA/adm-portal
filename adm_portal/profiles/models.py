@@ -1,5 +1,8 @@
 from django.db import models
 
+gender_choices = [("f", "Female"), ("m", "Male"), ("other", "Other/Prefer not to say")]
+ticket_types_choices = [("student", "Student"), ("regular", "Regular"), ("company", "Company")]
+
 
 # todo: add more fields, this model is incomplete, add NIF
 class Profile(models.Model):
@@ -9,19 +12,9 @@ class Profile(models.Model):
 
     profession = models.CharField(blank=False, null=False, max_length=50)
 
-    gender = models.CharField(
-        blank=False,
-        null=False,
-        choices=[("f", "Female"), ("m", "Male"), ("other", "Other/Prefer not to say")],
-        max_length=10,
-    )
+    gender = models.CharField(blank=False, null=False, choices=gender_choices, max_length=10)
 
-    ticket_type = models.CharField(
-        blank=False,
-        null=False,
-        choices=[("student", "Student"), ("regular", "Regular"), ("company", "Company")],
-        max_length=15,
-    )
+    ticket_type = models.CharField(blank=False, null=False, choices=ticket_types_choices, max_length=15)
 
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)

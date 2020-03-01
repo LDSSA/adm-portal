@@ -66,7 +66,6 @@ class Application(models.Model):
     # coding test ##########################################################
     _coding_test_duration = timedelta(hours=2)
     _coding_test_real_duration = timedelta(hours=2, minutes=3)
-    _coding_test_passed_score = 75
 
     coding_test_started_at = models.DateTimeField(null=True, default=None)
 

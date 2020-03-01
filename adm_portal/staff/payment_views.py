@@ -39,7 +39,7 @@ def _get_staff_payment_view(request: HttpRequest, payment: Payment) -> HttpRespo
                 "url": interface.storage_client.get_url(doc.file_location, content_type="image"),
                 "doc_type": doc.doc_type,
             }
-            for doc in payment.document_set.all()
+            for doc in payment.documents.all()
         ],
     }
     template = loader.get_template("./staff_templates/payment_id.html")

@@ -7,17 +7,15 @@ from django.db import models
 logger = getLogger(__name__)
 
 
+doc_type_choices = [("payment_proof", "Payment Proof"), ("student_id", "Student ID")]
+
+
 class Document(models.Model):
     payment = models.ForeignKey("payments.Payment", on_delete=models.CASCADE, related_name="documents")
 
     file_location = models.TextField(null=False)
 
-    doc_type = models.CharField(
-        blank=False,
-        null=False,
-        max_length=20,
-        choices=[("payment_proof", "Payment Proof"), ("student_id", "Student ID")],
-    )
+    doc_type = models.CharField(blank=False, null=False, max_length=20, choices=doc_type_choices)
 
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
