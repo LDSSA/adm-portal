@@ -1,8 +1,11 @@
-from django.http import Http404, HttpRequest, HttpResponse
+from typing import Tuple
+
+from django.http import Http404, HttpRequest, HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.views.decorators.http import require_http_methods
 
 from interface import interface
+from payments.domain import Domain, DomainException
 from payments.models import Payment
 from users.models import User
 
@@ -16,6 +19,24 @@ def staff_payments_view(request: HttpRequest) -> HttpResponse:
 
 @require_http_methods(["GET", "POST"])
 def staff_payment_view(request: HttpRequest, user_id: int) -> HttpResponse:
+    _, payment = _get_user_payment(user_id)
+    if request.method == "GET":
+        return _get_staff_payment_view(request, payment, user_id)
+    return _post_staff_payment_view(request, payment)
+
+
+@require_http_methods(["POST"])
+def reset_payment_view(request: HttpRequest, user_id: int) -> HttpResponse:
+    candidate, payment = _get_user_payment(user_id)
+    try:
+        Domain.reset_payment(payment, candidate.profile)
+    except DomainException:
+        raise Http404
+
+    return HttpResponseRedirect(f"/staff/payments/{user_id}")
+
+
+def _get_user_payment(user_id: int) -> Tuple[User, Payment]:
     try:
         candidate = User.objects.get(id=user_id)
     except User.DoesNotExist:
@@ -26,14 +47,14 @@ def staff_payment_view(request: HttpRequest, user_id: int) -> HttpResponse:
     except User.DoesNotExist:
         raise Http404
 
-    if request.method == "GET":
-        return _get_staff_payment_view(request, payment)
-    return _post_staff_payment_view(request, payment)
+    return candidate, payment
 
 
-def _get_staff_payment_view(request: HttpRequest, payment: Payment) -> HttpResponse:
+def _get_staff_payment_view(request: HttpRequest, payment: Payment, candidate_id: int) -> HttpResponse:
     ctx = {
         "payment": payment,
+        "can_reset": Domain.can_reset_payment(payment),
+        "candidate_id": candidate_id,
         "docs": [
             {
                 "url": interface.storage_client.get_url(doc.file_location, content_type="image"),

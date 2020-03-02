@@ -7,7 +7,8 @@ from typing import Dict
 from django.core.management.base import BaseCommand
 
 from applications.models import Application, Submission, SubmissionTypes
-from payments.models import Document, Payment
+from payments.domain import Domain as PaymentsDomain
+from payments.models import Document
 from profiles.models import Profile, gender_choices, ticket_types_choices
 from users.models import User
 
@@ -96,21 +97,40 @@ class Command(BaseCommand):
 
         # users with payments
         prof0 = Profile.objects.create(
-            user=self._user("user_with_docs"), name="User With Pay docs", ticket_type="student", gender="f"
+            user=self._user("user_with_docs"), full_name="User With Pay docs", ticket_type="regular", gender="f"
         )
-        pay0 = Payment.objects.create(
-            user=prof0.user, value=500, currency="£", due_date=datetime.now(), status="pending_verification"
-        )
-        Document.objects.create(payment=pay0, file_location=_payment_proof_location, doc_type="payment_proof")
-        Document.objects.create(payment=pay0, file_location=_student_id_proof_location, doc_type="student_id")
+        pay0 = PaymentsDomain.create_payment(prof0)
+        doc_proof0 = Document(file_location=_payment_proof_location, doc_type="payment_proof")
+        PaymentsDomain.add_document(pay0, doc_proof0)
 
         prof1 = Profile.objects.create(
-            user=self._user("user_without_docs"), name="User Without Pay docs", ticket_type="company", gender="m"
+            user=self._user("user_with_docs_student"),
+            full_name="User With Pay docs",
+            ticket_type="student",
+            gender="other",
         )
-        Payment.objects.create(user=prof1.user, value=1500, currency="£", due_date=datetime.now())
+        pay1 = PaymentsDomain.create_payment(prof1)
+        PaymentsDomain.add_document(pay1, Document(file_location=_payment_proof_location, doc_type="payment_proof"))
+        PaymentsDomain.add_document(pay1, Document(file_location=_student_id_proof_location, doc_type="student_id"))
+
+        prof2 = Profile.objects.create(
+            user=self._user("user_without_docs"), full_name="User Without Pay docs", ticket_type="company", gender="m"
+        )
+        PaymentsDomain.create_payment(prof2)
+
+        prof3 = Profile.objects.create(
+            user=self._user("user_with_updated_profile"),
+            full_name="User With New Profile",
+            ticket_type="company",
+            gender="m",
+        )
+        pay3 = PaymentsDomain.create_payment(prof3)
+        PaymentsDomain.add_document(pay3, Document(file_location=_payment_proof_location, doc_type="payment_proof"))
+        prof3.ticket_type = "student"
+        prof3.save()
 
         # randoms
-        for i in range(0, 50):
+        for i in range(0, 5):
             u = self._user(f"random_{i}")
             gender = random.choice(gender_choices)[0]
             ticket_type = random.choice(ticket_types_choices)[0]

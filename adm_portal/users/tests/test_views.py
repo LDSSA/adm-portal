@@ -139,10 +139,13 @@ class TestConfirmEmailViews(TestCase):
 
     def test_get_confirm_email(self) -> None:
         token = UserConfirmEmail.objects.get(user=self.user).token
-        response = Client().get("/account/confirm-email", {"token": token})
+        client = Client()
+        response = client.get("/account/confirm-email", {"token": token})
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, "/candidate/home")
         self.assertEqual(UserConfirmEmail.objects.count(), 0)
+
+        self.assertTrue(is_logged_as(client, self.user))
 
     def test_get_confirm_email_404_error(self) -> None:
         response = Client().get("/account/confirm-email", {"token": "token_doesnt_exist"})

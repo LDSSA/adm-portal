@@ -6,6 +6,7 @@ from typing import Any, Optional
 
 
 class EmailClient(ABC):
+    # account
     @abstractmethod
     def send_signup_email(self, to: str, email_confirmation_url: str) -> None:
         pass
@@ -15,12 +16,15 @@ class EmailClient(ABC):
         pass
 
     # payments
+    @abstractmethod
     def send_payment_accepted_proof_email(self, to: str, msg: Optional[str] = None) -> None:
         pass
 
+    @abstractmethod
     def send_payment_need_additional_proof_email(self, to: str, msg: str) -> None:
         pass
 
+    @abstractmethod
     def send_payment_refused_proof_email(self, to: str, msg: str) -> None:
         pass
 
@@ -33,7 +37,7 @@ class LocalEmailClient(EmailClient):
     def _dump_locally(self, f_name: str, **kwargs: Any) -> None:
         directory = os.path.join(self.root, f_name)
         os.makedirs(directory, exist_ok=True)
-        filename = datetime.now().strftime("%m_%d_%Y__%H_%M_%S")
+        filename = datetime.now().strftime("%d_%m_%Y__%H_%M_%S")
 
         with open(os.path.join(directory, filename), "w") as file:
             json.dump(kwargs, file, indent=4, separators=(",", ": "))

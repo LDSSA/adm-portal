@@ -27,7 +27,7 @@ from candidate.views import (
     candidate_profile_view,
 )
 from staff.application_views import staff_applications_view
-from staff.payment_views import staff_payment_view, staff_payments_view
+from staff.payment_views import reset_payment_view, staff_payment_view, staff_payments_view
 from staff.profile_views import staff_profiles_view
 from staff.views import staff_home_view
 from users.decorators import requires_candidate_login, requires_staff_login
@@ -66,11 +66,12 @@ account_routs = [
 staff_routes = [
     Route(route="staff/home", view=staff_home_view, name="staff-home"),
     Route(route="staff/profiles", view=staff_profiles_view, name="staff-profiles-list"),
-    Route(route="staff/profiles/<int:user_id>/", view=todo_view, name="staff-profiles-id"),
+    Route(route="staff/profiles/<int:user_id>/", view=todo_view, name="staff-profile"),
     Route(route="staff/applications", view=staff_applications_view, name="staff-applications-list"),
-    Route(route="staff/applications/<int:user_id>", view=todo_view, name="staff-applications-id"),
+    Route(route="staff/applications/<int:user_id>", view=todo_view, name="staff-application"),
     Route(route="staff/payments", view=staff_payments_view, name="staff-payments-list"),
-    Route(route="staff/payments/<int:user_id>", view=staff_payment_view, name="staff-payments-id"),
+    Route(route="staff/payments/<int:user_id>", view=staff_payment_view, name="staff-payment"),
+    Route(route="staff/payments/<int:user_id>/reset", view=reset_payment_view, name="staff-reset-payment"),
 ]
 
 candidate_routes = [

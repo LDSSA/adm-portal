@@ -3,6 +3,7 @@ from django.template import loader
 from django.views.decorators.http import require_http_methods
 
 from interface import interface
+from payments.domain import Domain
 from payments.models import Document, Payment
 from storage_client import StorageClient
 
@@ -19,6 +20,7 @@ def candidate_payment_view(request: HttpRequest) -> HttpResponse:
     student_ids = payment.get_student_id_documents
 
     template = loader.get_template("./candidate_templates/payment.html")
+
     context = {
         "payment": payment,
         "profile": request.user.profile,
@@ -58,6 +60,6 @@ def _candidate_document_upload(request: HttpRequest, document_type: str) -> Http
 
     document = Document(file_location=upload_key_unique, doc_type=document_type)
     payment = Payment.objects.get(user=request.user)
-    payment.add_document(document)
+    Domain.add_document(payment, document)
 
     return HttpResponseRedirect("/candidate/payment")

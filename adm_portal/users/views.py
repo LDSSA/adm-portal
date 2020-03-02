@@ -99,6 +99,8 @@ def confirm_email_view(request: HttpRequest) -> HttpResponse:
         user.save()
         user_confirm_email.delete()
 
+    login(request, user)
+
     return HttpResponseRedirect("/candidate/home")
 
 
