@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from django.test import TestCase
 
-from applications.domain import Domain, DomainException, SubmissionStatus
+from applications.domain import ApplicationStatus, Domain, DomainException, SubmissionStatus
 from applications.models import Application, Submission, SubmissionTypes
 from users.models import User
 
@@ -103,21 +103,6 @@ class TestDomain(TestCase):
         self.assertEqual(Domain.has_positive_score(other_app, SubmissionTypes.slu02), False)
         self.assertEqual(Domain.has_positive_score(other_app, SubmissionTypes.slu03), False)
 
-    def test_get_sub_type_status(self) -> None:
-        a = Application.objects.create(user=User.objects.create(email="target@test.com"))
-
-        self.assertEqual(Domain.get_sub_type_status(a, SubmissionTypes.coding_test), SubmissionStatus.not_started)
-        self.assertEqual(Domain.get_sub_type_status(a, SubmissionTypes.slu01), SubmissionStatus.ongoing)
-        self.assertEqual(Domain.get_sub_type_status(a, SubmissionTypes.slu02), SubmissionStatus.ongoing)
-        self.assertEqual(Domain.get_sub_type_status(a, SubmissionTypes.slu03), SubmissionStatus.ongoing)
-
-        Submission.objects.create(application=a, score=99, submission_type=SubmissionTypes.slu01.uname)
-        self.assertEqual(Domain.get_sub_type_status(a, SubmissionTypes.slu01), SubmissionStatus.passed)
-
-        a.slu02_started_at = datetime.now() - timedelta(days=20)
-        a.save()
-        self.assertEqual(Domain.get_sub_type_status(a, SubmissionTypes.slu02), SubmissionStatus.failed)
-
     def test_add_submission(self) -> None:
         a = Application.objects.create(user=User.objects.create(email="target@test.com"))
         s1 = Submission(score=91)
@@ -141,3 +126,33 @@ class TestDomain(TestCase):
         with self.assertRaises(DomainException):
             Domain.add_submission(a, SubmissionTypes.coding_test, s3)
         self.assertEqual(a.submissions.count(), 1)
+
+    def test_get_status(self) -> None:
+        a = Application.objects.create(user=User.objects.create(email="target@test.com"))
+
+        self.assertEqual(Domain.get_sub_type_status(a, SubmissionTypes.coding_test), SubmissionStatus.not_started)
+        self.assertEqual(Domain.get_sub_type_status(a, SubmissionTypes.slu01), SubmissionStatus.ongoing)
+        self.assertEqual(Domain.get_sub_type_status(a, SubmissionTypes.slu02), SubmissionStatus.ongoing)
+        self.assertEqual(Domain.get_sub_type_status(a, SubmissionTypes.slu03), SubmissionStatus.ongoing)
+        self.assertEqual(Domain.get_application_status(a), ApplicationStatus.ongoing)
+
+        Submission.objects.create(application=a, score=99, submission_type=SubmissionTypes.slu01.uname)
+        self.assertEqual(Domain.get_sub_type_status(a, SubmissionTypes.slu01), SubmissionStatus.passed)
+        self.assertEqual(Domain.get_application_status(a), ApplicationStatus.ongoing)
+
+        Submission.objects.create(application=a, score=99, submission_type=SubmissionTypes.coding_test.uname)
+        Submission.objects.create(application=a, score=99, submission_type=SubmissionTypes.slu01.uname)
+        slu02_sub = Submission.objects.create(application=a, score=99, submission_type=SubmissionTypes.slu02.uname)
+        Submission.objects.create(application=a, score=99, submission_type=SubmissionTypes.slu03.uname)
+
+        self.assertEqual(Domain.get_sub_type_status(a, SubmissionTypes.coding_test), SubmissionStatus.passed)
+        self.assertEqual(Domain.get_sub_type_status(a, SubmissionTypes.slu01), SubmissionStatus.passed)
+        self.assertEqual(Domain.get_sub_type_status(a, SubmissionTypes.slu02), SubmissionStatus.passed)
+        self.assertEqual(Domain.get_sub_type_status(a, SubmissionTypes.slu02), SubmissionStatus.passed)
+        self.assertEqual(Domain.get_application_status(a), ApplicationStatus.passed)
+
+        a.slu02_started_at = datetime.now() - timedelta(days=20)
+        a.save()
+        slu02_sub.delete()
+        self.assertEqual(Domain.get_sub_type_status(a, SubmissionTypes.slu02), SubmissionStatus.failed)
+        self.assertEqual(Domain.get_application_status(a), ApplicationStatus.failed)

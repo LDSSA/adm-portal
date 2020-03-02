@@ -22,19 +22,18 @@ SubmissionStatus = Status
 
 class Domain:
     @staticmethod
-    def application_status(application: Application) -> ApplicationStatus:
-        sub_types = [SubmissionTypes.coding_test, SubmissionTypes.slu01, SubmissionTypes.slu02, SubmissionTypes.slu03]
+    def get_application_status(application: Application) -> ApplicationStatus:
         sub_type_status = []
-        for sub_type in sub_types:
+        for sub_type in SubmissionTypes.all:
             sub_type_status.append(Domain.get_sub_type_status(application, sub_type))
 
-        if any(sub_type_status) == SubmissionStatus.failed:
+        if any((s == SubmissionStatus.failed for s in sub_type_status)):
             return ApplicationStatus.failed
-        if any(sub_type_status) == SubmissionStatus.ongoing:
+        if any((s == SubmissionStatus.ongoing for s in sub_type_status)):
             return ApplicationStatus.ongoing
-        if all(sub_type_status) == SubmissionStatus.passed:
+        if all((s == SubmissionStatus.passed for s in sub_type_status)):
             return ApplicationStatus.passed
-        if all(sub_type_status) == SubmissionStatus.not_started:
+        if all((s == SubmissionStatus.not_started for s in sub_type_status)):
             return ApplicationStatus.not_started
 
         raise DomainException(

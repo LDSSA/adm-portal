@@ -1,8 +1,8 @@
 import logging
 import os
 import random
-from datetime import datetime
-from typing import Dict
+from datetime import datetime, timedelta
+from typing import Dict, List
 
 from django.core.management.base import BaseCommand
 
@@ -24,7 +24,7 @@ class Command(BaseCommand):
     help = "Generates Fixtures for tests"
 
     def _user(self, uid: str) -> User:
-        logger.info(f"creating user with uid: {uid}")
+        logger.info(f"creating user: email={uid}@adm.com; pw={uid}")
         return User.objects.create_user(email=f"{uid}@adm.com", password=uid)
 
     @staticmethod
@@ -37,6 +37,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options) -> None:
         # staff user
+        logger.info(f"creating staff user: user=staff; pw=staff")
         User.objects.create_staff_user(email="staff@adm.com", password="staff")
 
         # user with nothing
@@ -83,7 +84,9 @@ class Command(BaseCommand):
             application=a0, submission_type=SubmissionTypes.slu03.uname, score=75, feedback_location=_feedback_location
         )
 
-        a1 = Application.objects.create(user=self._user("application_failed"), coding_test_started_at=datetime.now())
+        a1 = Application.objects.create(
+            user=self._user("application_failed"), coding_test_started_at=datetime.now() - timedelta(hours=4)
+        )
         Submission.objects.create(
             application=a1,
             submission_type=SubmissionTypes.coding_test.uname,
@@ -91,9 +94,7 @@ class Command(BaseCommand):
             feedback_location=_feedback_location,
         )
 
-        Application.objects.create(
-            user=self._user("application_failed_no_coding_test"), coding_test_started_at=datetime.now()
-        )
+        Application.objects.create(user=self._user("application_coding_not_started"))
 
         # users with payments
         prof0 = Profile.objects.create(
@@ -129,20 +130,44 @@ class Command(BaseCommand):
         prof3.ticket_type = "student"
         prof3.save()
 
-        # randoms
-        for i in range(0, 5):
-            u = self._user(f"random_{i}")
+        # randoms (will be bulk created)
+        users: List[User] = []
+        # random - users
+        logger.info(f"creating {_random_n} random users with profiles and applications")
+        for i in range(0, _random_n):
+            u = User(email=f"random_{i}")
+            users.append(u)
+
+        User.objects.bulk_create(users)
+        users = User.objects.filter(email__in=[u.email for u in users])
+
+        # random - profiles
+        profiles: List[Profile] = []
+        for prof_u in users:
             gender = random.choice(gender_choices)[0]
             ticket_type = random.choice(ticket_types_choices)[0]
-            Profile.objects.create(
-                user=u,
-                full_name=f"Random User {i}",
-                profession=f"Random Profession {i}",
+            p = Profile(
+                user=prof_u,
+                full_name=f"Random User {prof_u.id}",
+                profession=f"Random Profession {prof_u.id}",
                 gender=gender,
                 ticket_type=ticket_type,
             )
+            profiles.append(p)
+        Profile.objects.bulk_create(profiles)
 
-            a = Application.objects.create(user=u, coding_test_started_at=datetime.now())
+        # random - applications
+        applications: List[Application] = []
+        for app_u in users:
+            right_now = datetime.now()
+            a = Application(user=app_u, coding_test_started_at=right_now)
+            applications.append(a)
+        Application.objects.bulk_create(applications)
+        applications = Application.objects.filter(coding_test_started_at=right_now)
+
+        # random - submissions
+        submissions: List[Submission] = []
+        for sub_a in applications:
             for j in range(0, 15):
                 s_type = random.choice(
                     [
@@ -153,13 +178,17 @@ class Command(BaseCommand):
                     ]
                 )
                 score = random.randrange(60, 100, 2)
-                Submission.objects.create(
-                    application=a, submission_type=s_type, score=score, feedback_location=_feedback_location
+                s = Submission(
+                    application=sub_a, submission_type=s_type, score=score, feedback_location=_feedback_location
                 )
+                submissions.append(s)
+
+        Submission.objects.bulk_create(submissions)
 
         logger.info(self.summary())
 
 
+_random_n = 500
 _namespace = "fixtures/"
 _feedback_location = os.path.join(_namespace, "submission_feedback.html")
 _payment_proof_location = os.path.join(_namespace, "payment_proof.jpg")

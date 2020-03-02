@@ -41,6 +41,8 @@ class SubmissionTypes:
         repo="https://github.com/Chi-Acci/adm-portal",
     )
 
+    all = [coding_test, slu01, slu02, slu03]
+
 
 class Submission(models.Model):
     application = models.ForeignKey(

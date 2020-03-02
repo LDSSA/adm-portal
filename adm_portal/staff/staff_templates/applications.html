@@ -22,46 +22,23 @@
                 <tbody>
                 {% for a in applications %}
                 <tr>
-                    <td><a href="/staff/profiles/{{ a.user.id }}">{{ a.user.email }}</a></td>
+                    <td><a href="/staff/profiles/{{ a.ref.user.id }}">{{ a.ref.user.email }}</a></td>
+                    {% for status in a.status_list %}
                     <td>
-                        {% if a.passed %}
-                            <span class="badge badge-success">Passed</span>
+                        {% if status.name == "not_started" %}
+                            <span class="badge badge-info">{{status.value}}</span>
+                        {% endif %}
+                        {% if status.name == "ongoing" %}
+                            <span class="badge badge-warning">{{status.value}}</span>
+                        {% endif %}
+                        {% if status.name == "passed" %}
+                            <span class="badge badge-success">{{status.value}}</span>
+                        {% endif %}
+                        {% if status.name == "failed" %}
+                            <span class="badge badge-danger">{{status.value}}</span>
                         {% endif %}
                     </td>
-                    <td>
-                        {% if a.coding_test_passed %}
-                            <span class="badge badge-success">{{ a.coding_test_best_score }}</span>
-                        {% elif a.coding_test_submission_is_open %}
-                            <span class="badge badge-warning">{{ a.coding_test_best_score }}</span>
-                        {% else %}
-                            {% if a.coding_test_submission_is_open %}
-                                <span class="badge badge-warning">{{ a.coding_test_best_score }}</span>
-                            {% else %}
-                                <span class="badge badge-danger">{{ a.coding_test_best_score }}</span>
-                            {% endif %}
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if a.slu01_passed %}
-                            <span class="badge badge-success">{{ a.slu01_best_score }}</span>
-                        {% else %}
-                            <span class="badge badge-warning">{{ a.slu01_best_score }}</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if a.slu02_passed %}
-                            <span class="badge badge-success">{{ a.slu02_best_score }}</span>
-                        {% else %}
-                            <span class="badge badge-warning">{{ a.slu02_best_score }}</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if a.slu03_passed %}
-                            <span class="badge badge-success">{{ a.slu03_best_score }}</span>
-                        {% else %}
-                            <span class="badge badge-warning">{{ a.slu03_best_score }}</span>
-                        {% endif %}
-                    </td>
+                    {% endfor %}
                 </tr>
                 {% endfor %}
                 </tbody>

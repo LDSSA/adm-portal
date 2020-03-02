@@ -75,8 +75,6 @@ $ python manage.py runserver
 - [ ] Applications: Review Submission Types (min_score, repo, duration, etc..)
 - [ ] Applications: Review "applications_close_at" datetime
 - [ ] Applications edge case - candidate starts test with only one hour until applications close
-- [ ] Applications: Fix staff applications view (super broken now)
 - [ ] Applications: Make page to start coding test pretty
-- [ ] Payments: allow to replace payment (add to staff frontend the create payment option)
 - [ ] Payments: work on due date logic
 - [ ] Payments: Email message is wrong (outcome vs message disconnect)
