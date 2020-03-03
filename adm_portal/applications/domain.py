@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import Optional
+from typing import Dict, Optional
 
 from django.db import models
 
@@ -23,22 +23,31 @@ SubmissionStatus = Status
 class Domain:
     @staticmethod
     def get_application_status(application: Application) -> ApplicationStatus:
-        sub_type_status = []
+        return Domain.get_application_detailed_status(application)["application"]
+
+    @staticmethod
+    def get_application_detailed_status(application: Application) -> Dict[str, Status]:
+        sub_type_status = {}
         for sub_type in SubmissionTypes.all:
-            sub_type_status.append(Domain.get_sub_type_status(application, sub_type))
+            sub_type_status[sub_type.uname] = Domain.get_sub_type_status(application, sub_type)
 
-        if any((s == SubmissionStatus.failed for s in sub_type_status)):
-            return ApplicationStatus.failed
-        if any((s == SubmissionStatus.ongoing for s in sub_type_status)):
-            return ApplicationStatus.ongoing
-        if all((s == SubmissionStatus.passed for s in sub_type_status)):
-            return ApplicationStatus.passed
-        if all((s == SubmissionStatus.not_started for s in sub_type_status)):
-            return ApplicationStatus.not_started
+        application_status = None
+        if any((s == SubmissionStatus.failed for _, s in sub_type_status.items())):
+            application_status = ApplicationStatus.failed
+        if any((s == SubmissionStatus.ongoing for _, s in sub_type_status.items())):
+            application_status = ApplicationStatus.ongoing
+        if all((s == SubmissionStatus.passed for _, s in sub_type_status.items())):
+            application_status = ApplicationStatus.passed
+        if all((s == SubmissionStatus.not_started for _, s in sub_type_status.items())):
+            application_status = ApplicationStatus.not_started
 
-        raise DomainException(
-            "Domain logic error in the computation of the Application Status." f"sub_type_status: {sub_type_status}"
-        )
+        if application_status is None:
+            raise DomainException(
+                "Domain logic error in the computation of the Application Status."
+                f"sub_type_status: {sub_type_status}"
+            )
+
+        return {"application": application_status, **sub_type_status}
 
     @staticmethod
     def get_sub_type_status(application: Application, sub_type: SubmissionType) -> SubmissionStatus:
