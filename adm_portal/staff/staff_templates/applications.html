@@ -7,6 +7,22 @@
         Candidate Applications
     </h2>
     <div class="row">
+        <div class="col">
+            <div class="dropdown">
+                <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Filter Application Status By
+                </a>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                    <a class="dropdown-item" href="?application_status={{status_enum.not_started.name}}"><span class="badge badge-info">{{status_enum.not_started.value}} ({{status_enum.not_started.count}})</span></a>
+                    <a class="dropdown-item" href="?application_status={{status_enum.ongoing.name}}"><span class="badge badge-warning">{{status_enum.ongoing.value}} ({{status_enum.ongoing.count}})</span></a>
+                    <a class="dropdown-item" href="?application_status={{status_enum.passed.name}}"><span class="badge badge-success">{{status_enum.passed.value}} ({{status_enum.passed.count}})</span></a>
+                    <a class="dropdown-item" href="?application_status={{status_enum.failed.name}}"><span class="badge badge-danger">{{status_enum.failed.value}} ({{status_enum.failed.count}})</span></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row">
         <div class="col-md-12 text-center">
             <table class="table table-striped">
                 <thead>

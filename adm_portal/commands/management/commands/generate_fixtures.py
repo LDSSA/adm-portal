@@ -33,6 +33,7 @@ class Command(BaseCommand):
             "users": User.objects.count(),
             "profiles": Profile.objects.count(),
             "applications": Application.objects.count(),
+            "submissions": Submission.objects.count(),
         }
 
     def handle(self, *args, **options) -> None:
@@ -159,11 +160,11 @@ class Command(BaseCommand):
         # random - applications
         applications: List[Application] = []
         for app_u in users:
-            right_now = datetime.now()
-            a = Application(user=app_u, coding_test_started_at=right_now)
+            minutes_delta = random.randrange(0, 300, 20)
+            a = Application(user=app_u, coding_test_started_at=datetime.now() - timedelta(minutes=minutes_delta))
             applications.append(a)
         Application.objects.bulk_create(applications)
-        applications = Application.objects.filter(coding_test_started_at=right_now)
+        applications = Application.objects.filter(user__in=users)
 
         # random - submissions
         submissions: List[Submission] = []
