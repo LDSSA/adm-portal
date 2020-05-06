@@ -30,7 +30,12 @@ from staff.application_views import staff_applications_view
 from staff.payment_views import reset_payment_view, staff_payment_view, staff_payments_view
 from staff.profile_views import staff_profiles_view
 from staff.views import staff_home_view
-from users.decorators import requires_candidate_login, requires_staff_login
+from users.decorators import (
+    requires_candidate_coc,
+    requires_candidate_confirmed,
+    requires_candidate_login,
+    requires_staff_login,
+)
 from users.views import (
     confirm_email_view,
     login_view,
@@ -74,10 +79,14 @@ staff_routes = [
     Route(route="staff/payments/<int:user_id>/reset", view=reset_payment_view, name="staff-reset-payment"),
 ]
 
-candidate_routes = [
-    Route(route="candidate/home", view=candidate_home_view, name="candidate-home"),
+candidate_routes = [Route(route="candidate/home", view=candidate_home_view, name="candidate-home")]
+
+confirmed_candidate_routes = [
     # conde of conduct
-    Route(route="candidate/code-of-conduct", view=candidate_code_of_conduct_view, name="candidate-code-of-conduct"),
+    Route(route="candidate/code-of-conduct", view=candidate_code_of_conduct_view, name="candidate-code-of-conduct")
+]
+
+coc_candidate_routes = [
     # profile
     Route(route="candidate/profile", view=candidate_profile_view, name="candidate-profile"),
     Route(route="candidate/profile/edit", view=candidate_profile_edit, name="candidate-profile-edit"),
@@ -130,6 +139,11 @@ candidate_routes = [
     ),
 ]
 
+
+def my_d(f: Callable[..., Any]) -> Callable[..., Any]:
+    return lambda a: f
+
+
 urlpatterns = [
     path("", lambda req: redirect("account/login")),
     # admin
@@ -140,4 +154,6 @@ urlpatterns = [
     *[path(r.route, requires_staff_login(r.view), name=r.name) for r in staff_routes],
     # candidate
     *[path(r.route, requires_candidate_login(r.view), name=r.name) for r in candidate_routes],
+    *[path(r.route, requires_candidate_confirmed(r.view), name=r.name) for r in confirmed_candidate_routes],
+    *[path(r.route, requires_candidate_coc(r.view), name=r.name) for r in coc_candidate_routes],
 ]

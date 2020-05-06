@@ -74,4 +74,4 @@ def candidate_code_of_conduct_view(request: HttpRequest) -> HttpResponse:
     request.user.code_of_conduct_accepted = True
     request.user.save()
 
-    return HttpResponseRedirect("/candidate/code-of-conduct")
+    return HttpResponseRedirect("/candidate/home")

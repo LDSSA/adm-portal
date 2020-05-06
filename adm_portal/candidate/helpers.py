@@ -13,7 +13,11 @@ def user_has_payment(user: User) -> bool:
 
 
 def build_context(user: User, ctx: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-    base_ctx = {"user_has_payment": user_has_payment(user)}
+    base_ctx = {
+        "user_has_payment": user_has_payment(user),
+        "user_confirmed_email": user.email_confirmed,
+        "user_accepted_coc": user.code_of_conduct_accepted,
+    }
     ctx = ctx or {}
 
     return {**base_ctx, **ctx}

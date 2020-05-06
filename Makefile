@@ -1,3 +1,7 @@
+.PHONY: default format test-all docker-build docker-run docker-stop
+
+default: format test-all
+
 format:
 	@ isort -rc adm_portal
 	@ black adm_portal

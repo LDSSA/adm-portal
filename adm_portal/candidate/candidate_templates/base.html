@@ -13,9 +13,12 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
+                {% if user_confirmed_email %}
                 <li class="nav-item">
                     <a class="nav-link" href="/candidate/code-of-conduct">Code of Conduct</a>
                 </li>
+                {% endif %}
+                {% if user_confirmed_email and user_accepted_coc %}
                 <li class="nav-item">
                     <a class="nav-link" href="/candidate/profile">Profile</a>
                 </li>
@@ -30,6 +33,7 @@
                       <a class="dropdown-item" href="/candidate/slu/slu03">SLU03</a>
                     </div>
                   </li>
+                {% endif %}
                 {% if user_has_payment %}
                     <li class="nav-item">
                         <a class="nav-link" href="/candidate/payment">Payment</a>
