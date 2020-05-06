@@ -65,16 +65,3 @@ $ python manage.py runserver
         └── user_1
             └── file_1
 ```
-
-
-### TODO list
-
-- [ ] Email: Elastic Email Implementation 
-- [ ] Candidate: Candidate Home page missing
-- [ ] Applications: We are still using dummy nbgrader notebooks
-- [ ] Applications: Review Submission Types (min_score, repo, duration, etc..)
-- [ ] Applications: Review "applications_close_at" datetime
-- [ ] Applications edge case - candidate starts test with only one hour until applications close
-- [ ] Applications: Make page to start coding test pretty
-- [ ] Payments: work on due date logic
-- [ ] Payments: Email message is wrong (outcome vs message disconnect)
