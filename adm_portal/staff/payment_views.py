@@ -85,4 +85,4 @@ def _post_staff_payment_view(request: HttpRequest, payment: Payment) -> HttpResp
         payment.save()
         interface.email_client.send_payment_accepted_proof_email(to=payment.user.email, msg=msg)
 
-    return _get_staff_payment_view(request, payment)
+    return _get_staff_payment_view(request, payment, payment.user.id)

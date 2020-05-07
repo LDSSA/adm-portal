@@ -1,4 +1,7 @@
-.PHONY: default format test-all docker-build docker-run docker-stop
+.PHONY: default format test-all dev-run docker-build docker-run docker-stop
+
+CI_SETTINGS=adm_portal.settings.ci
+DEV_SETTINGS=adm_portal.settings.dev
 
 default: format test-all
 
@@ -11,8 +14,11 @@ test-all:
 	@ black adm_portal --check --quiet
 	@ flake8 adm_portal
 	@ mypy adm_portal
-	@ cd adm_portal && python manage.py makemigrations --check --dry-run && cd ..
-	@ cd adm_portal && python manage.py test --exclude-tag=integration && cd ..
+	@ cd adm_portal && DJANGO_SETTINGS_MODULE=$(CI_SETTINGS) python manage.py makemigrations --check --dry-run && cd ..
+	@ cd adm_portal && DJANGO_SETTINGS_MODULE=$(CI_SETTINGS) python manage.py test --exclude-tag=integration && cd ..
+
+dev-run:
+	@ cd adm_portal && DJANGO_SETTINGS_MODULE=$(DEV_SETTINGS) python manage.py runserver
 
 docker-build:
 	@ echo "Building docker image"

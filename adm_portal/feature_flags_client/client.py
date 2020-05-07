@@ -1,38 +1,53 @@
 from abc import ABC, abstractmethod
-from datetime import datetime
+
+# https://configcat.com/#pricing
 
 
 class FeatureFlagsClient(ABC):
+    # signup
     @abstractmethod
-    def applications_are_open(self) -> bool:
+    def signups_are_open(self) -> bool:
+        """controls whether or not new signups are allowed"""
         pass
 
     @abstractmethod
-    def accepting_payment_profs(self) -> bool:
+    def open_signups(self) -> None:
+        """opens signups. new users will be allowed to signup"""
         pass
 
+    @abstractmethod
+    def close_signups(self) -> None:
+        """closes signups. new users will be NOT allowed to signup"""
+        pass
 
-class InCodeFeatureFlagsClient(FeatureFlagsClient):
-    applications_open_date = datetime(day=1, month=1, year=2020)
-    applications_close_date = datetime(day=21, month=6, year=2020)
-
+    # applications
+    @abstractmethod
     def applications_are_open(self) -> bool:
-        return self.applications_open_date < datetime.now() < self.applications_close_date
+        """controls whether or not the candidates can submit exercise solutions"""
+        pass
 
+    @abstractmethod
+    def open_applications(self) -> None:
+        """opens applications. candidates will be able to submit exercise solutions"""
+        pass
+
+    @abstractmethod
+    def close_applications(self) -> None:
+        """closes applications. candidates will NOT be able to submit exercise solutions"""
+        pass
+
+    # payments
+    @abstractmethod
     def accepting_payment_profs(self) -> bool:
-        return True
+        """controls whether or not the candidates can upload new payment profs"""
+        pass
 
+    @abstractmethod
+    def open_payment_profs(self) -> None:
+        """opens payment prof uploads. candidates will be able to upload new payment profs"""
+        pass
 
-class MockFeatureFlagsClient(FeatureFlagsClient):
-    def __init__(self, accepting_test_submissions: bool, accepting_payment_profs: bool) -> None:
-        self._accepting_test_submissions = accepting_test_submissions
-        self._accepting_payment_profs = accepting_payment_profs
-
-    def applications_are_open(self) -> bool:
-        return self._accepting_test_submissions
-
-    def accepting_payment_profs(self) -> bool:
-        return self._accepting_payment_profs
-
-
-# https://configcat.com/#pricing
+    @abstractmethod
+    def close_payment_profs(self) -> None:
+        """closes payment prof uploads. candidates will NOT be able to upload new payment profs"""
+        pass

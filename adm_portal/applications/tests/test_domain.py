@@ -4,6 +4,7 @@ from django.test import TestCase
 
 from applications.domain import ApplicationStatus, Domain, DomainException, SubmissionStatus
 from applications.models import Application, Submission, SubmissionTypes
+from interface import interface
 from users.models import User
 
 
@@ -104,10 +105,14 @@ class TestDomain(TestCase):
         self.assertEqual(Domain.has_positive_score(other_app, SubmissionTypes.slu03), False)
 
     def test_add_submission(self) -> None:
+        interface.feature_flag_client.open_applications()
+
         a = Application.objects.create(user=User.objects.create(email="target@test.com"))
+
         s1 = Submission(score=91)
         s2 = Submission(score=92)
         s3 = Submission(score=93)
+        s4 = Submission(score=99)
 
         a.coding_test_started_at = None
         a.save()
@@ -125,6 +130,11 @@ class TestDomain(TestCase):
 
         with self.assertRaises(DomainException):
             Domain.add_submission(a, SubmissionTypes.coding_test, s3)
+        self.assertEqual(a.submissions.count(), 1)
+
+        interface.feature_flag_client.close_applications()
+        with self.assertRaises(DomainException):
+            Domain.add_submission(a, SubmissionTypes.coding_test, s4)
         self.assertEqual(a.submissions.count(), 1)
 
     def test_get_status(self) -> None:

@@ -1,4 +1,5 @@
 from collections import defaultdict
+from typing import Any, Dict
 
 from django.http import HttpRequest, HttpResponse
 from django.template import loader
@@ -15,7 +16,7 @@ def staff_applications_view(request: HttpRequest) -> HttpResponse:
     filter_by_application_status = request.GET.get("application_status")
 
     applications = []
-    count = defaultdict(int)
+    count: Dict[Any, int] = defaultdict(int)
     for a in query:
         application_status = Domain.get_application_status(a)
         count[application_status.value] += 1

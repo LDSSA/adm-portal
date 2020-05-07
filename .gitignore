@@ -32,3 +32,6 @@ db.sqlite3
 
 # local email client dumps
 .mailbox
+.storage
+.ci-mailbox
+.ci-storage

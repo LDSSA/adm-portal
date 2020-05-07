@@ -3,8 +3,9 @@ from typing import Optional
 from django.conf import settings
 
 from email_client.client import EmailClient, LocalEmailClient
-from feature_flags_client import FeatureFlagsClient, InCodeFeatureFlagsClient
+from feature_flags_client import DBFeatureFlagsClient, FeatureFlagsClient, MockFeatureFlagsClient
 from grader_client import GraderClient, GraderClientFakeScores, GraderClientHttp
+from staff.domain import FlagsGetSet
 from storage_client import AWSS3StorageClient, LocalStorageClient, StorageClient
 
 
@@ -54,8 +55,10 @@ class _Interface:
     @staticmethod
     def new_feature_flag_client(client_id: Optional[str] = None) -> FeatureFlagsClient:
         client_id = client_id or settings.FF_CLIENT
-        if client_id == "CODE":
-            return InCodeFeatureFlagsClient()
+        if client_id == "DB":
+            return DBFeatureFlagsClient(FlagsGetSet())
+        elif client_id == "MOCK":
+            return MockFeatureFlagsClient()
         raise InterfaceException(msg=f"No FeatureFlagsClient implementation for `{client_id}`")
 
     @property
