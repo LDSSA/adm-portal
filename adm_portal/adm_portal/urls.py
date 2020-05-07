@@ -41,6 +41,7 @@ from users.views import (
     login_view,
     logout_view,
     reset_password_view,
+    send_confirmation_email_view,
     signup_view,
     start_reset_password_view,
 )
@@ -65,6 +66,7 @@ account_routs = [
     Route(route="account/confirm-email", view=confirm_email_view, name="accounts-confirm-email"),
     Route(route="account/start-reset-password", view=start_reset_password_view, name="accounts-start-reset-password"),
     Route(route="account/reset-password", view=reset_password_view, name="accounts-reset-password"),
+    Route(route="account/send-confirmation-email", view=send_confirmation_email_view, name="send-confirmation-email"),
 ]
 
 

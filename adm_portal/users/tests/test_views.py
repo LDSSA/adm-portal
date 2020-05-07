@@ -121,7 +121,7 @@ class TestUserLogoutViews(TestCase):
     def test_post_logout_success_302(self) -> None:
         client = Client()
         client.login(email=self.user.email, password="joao_pw")
-        response = Client().get("/account/logout")
+        response = client.get("/account/logout")
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, "/account/login")
 
@@ -202,6 +202,23 @@ class TestResetPasswordViews(TestCase):
         self.assertEqual(response.status_code, 404)
         self.assertFalse(is_logged_as(client, self.user))
         self.assertFalse(self.user.check_password("my_new_password"))
+
+
+class TestSendConfirmationEmailView(TestCase):
+    def setUp(self) -> None:
+        self.user = User.objects.create_user(email="joao@protonmail.com", password="joao_pw")
+
+    def test_get_success_302(self) -> None:
+        client = Client()
+        client.login(email=self.user.email, password="joao_pw")
+        response = client.get("/account/send-confirmation-email")
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, "/candidate/home")
+
+    def test_get_error_302(self) -> None:
+        response = Client().get("/account/logout")
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, "/account/login")
 
 
 def is_logged_as(client: Client, user: User) -> bool:

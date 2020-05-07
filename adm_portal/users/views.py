@@ -1,3 +1,5 @@
+from logging import getLogger
+
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError, transaction
 from django.http import Http404, HttpRequest, HttpResponse, HttpResponseRedirect
@@ -6,7 +8,10 @@ from django.views.decorators.http import require_http_methods
 
 from interface import interface
 
+from .decorators import requires_candidate_login
 from .models import User, UserConfirmEmail, UserResetPassword
+
+logger = getLogger(__name__)
 
 
 def _get_signup_view(request: HttpRequest) -> HttpResponse:
@@ -147,4 +152,34 @@ def reset_password_view(request: HttpRequest) -> HttpResponse:
         user.save()
         reset_password.delete()
     login(request, user)
+    return HttpResponseRedirect("/candidate/home")
+
+
+@requires_candidate_login
+@require_http_methods(["GET"])
+def send_confirmation_email_view(request: HttpRequest) -> HttpResponse:
+    try:
+        email_confirmation_url = (
+            f"{request.get_host()}/account/confirm-email?token={UserConfirmEmail.objects.get(user=request.user).token}"
+        )
+        interface.email_client.send_signup_email(to=request.user.email, email_confirmation_url=email_confirmation_url)
+    except UserConfirmEmail.DoesNotExist:
+        if request.user.email_confirmed:
+            logger.warning(
+                f"user `{request.user.email}` requesting confirmation email "
+                f"but they are already confirmed.. doing nothing"
+            )
+        else:
+            logger.warning(
+                f"user `{request.user.email}` requesting confirmation email "
+                f"but they have no confirmation token.. generating new one"
+            )
+            email_confirmation_url = (
+                f"{request.get_host()}/account/confirm-email?token="
+                f"{UserConfirmEmail.objects.create(user=request.user).token}"
+            )
+            interface.email_client.send_signup_email(
+                to=request.user.email, email_confirmation_url=email_confirmation_url
+            )
+
     return HttpResponseRedirect("/candidate/home")
