@@ -104,37 +104,59 @@ class TestDomain(TestCase):
         self.assertEqual(Domain.has_positive_score(other_app, SubmissionTypes.slu02), False)
         self.assertEqual(Domain.has_positive_score(other_app, SubmissionTypes.slu03), False)
 
-    def test_add_submission(self) -> None:
-        interface.feature_flag_client.open_applications()
-
+    def test_add_submission_error_close_applications(self) -> None:
+        interface.feature_flag_client.close_applications()
         a = Application.objects.create(user=User.objects.create(email="target@test.com"))
 
-        s1 = Submission(score=91)
-        s2 = Submission(score=92)
-        s3 = Submission(score=93)
-        s4 = Submission(score=99)
+        a.coding_test_started_at = datetime.now()
+        a.save()
+        with self.assertRaises(DomainException):
+            Domain.add_submission(a, SubmissionTypes.coding_test, Submission())
+        self.assertEqual(a.submissions.count(), 0)
+
+    def test_add_submission_error_not_started(self) -> None:
+        interface.feature_flag_client.open_applications()
+        a = Application.objects.create(user=User.objects.create(email="target@test.com"))
 
         a.coding_test_started_at = None
         a.save()
         with self.assertRaises(DomainException):
-            Domain.add_submission(a, SubmissionTypes.coding_test, s1)
+            Domain.add_submission(a, SubmissionTypes.coding_test, Submission())
         self.assertEqual(a.submissions.count(), 0)
 
-        a.coding_test_started_at = datetime.now()
-        a.save()
-        Domain.add_submission(a, SubmissionTypes.coding_test, s2)
-        self.assertEqual(a.submissions.count(), 1)
+    def test_add_submission_error_already_ended(self) -> None:
+        interface.feature_flag_client.open_applications()
+        a = Application.objects.create(user=User.objects.create(email="target@test.com"))
 
         a.coding_test_started_at = datetime.now() - timedelta(hours=3)
         a.save()
 
         with self.assertRaises(DomainException):
-            Domain.add_submission(a, SubmissionTypes.coding_test, s3)
-        self.assertEqual(a.submissions.count(), 1)
+            Domain.add_submission(a, SubmissionTypes.coding_test, Submission())
+        self.assertEqual(a.submissions.count(), 0)
 
-        interface.feature_flag_client.close_applications()
+    def test_add_submission_error_max_submissions(self) -> None:
+        interface.feature_flag_client.open_applications()
+        a = Application.objects.create(user=User.objects.create(email="target@test.com"))
+
+        for _ in range(0, 251):
+            Submission.objects.create(application=a, submission_type=SubmissionTypes.coding_test.uname)
+
+        a.coding_test_started_at = datetime.now()
+        a.save()
+
         with self.assertRaises(DomainException):
-            Domain.add_submission(a, SubmissionTypes.coding_test, s4)
+            Domain.add_submission(a, SubmissionTypes.coding_test, Submission())
+        self.assertEqual(a.submissions.count(), 251)
+
+    def test_add_submission(self) -> None:
+        interface.feature_flag_client.open_applications()
+        a = Application.objects.create(user=User.objects.create(email="target@test.com"))
+
+        a.coding_test_started_at = datetime.now()
+        a.save()
+
+        Domain.add_submission(a, SubmissionTypes.coding_test, Submission())
         self.assertEqual(a.submissions.count(), 1)
 
     def test_get_status(self) -> None:

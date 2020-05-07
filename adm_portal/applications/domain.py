@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from enum import Enum
+from logging import getLogger
 from typing import Dict, Optional
 
 from django.db import models
@@ -7,6 +8,8 @@ from django.db import models
 from interface import interface
 
 from .models import Application, Submission, SubmissionType, SubmissionTypes
+
+logger = getLogger(__name__)
 
 
 class Status(Enum):
@@ -21,6 +24,9 @@ SubmissionStatus = Status
 
 
 class Domain:
+    # a candidate is only allowed to get graded MAX_SUBMISSIONS of times per submission type
+    max_submissions = 250
+
     @staticmethod
     def get_application_status(application: Application) -> ApplicationStatus:
         return Domain.get_application_detailed_status(application)["application"]
@@ -90,10 +96,18 @@ class Domain:
     def can_add_submission(application: Application, sub_type: SubmissionType) -> bool:
         if Domain.get_start_date(application, sub_type) is None:
             return False
+
         if datetime.now() > Domain.get_close_date(application, sub_type, apply_buffer=True):
             return False
+
         if not interface.feature_flag_client.applications_are_open():
-            # this is not tested
+            return False
+
+        if (
+            Submission.objects.filter(application=application, submission_type=sub_type.uname).count()
+            >= Domain.max_submissions
+        ):
+            logger.warning(f"user `{application.user.email}` reached max submissions.")
             return False
 
         return True
