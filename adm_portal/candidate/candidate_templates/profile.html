@@ -4,26 +4,48 @@
 
 <div class="container">
     <h2 class="py-5">Profile</h2>
-    <form method="post" novalidate>
-        {% csrf_token %}
-    
-        {% for hidden_field in form.hidden_fields %}
-        {{ hidden_field }}
-        {% endfor %}
-        
-        <fieldset disabled>
-            {% for field in form.visible_fields %}
-            <div class="form-group">
-                {{ field.label_tag }}
-                {{ field }}
-                {% if field.help_text %}
-                <small class="form-text text-muted">{{ field.help_text }}</small>
-                {% endif %}
-            </div>
-            {% endfor %}
-        </fieldset>
-        <button type="submit" class="btn btn-primary">Edit profile</button>
-    </form>
+
+    <div class="row">
+        <div class="col-md-6 order-md-6 mb-6">
+
+            <form method="post">
+                {% csrf_token %}
+
+                <fieldset>
+                    <div class="form-group">
+                        <label for="id_full_name">Full name:</label>
+                        <input type="text" name="full_name" maxlength="100" id="id_full_name" value="{{profile.full_name}}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_profession">Profession:</label>
+                        <input type="text" name="profession" maxlength="50" id="id_profession"  value="{{profile.profession}}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_gender">Gender:</label>
+                        <select name="gender" id="id_gender" required>
+                          <option value="" {% if profile.gender == "" %}selected{% endif %}>---------</option>
+                          <option value="f" {% if profile.gender == "f" %}selected{% endif %}>Female</option>
+                          <option value="m" {% if profile.gender == "m" %}selected{% endif %}>Male</option>
+                          <option value="other" {% if profile.gender == "other" %}selected{% endif %}>Other/Prefer not to say</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_ticket_type">Ticket type:</label>
+                        <select name="ticket_type" id="id_ticket_type"required>
+                          <option value="" {% if profile.ticket_type == "" %}selected{% endif %}>---------</option>
+                          <option value="student" {% if profile.ticket_type == "student" %}selected{% endif %}>Student</option>
+                          <option value="regular" {% if profile.ticket_type == "regular" %}selected{% endif %}>Regular</option>
+                          <option value="company" {% if profile.ticket_type == "company" %}selected{% endif %}>Company</option>
+                        </select>
+                    </div>
+
+                </fieldset>
+                <button type="submit" class="btn btn-primary">{% if profile_exists %}Update profile{% else %}Create Profile{% endif %}</button>
+            </form>
+        </div>
+    </div>
 </div>
 
 {% endblock %}
