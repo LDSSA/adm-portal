@@ -3,32 +3,259 @@
 {% block content %}
 
 <div class="container">
-    <h2 class="py-5">Home</h2>
-    <div class="col col-sm-5 col-sm-5 col-lg-3">
-        user id: {{ user.id }}
-        <br>
-        application id: {{application.id }}
-    </div>
-    <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
-        <div class="carousel-inner">
-            <div class="carousel-item active">
-                <img class="d-block w-100" src="..." alt="First slide">
+    
+    <h1 class="py-5">Hello{% if first_name %} {{ first_name }}{% endif %}!</h2>
+
+    {% if state.admission_status.name == "accepted" %}
+        <div class="alert alert-success" role="alert">
+            <b>Congratulations!</b> This application process is now closed and you've been accepted in batch4 of the LDSSA.
+        </div>
+    {% elif state.admission_status.name == "rejected" %}
+        <div class="alert alert-danger" role="alert">
+            This application process is now closed and sadly you've not been accepted in batch4 of the LDSSA. We hope you try again next year!
+        </div>
+    {% endif %}
+
+    <h4 class="py-2">Your next steps</h2>
+    <div id="accordion">
+        <!-- validate email -->
+        <div class="card">
+          <div class="card-header" id="headingOne">
+            <h5 class="mb-0">
+              <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-controls="collapseOne">
+                {% if state.confirmed_email %}
+                    <i class="fas fa-check-circle"></i>
+                {% else %}
+                    <i class="far fa-circle"></i>
+                {% endif %}
+                Validate email address
+              </button>
+            </h5>
+          </div>
+      
+          <div id="collapseOne" class="collapse {% if action_point == 'confirmed_email' %} show {% endif %}" aria-labelledby="headingOne" data-parent="#accordion">
+            <div class="card-body">
+                We've sent an email requesting you to validate your email address.<p>
+                You'll need to validate your email address before going further in this application process.<p>
+                {% if not state.confirmed_email %}
+                Can't find the email in your inbox? <a href="/account/send-confirmation-email">Resend it</a>.
+                {% endif %}
             </div>
-            <div class="carousel-item">
-                <img class="d-block w-100" src="..." alt="Second slide">
+          </div>
+        </div>
+        
+        <!-- code of conduct -->
+        <div class="card">
+          <div class="card-header" id="headingTwo">
+            <h5 class="mb-0">
+              <button class="btn btn-link" data-toggle="collapse" data-target="#collapseTwo" aria-controls="collapseTwo">
+                {% if state.accepted_coc %}
+                    <i class="fas fa-check-circle"></i>
+                {% else %}
+                    <i class="far fa-circle"></i>
+                {% endif %}
+                Accept Code of Conduct
+              </button>
+            </h5>
+          </div>
+          <div id="collapseTwo" class="collapse {% if action_point == 'accepted_coc' %} show {% endif %}" aria-labelledby="headingTwo" data-parent="#accordion">
+            <div class="card-body">
+              In order to proceed with your application to the Lisbon Data Science Starters Academy, you need to <b>read and agree with our Code of Conduct</b>.<p>
+              Not complying with the Code of Conduct during the Academy will lead to imediate exclusion from the course, without a refund.
+              So we want you to be completely familiar with the Code of Conduct, before putting any more time into this application process.
+              <p>
+              You can find the Code of Conduct <a href="/candidate/code-of-conduct">here</a>.
             </div>
-            <div class="carousel-item">
-                <img class="d-block w-100" src="..." alt="Third slide">
+          </div>
+        </div>
+        
+        <!-- complete profile -->
+        <div class="card">
+          <div class="card-header" id="headingThree">
+            <h5 class="mb-0">
+              <button class="btn btn-link" data-toggle="collapse" data-target="#collapseThree" aria-controls="collapseThree">
+                {% if state.created_profile %}
+                    <i class="fas fa-check-circle"></i>
+                {% else %}
+                    <i class="far fa-circle"></i>
+                {% endif %}
+                Complete your profile
+              </button>
+            </h5>
+          </div>
+          <div id="collapseThree" class="collapse {% if action_point == 'created_profile' %} show {% endif %}" aria-labelledby="headingThree" data-parent="#accordion">
+            <div class="card-body">
+                For this application, we need some information about you, like your name, etc.<p>
+                We promise this is the last bureaucracy step before you can show us your coding skills :)
+                <p>
+                To share this information with us, please fill in your <a href="/candidate/profile">profile</a>.
+            </div>
+          </div>
+        </div>
+
+        <!-- admission test -->
+        <div class="card">
+            <div class="card-header" id="headingFour">
+              <h5 class="mb-0">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseFour" aria-controls="collapseFour">
+                    {% if state.application_status.name == "passed" or state.application_status.name == "failed" %}
+                        <i class="fas fa-check-circle"></i>
+                    {% else %}
+                        <i class="far fa-circle"></i>
+                    {% endif %}
+                    Admission Test
+                  </button>
+              </h5>
+            </div>
+            <div id="collapseFour" class="collapse {% if action_point == 'admission_test' %} show {% endif %}" aria-labelledby="collapseFour" data-parent="#accordion">
+              <div class="card-body">
+                {% if state.application_status.name == "passed" %}
+                    Congratulations! You've passed the admission test.
+                    From the X, we'll let you know if you've been (randomly) selected to participate in this batch of the LDSSA.
+                {% elif state.application_status.name == "failed" %}
+                    <p>We're sorry, but you didn't pass the admission test...</p>
+                    
+                    <p>Remember that all the contents used in the Academy are available in our <a href="https://github.com/LDSSA/batch4-students">GitHub</a>, for free.</p>
+
+                    <p>
+                        If you want to give it another try next year, we hope that you have better luck.
+                        Check our <a href="https://www.lisbondatascience.org/">website</a> for updates about our courses.
+                    </p>
+
+                {% else %}
+                    <p>You have until X to pass all the assignments.</p>
+                    
+                    <p>For the SLUs, you can start them at any time, submit them for grading as many times as you want, and the due date will always be the X.
+                    For the coding test, you can also submit it for grading as many times as you want, but once you start it, <b>you only have Y hours to finish it</b>.</p>
+                    
+                    <p>Make sure that you only start the coding test when you have enough free and uninterrupted time to spend.
+                    Also, we suggest that you complete SLU01 before doing the coding test.
+                    This way, you'll first get familiar with the grading system, and will be better prepared to face the coding test's time constraints.</p>
+                {% endif %}
+
+                <ul class="list-group list-group-flush pt-3">
+                    <li class="list-group-item">
+                        {% if state.slu01_status.name == "passed" %}
+                            <i class="far fa-check-circle"></i>
+                        {% elif state.slu01_status.name == "failed" %}
+                            <i class="far fa-times-circle"></i>
+                        {% else %}
+                            <i class="far fa-circle"></i>
+                        {% endif %}
+                        <a href="/candidate/slu/slu01">SLU01</a>
+                    </li>
+                    <li class="list-group-item">
+                        {% if state.coding_test_status.name == "passed" %}
+                            <i class="far fa-check-circle"></i>
+                        {% elif state.coding_test_status.name == "failed" %}
+                            <i class="far fa-times-circle"></i>
+                        {% else %}
+                            <i class="far fa-circle"></i>
+                        {% endif %}
+                        <a href="/candidate/coding-test">Coding Test</a>
+                    </li>
+                    <li class="list-group-item">
+                        {% if state.slu02_status.name == "passed" %}
+                            <i class="far fa-check-circle"></i>
+                        {% elif state.slu02_status.name == "failed" %}
+                            <i class="far fa-times-circle"></i>
+                        {% else %}
+                            <i class="far fa-circle"></i>
+                        {% endif %}
+                        <a href="/candidate/slu/slu02">SLU02</a>
+                    </li>
+                    <li class="list-group-item">
+                        {% if state.slu03_status.name == "passed" %}
+                            <i class="far fa-check-circle"></i>
+                        {% elif state.slu03_status.name == "failed" %}
+                            <i class="far fa-times-circle"></i>
+                        {% else %}
+                            <i class="far fa-circle"></i>
+                        {% endif %}
+                        <a href="/candidate/slu/slu03">SLU03</a>
+                    </li>
+                </ul>
+              </div>
             </div>
         </div>
-        <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="sr-only">Previous</span>
-        </a>
-        <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="sr-only">Next</span>
-        </a>
+
+        <!-- selection results (only shows if candidate passed admission test) -->
+        {% if state.application_status.name == "passed" %}
+            <div class="card">
+                <div class="card-header" id="headingFive">
+                <h5 class="mb-0">
+                    <button class="btn btn-link" data-toggle="collapse" data-target="#collapseFive" aria-controls="collapseFive">
+                        {% if state.selected_status.name != "awaiting" %}
+                            <i class="fas fa-check-circle"></i>
+                        {% else %}
+                            <i class="far fa-circle"></i>
+                        {% endif %}
+                        Selection Results
+                    </button>
+                </h5>
+                </div>
+                <div id="collapseFive" class="collapse {% if action_point == 'selection_results' %} show {% endif %}" aria-labelledby="collapseFive" data-parent="#accordion">
+                <div class="card-body">
+                    {% if state.selected_status.name == "awaiting" %}
+                        We're in the process of randomly selecting this year's students for the Lisbon Data Science Starters Academy.</p>
+                        We'll send you an email soon to let you if you were selected or not.
+                        This page will also be updated with the results. Stay tuned!
+                    {% elif state.selected_status.name == "selected" %}
+                        You've been selected to participate in this batch of the Lisbon Data Science Starters Academy!
+                    {% else %}
+                        Unfortunately, you have not been selected for this batch of the Lisbon Data Science Starters Academy.
+
+                        <p>Remember that all the contents used in the Academy are available in our <a href="https://github.com/LDSSA/batch4-students">GitHub</a>, for free.</p>
+
+                        <p>
+                            If you want to give it another try next year, we hope that you have better luck.
+                            Check our <a href="https://www.lisbondatascience.org/">website</a> for updates about our courses.
+                        </p>
+                    {% endif %}
+                </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- payment (only shows if candidate has passed the test and was selected) -->
+        {% if state.application_status.name == "passed" and state.selected_status.name == "selected" %}
+            <div class="card">
+                <div class="card-header" id="headingSix">
+                <h5 class="mb-0">
+                    <button class="btn btn-link" data-toggle="collapse" data-target="#collapseSix" aria-controls="collapseSix">
+                        {% if state.payment_status.name == "accepted" or state.payment_status.name == "rejected" %}
+                            <i class="fas fa-check-circle"></i>
+                        {% else %}
+                            <i class="far fa-circle"></i>
+                        {% endif %}
+                        Payment
+                    </button>
+                </h5>
+                </div>
+                <div id="collapseSix" class="collapse {% if action_point == 'selection_results' %} show {% endif %}" aria-labelledby="collapseSix" data-parent="#accordion">
+                <div class="card-body">
+                    {% if state.payment_status.name == "waiting_for_documents" %}
+                        We're waiting for your payment in order to finally accept your application.
+                        See all the details in the <a href="/candidate/payment">payments page</a>.
+                    {% elif state.payment_status.name == "pending_verification" %}
+                        We're analysing your payment proof. We'll get back to you ASAP!
+                        You can follow your payment process in the <a href="/candidate/payment">payments page</a>.
+                    {% elif state.payment_status.name == "accepted" %}
+                        Your payment has been accepted! Welcome to batch4 of the Lisbon Data Science Starters Academy!
+                    {% else %}
+                        Unfortunately, your payment has not been validated, so we've had to give your spot in the Academy to the next person in line.
+
+                        <p>Remember that all the contents used in the Academy are available in our <a href="https://github.com/LDSSA/batch4-students">GitHub</a>, for free.</p>
+
+                        <p>
+                            If you want to give it another try next year, we hope that you have better luck.
+                            Check our <a href="https://www.lisbondatascience.org/">website</a> for updates about our courses.
+                        </p>
+                    {% endif %}
+                </div>
+                </div>
+            </div>
+        {% endif %}
     </div>
 
 </div>

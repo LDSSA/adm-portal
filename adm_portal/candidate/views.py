@@ -2,6 +2,8 @@ from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.views.decorators.http import require_http_methods
 
+from applications.domain import Status
+
 from .domain import Domain
 from .helpers import build_context
 
@@ -9,7 +11,29 @@ from .helpers import build_context
 @require_http_methods(["GET"])
 def candidate_home_view(request: HttpRequest) -> HttpResponse:
     template = loader.get_template("./candidate_templates/home.html")
-    ctx = build_context(request.user, {"user": request.user, "state": Domain.get_candidate_state(request.user)})
+    state = Domain.get_candidate_state(request.user)
+
+    action_point = None
+    if not state.confirmed_email:
+        action_point = "confirmed_email"
+    elif not state.accepted_coc:
+        action_point = "accepted_coc"
+    elif not state.created_profile:
+        action_point = "created_profile"
+    elif state.application_status != Status.passed:
+        action_point = "admission_test"
+    # elif state.selection_status != Status.selected:
+    #     action_point = "selection_results"
+    else:
+        action_point = "payment"
+
+    first_name = None
+    if state.created_profile:
+        first_name = request.user.profile.full_name.split(" ")[0]
+
+    ctx = build_context(
+        request.user, {"user": request.user, "state": state, "action_point": action_point, "first_name": first_name}
+    )
     return HttpResponse(template.render(ctx, request))
 
 

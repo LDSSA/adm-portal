@@ -14,7 +14,7 @@ logger = getLogger(__name__)
 
 class Status(Enum):
     not_started = "Not Started"
-    ongoing = "On Going"
+    ongoing = "Ongoing"
     passed = "Passed"
     failed = "Failed"
 
