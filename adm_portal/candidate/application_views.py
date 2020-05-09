@@ -104,6 +104,7 @@ def submission_view_ctx(application: Application, submission_type: SubmissionTyp
         "submissions": Submission.objects.filter(
             application=application, submission_type=submission_type.uname
         ).order_by("-updated_at"),
+        "coding_test_started_at_ms": int(application.coding_test_started_at.timestamp() * 1000),
     }
 
 

@@ -2,21 +2,28 @@
 
 {% block content %}
 
-<div class="row justify-content-center">
-    <div class="col col-sm-10 col-md-8 col-lg-7">
-        <div class="jumbotron">
-            <h1 class="display-4">Welcome to the coding test!</h1>
-            <p class="lead">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi varius porttitor finibus. Nulla tristique mi a enim posuere, vitae facilisis nunc tincidunt.</p>
-            <hr class="my-4">
-            <p>In varius dapibus efficitur. Vivamus sit amet arcu vitae lectus sollicitudin venenatis.</p>
-            <p class="lead">
-            <form method="post">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-primary">I understood and I'm ready</button>
-            </form>
-            </p>
-        </div>
+<div class="container">
+    <h2 class="py-5">Coding Test</h2>
+
+    <div class="jumbotron py-5">
+        <h2 class="pb-4">Attention!</h4>
+
+        <p>You're about to start the coding test.</p>
+        <p>Once you start it, you'll only have <b>X hours</b> to complete it.
+            You can make as many submissions as you want, and you only need 1 passing submission (at least X out of Y points).
+        </p>
+        <p>We'll only consider your <b>best</b> submission, not your last one.</p>
+        <p>
+            Your time will start once you click the button below, and it can't be stopped.
+            So make sure you're free for the next X hours!
+        </p>
+
+        <form method="post" class="pt-4">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">I understood & I'm ready!</button>
+        </form>
     </div>
+
 </div>
 
 {% endblock %}
