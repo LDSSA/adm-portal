@@ -2,8 +2,6 @@ from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.views.decorators.http import require_http_methods
 
-from applications.models import Application
-
 from .domain import Domain
 from .helpers import build_context
 
@@ -11,7 +9,6 @@ from .helpers import build_context
 @require_http_methods(["GET"])
 def candidate_home_view(request: HttpRequest) -> HttpResponse:
     template = loader.get_template("./candidate_templates/home.html")
-    application, _ = Application.objects.get_or_create(user=request.user)
     ctx = build_context(request.user, {"user": request.user, "state": Domain.get_candidate_state(request.user)})
     return HttpResponse(template.render(ctx, request))
 

@@ -40,18 +40,15 @@ class Domain:
         application_status = None
         if any((s == SubmissionStatus.failed for _, s in sub_type_status.items())):
             application_status = ApplicationStatus.failed
-        if any((s == SubmissionStatus.ongoing for _, s in sub_type_status.items())):
+        elif any((s == SubmissionStatus.ongoing for _, s in sub_type_status.items())):
             application_status = ApplicationStatus.ongoing
-        if all((s == SubmissionStatus.passed for _, s in sub_type_status.items())):
+        elif all((s == SubmissionStatus.passed for _, s in sub_type_status.items())):
             application_status = ApplicationStatus.passed
-        if all((s == SubmissionStatus.not_started for _, s in sub_type_status.items())):
+        elif all((s == SubmissionStatus.not_started for _, s in sub_type_status.items())):
             application_status = ApplicationStatus.not_started
-
-        if application_status is None:
-            raise DomainException(
-                "Domain logic error in the computation of the Application Status."
-                f"sub_type_status: {sub_type_status}"
-            )
+        else:
+            # some tests passed, some not started
+            application_status = ApplicationStatus.ongoing
 
         return {"application": application_status, **sub_type_status}
 
