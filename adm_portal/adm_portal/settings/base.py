@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     "applications",
     "payments",
     "commands",
+    "selected",
 ]
 
 MIDDLEWARE = [
