@@ -85,6 +85,9 @@ class Domain:
             if state["payment_status"] == "accepted":
                 state["admission_status"] = AdmissionStatus.accepted
 
+            if state["payment_status"] == "rejected":
+                state["admission_status"] = AdmissionStatus.rejected
+
         except Payment.DoesNotExist:
             pass
 
