@@ -2,14 +2,16 @@ import logging
 import os
 import random
 from datetime import datetime, timedelta
-from typing import Dict, List
+from typing import Callable, Dict, List, Optional
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from applications.models import Application, Submission, SubmissionTypes
+from applications.models import Application, Submission, SubmissionType, SubmissionTypes
 from payments.domain import Domain as PaymentsDomain
-from payments.models import Document
+from payments.models import Document, Payment
 from profiles.models import Profile, gender_choices, ticket_types_choices
+from storage_client import LocalStorageClient
 from users.models import User
 
 logger = logging.getLogger(__name__)
@@ -19,13 +21,117 @@ formatter = logging.Formatter("[%(asctime)s] %(message)s", "%Y-%m-%d %H:%M:%S")
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
+_assets = os.path.join(".", "commands", "assets")
+ASSET_SUBMISSION_FEEDBACK_HTML = os.path.join(_assets, "submission-feedback.html")
+ASSET_PAYMENT_PROOF_PNG = os.path.join(_assets, "payment-proof.png")
+ASSET_STUDENT_ID_PNG = os.path.join(_assets, "student-id.png")
+
+
+storage_cli = LocalStorageClient(settings.STORAGE_CLIENT_NAMESPACE, run_server=False)
+
+UserOption = Callable[[User], None]
+
+
+def with_email_confirmation() -> UserOption:
+    def f(u: User) -> None:
+        u.email_confirmed = True
+
+    return f
+
+
+def with_accepted_coc() -> UserOption:
+    def f(u: User) -> None:
+        with_email_confirmation()(u)
+        u.code_of_conduct_accepted = True
+
+    return f
+
+
+def with_profile(
+    *,
+    gender: str = "other",
+    ticket_type: str = "regular",
+    full_name: Optional[str] = None,
+    profession: Optional[str] = None,
+) -> UserOption:
+    def f(u: User) -> None:
+        with_accepted_coc()(u)
+        Profile.objects.create(
+            user=u,
+            full_name=full_name or f"default - {gender} - {ticket_type}",
+            profession=profession or ticket_type.title(),
+            gender=gender,
+            ticket_type=ticket_type,
+        )
+
+    return f
+
+
+def with_application(*, coding_test_started_at: Optional[datetime] = None) -> UserOption:
+    def f(u: User) -> None:
+        if not Profile.objects.filter(user=u).exists():
+            with_profile()(u)
+        Application.objects.create(user=u, coding_test_started_at=coding_test_started_at)
+
+    return f
+
+
+def with_submission(
+    submission_type: SubmissionType, score: int, feedback_location: str = ASSET_SUBMISSION_FEEDBACK_HTML
+) -> UserOption:
+    def f(u: User) -> None:
+        if not Application.objects.filter(user=u).exists():
+            with_application()(u)
+        Submission.objects.create(
+            application=Application.objects.get(user=u),
+            submission_type=submission_type.uname,
+            score=score,
+            feedback_location=feedback_location,
+        )
+        storage_cli.copy(feedback_location)
+
+    return f
+
+
+def with_payment() -> UserOption:
+    def f(u: User) -> None:
+        if not Profile.objects.filter(user=u).exists():
+            with_profile()(u)
+        if not Application.objects.filter(user=u).exists():
+            with_application(coding_test_started_at=datetime.now())(u)
+        with_submission(SubmissionTypes.coding_test, 100)(u)
+        with_submission(SubmissionTypes.slu01, 100)(u)
+        with_submission(SubmissionTypes.slu02, 100)(u)
+        with_submission(SubmissionTypes.slu03, 100)(u)
+
+        PaymentsDomain.create_payment(u.profile)
+
+    return f
+
+
+def with_document(doc_type: str = "payment_proof", file_location: str = ASSET_PAYMENT_PROOF_PNG) -> UserOption:
+    def f(u: User) -> None:
+        if not Payment.objects.filter(user=u).exists():
+            with_payment()(u)
+
+        PaymentsDomain.add_document(
+            Payment.objects.get(user=u), Document(file_location=file_location, doc_type=doc_type)
+        )
+        storage_cli.copy(file_location)
+
+    return f
+
+
+def new_user(uid: str, *opts: Callable[[User], None]) -> User:
+    u = User.objects.create_user(email=f"{uid}@adm.com", password=uid)
+    for opt in opts:
+        opt(u)
+    u.save()
+    logger.info(f"creating user: email={uid}@adm.com; pw={uid}")
+
 
 class Command(BaseCommand):
     help = "Generates Fixtures for tests"
-
-    def _user(self, uid: str) -> User:
-        logger.info(f"creating user: email={uid}@adm.com; pw={uid}")
-        return User.objects.create_user(email=f"{uid}@adm.com", password=uid)
 
     @staticmethod
     def summary() -> Dict[str, int]:
@@ -42,94 +148,62 @@ class Command(BaseCommand):
         User.objects.create_staff_user(email="staff@adm.com", password="staff")
 
         # user with nothing
-        self._user("nothing")
+        new_user("nothing")
+
+        # user with confirmed email
+        new_user("with_confirmed_email", with_email_confirmation())
+
+        # user with confirmed email
+        new_user("with_accepted_coc", with_accepted_coc())
 
         # user with profiles
-        Profile.objects.create(
-            user=self._user("profile_student"),
-            full_name="User With Student Profile",
-            profession="Student",
-            gender="f",
-            ticket_type="student",
+        new_user(
+            "profile_student",
+            with_profile(
+                full_name="User With Student Profile", profession="Student", gender="f", ticket_type="student"
+            ),
         )
-        Profile.objects.create(
-            user=self._user("profile_regular"),
-            full_name="User With Regular Profile",
-            profession="Worker",
-            gender="m",
-            ticket_type="regular",
+        new_user(
+            "profile_regular",
+            with_profile(
+                full_name="User With Regular Profile", profession="Worker", gender="m", ticket_type="regular"
+            ),
         )
-        Profile.objects.create(
-            user=self._user("profile_company"),
-            full_name="User With Company Profile",
-            profession="Spotify",
-            gender="other",
-            ticket_type="company",
+        new_user(
+            "profile_company",
+            with_profile(
+                full_name="User With Company Profile", profession="Spotify", gender="other", ticket_type="company"
+            ),
         )
 
         # users with applications
-        a0 = Application.objects.create(user=self._user("application_success"), coding_test_started_at=datetime.now())
-        Submission.objects.create(
-            application=a0,
-            submission_type=SubmissionTypes.coding_test.uname,
-            score=85,
-            feedback_location=_feedback_location,
+        new_user("with_application_not_started", with_application())
+        new_user("with_submissions_ongoing", with_application(coding_test_started_at=datetime.now()))
+        new_user(
+            "with_submissions_passed",
+            with_application(coding_test_started_at=datetime.now()),
+            with_submission(SubmissionTypes.coding_test, 85),
+            with_submission(SubmissionTypes.slu01, 91),
+            with_submission(SubmissionTypes.slu02, 82),
+            with_submission(SubmissionTypes.slu03, 76),
         )
-        Submission.objects.create(
-            application=a0, submission_type=SubmissionTypes.slu01.uname, score=91, feedback_location=_feedback_location
+        new_user(
+            "with_submissions_failed", with_application(coding_test_started_at=datetime.now() - timedelta(hours=4))
         )
-        Submission.objects.create(
-            application=a0, submission_type=SubmissionTypes.slu02.uname, score=82, feedback_location=_feedback_location
-        )
-        Submission.objects.create(
-            application=a0, submission_type=SubmissionTypes.slu03.uname, score=75, feedback_location=_feedback_location
-        )
-
-        a1 = Application.objects.create(
-            user=self._user("application_failed"), coding_test_started_at=datetime.now() - timedelta(hours=4)
-        )
-        Submission.objects.create(
-            application=a1,
-            submission_type=SubmissionTypes.coding_test.uname,
-            score=40,
-            feedback_location=_feedback_location,
-        )
-
-        Application.objects.create(user=self._user("application_coding_not_started"))
 
         # users with payments
-        prof0 = Profile.objects.create(
-            user=self._user("user_with_docs"), full_name="User With Pay docs", ticket_type="regular", gender="f"
+        new_user("with_regular_payment", with_profile(ticket_type="regular"), with_payment())
+        new_user(
+            "with_regular_payment_with_docs", with_profile(ticket_type="regular"), with_payment(), with_document()
         )
-        pay0 = PaymentsDomain.create_payment(prof0)
-        doc_proof0 = Document(file_location=_payment_proof_location, doc_type="payment_proof")
-        PaymentsDomain.add_document(pay0, doc_proof0)
-
-        prof1 = Profile.objects.create(
-            user=self._user("user_with_docs_student"),
-            full_name="User With Pay docs",
-            ticket_type="student",
-            gender="other",
+        new_user(
+            "with_student_payment_with_docs",
+            with_profile(ticket_type="student"),
+            with_payment(),
+            with_document(),
+            with_document(doc_type="student_id", file_location=ASSET_STUDENT_ID_PNG),
         )
-        pay1 = PaymentsDomain.create_payment(prof1)
-        PaymentsDomain.add_document(pay1, Document(file_location=_payment_proof_location, doc_type="payment_proof"))
-        PaymentsDomain.add_document(pay1, Document(file_location=_student_id_proof_location, doc_type="student_id"))
-
-        prof2 = Profile.objects.create(
-            user=self._user("user_without_docs"), full_name="User Without Pay docs", ticket_type="company", gender="m"
-        )
-        PaymentsDomain.create_payment(prof2)
-
-        prof3 = Profile.objects.create(
-            user=self._user("user_with_updated_profile"),
-            full_name="User With New Profile",
-            ticket_type="company",
-            gender="m",
-        )
-        pay3 = PaymentsDomain.create_payment(prof3)
-        PaymentsDomain.add_document(pay3, Document(file_location=_payment_proof_location, doc_type="payment_proof"))
-        prof3.ticket_type = "student"
-        prof3.save()
+        new_user("with_company_payment", with_profile(ticket_type="company"), with_payment(), with_document())
 
         # randoms (will be bulk created)
         users: List[User] = []
@@ -179,9 +253,7 @@ class Command(BaseCommand):
                     ]
                 )
                 score = random.randrange(60, 100, 2)
-                s = Submission(
-                    application=sub_a, submission_type=s_type, score=score, feedback_location=_feedback_location
-                )
+                s = Submission(application=sub_a, submission_type=s_type, score=score, feedback_location="404")
                 submissions.append(s)
 
         Submission.objects.bulk_create(submissions)
@@ -190,7 +262,3 @@ class Command(BaseCommand):
 
 
 _random_n = 500
-_namespace = "fixtures/"
-_feedback_location = os.path.join(_namespace, "submission_feedback.html")
-_payment_proof_location = os.path.join(_namespace, "payment_proof.jpg")
-_student_id_proof_location = os.path.join(_namespace, "student_id_proof.png")

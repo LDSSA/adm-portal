@@ -1,4 +1,4 @@
-.PHONY: default format test-all dev-run docker-build docker-run docker-stop
+.PHONY: default format test-all dev-fixtures dev-run docker-build docker-run docker-stop
 
 CI_SETTINGS=adm_portal.settings.ci
 DEV_SETTINGS=adm_portal.settings.dev
@@ -16,6 +16,11 @@ test-all:
 	@ mypy adm_portal
 	@ cd adm_portal && DJANGO_SETTINGS_MODULE=$(CI_SETTINGS) python manage.py makemigrations --check --dry-run && cd ..
 	@ cd adm_portal && DJANGO_SETTINGS_MODULE=$(CI_SETTINGS) python manage.py test --exclude-tag=integration && cd ..
+
+dev-fixtures:
+	@ cd adm_portal && rm -f adm_portal/db.sqlite3
+	@ cd adm_portal && DJANGO_SETTINGS_MODULE=$(DEV_SETTINGS) python manage.py migrate
+	@ cd adm_portal && DJANGO_SETTINGS_MODULE=$(DEV_SETTINGS) python manage.py generate_fixtures
 
 dev-run:
 	@ cd adm_portal && DJANGO_SETTINGS_MODULE=$(DEV_SETTINGS) python manage.py runserver

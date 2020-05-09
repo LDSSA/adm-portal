@@ -1,1 +1,3 @@
-from .client import AWSS3StorageClient, LocalStorageClient, StorageClient, StorageClientException
+from .aws_s3 import AWSS3StorageClient
+from .client import StorageClient, StorageClientException
+from .local import LocalStorageClient
