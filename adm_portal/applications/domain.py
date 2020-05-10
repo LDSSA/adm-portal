@@ -23,9 +23,16 @@ ApplicationStatus = Status
 SubmissionStatus = Status
 
 
+class DomainException(Exception):
+    pass
+
+
 class Domain:
     # a candidate is only allowed to get graded MAX_SUBMISSIONS of times per submission type
     max_submissions = 250
+
+    # buffer to upload submissions
+    submission_timedelta_buffer = timedelta(minutes=2)
 
     @staticmethod
     def get_application_status(application: Application) -> ApplicationStatus:
@@ -56,27 +63,45 @@ class Domain:
     def get_sub_type_status(application: Application, sub_type: SubmissionType) -> SubmissionStatus:
         if Domain.has_positive_score(application, sub_type):
             return SubmissionStatus.passed
-        if Domain.get_start_date(application, sub_type) is None:
+
+        dt_now = datetime.now()
+        start_date = Domain.get_start_date(application, sub_type)
+        end_date = Domain.get_end_date(application, sub_type)
+
+        if start_date is None or start_date > dt_now:
             return SubmissionStatus.not_started
-        if datetime.now() < Domain.get_close_date(application, sub_type):
-            return SubmissionStatus.ongoing
-        return SubmissionStatus.failed
+
+        if end_date < dt_now:
+            return SubmissionStatus.failed
+
+        return SubmissionStatus.ongoing
 
     @staticmethod
     def get_start_date(application: Application, sub_type: SubmissionType) -> Optional[datetime]:
-        start_date = getattr(application, f"{sub_type.uname}_started_at", None)
+        if sub_type == SubmissionTypes.coding_test:
+            start_date = getattr(application, f"{sub_type.uname}_started_at", None)
+        else:
+            start_date = interface.feature_flag_client.get_applications_opening_date()
+
         return start_date
 
     @staticmethod
-    def get_close_date(application: Application, sub_type: SubmissionType, *, apply_buffer: bool = False) -> datetime:
+    def get_end_date(application: Application, sub_type: SubmissionType, *, apply_buffer: bool = False) -> datetime:
         start_date = Domain.get_start_date(application, sub_type)
-        if start_date is None:
-            raise DomainException("Cant compute `close_date` with null `start_date`")
+
+        if sub_type == SubmissionTypes.coding_test:
+            if start_date is not None:
+                close_date = start_date + timedelta(minutes=interface.feature_flag_client.get_coding_test_duration())
+            else:
+                close_date = interface.feature_flag_client.get_applications_closing_date()
+        else:
+            close_date = interface.feature_flag_client.get_applications_closing_date()
+
         if apply_buffer:
             # buffer is applied to account for possible latency (lambda grader func may take a while)
-            return start_date + sub_type.duration + Domain.submission_timedelta_buffer
+            return close_date + Domain.submission_timedelta_buffer
         else:
-            return start_date + sub_type.duration
+            return close_date
 
     @staticmethod
     def get_best_score(application: Application, sub_type: SubmissionType) -> Optional[int]:
@@ -91,13 +116,17 @@ class Domain:
 
     @staticmethod
     def can_add_submission(application: Application, sub_type: SubmissionType) -> bool:
-        if Domain.get_start_date(application, sub_type) is None:
+        dt_now = datetime.now()
+
+        start_dt = Domain.get_start_date(application, sub_type)
+
+        if start_dt is None:
             return False
 
-        if datetime.now() > Domain.get_close_date(application, sub_type, apply_buffer=True):
+        if dt_now < start_dt:
             return False
 
-        if not interface.feature_flag_client.applications_are_open():
+        if dt_now > Domain.get_end_date(application, sub_type, apply_buffer=True):
             return False
 
         if (
@@ -117,10 +146,3 @@ class Domain:
         sub.application = application
         sub.submission_type = sub_type.uname
         sub.save()
-
-    # constants
-    submission_timedelta_buffer = timedelta(minutes=2)
-
-
-class DomainException(Exception):
-    pass

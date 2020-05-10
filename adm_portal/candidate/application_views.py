@@ -19,8 +19,12 @@ from .helpers import build_context
 def candidate_before_coding_test_view(request: HttpRequest) -> HttpResponse:
     if request.method == "GET":
         template = loader.get_template("./candidate_templates/before_coding_test.html")
-        context = build_context(request.user)
-        return HttpResponse(template.render(context, request))
+        ctx = {
+            **build_context(request.user),
+            "coding_test_duration_hours": interface.feature_flag_client.get_coding_test_duration() / 60,
+            "coding_test_subtype": SubmissionTypes.coding_test,
+        }
+        return HttpResponse(template.render(ctx, request))
 
     application = Application.objects.get(user=request.user)
     if application.coding_test_started_at is None:
@@ -37,7 +41,11 @@ def candidate_coding_test_view(request: HttpRequest) -> HttpResponse:
         return HttpResponseRedirect("/candidate/before-coding-test")
 
     submission_type_ = SubmissionTypes.coding_test
-    ctx = build_context(request.user, submission_view_ctx(application, submission_type_))
+    sub_view_ctx = {
+        **submission_view_ctx(application, submission_type_),
+        "coding_test_duration_hours": interface.feature_flag_client.get_coding_test_duration() / 60,
+    }
+    ctx = build_context(request.user, sub_view_ctx)
     template = loader.get_template("./candidate_templates/coding_test.html")
     return HttpResponse(template.render(ctx, request))
 
@@ -97,7 +105,7 @@ def submission_view_ctx(application: Application, submission_type: SubmissionTyp
     return {
         "submission_type": submission_type,
         "status": Domain.get_sub_type_status(application, submission_type).name,
-        "submissions_closes_at": Domain.get_close_date(application, submission_type),
+        "submissions_closes_at": Domain.get_end_date(application, submission_type),
         "best_score": Domain.get_best_score(application, submission_type),
         "download_enabled": Domain.can_add_submission(application, submission_type),
         "upload_enabled": Domain.can_add_submission(application, submission_type),

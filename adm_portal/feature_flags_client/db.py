@@ -1,6 +1,10 @@
 from abc import ABC, abstractmethod
+from datetime import datetime
+from logging import getLogger
 
 from .client import FeatureFlagsClient
+
+logger = getLogger(__name__)
 
 
 class GetSetFlagsInterface(ABC):
@@ -14,9 +18,6 @@ class GetSetFlagsInterface(ABC):
 
 
 class DBFeatureFlagsClient(FeatureFlagsClient):
-    def __init__(self, flags: GetSetFlagsInterface) -> None:
-        self._flags = flags
-
     # values
     true = "true"
     false = "false"
@@ -24,6 +25,34 @@ class DBFeatureFlagsClient(FeatureFlagsClient):
     # signup
     signups_are_open_key = "signups_are_open"
 
+    # applications
+    applications_opening_date = "applications_opening_date"
+    applications_closing_date = "applications_closing_date"
+    datetime_fmt = "%Y/%m/%d %H:%M:%S"
+    default_opening_date_s = default_closing_date_s = datetime(year=2021, month=1, day=1).strftime(datetime_fmt)
+    coding_test_duration = "coding_test_duration"
+    default_coding_test_duration_s = str(60 * 2)
+
+    # payments
+    accepting_payment_profs_key = "accepting_payment_profs"
+
+    def __init__(self, flags: GetSetFlagsInterface) -> None:
+        self._flags = flags
+
+        # set defaults
+        if self._flags.get(key=self.applications_opening_date) == "":
+            logger.info(f"setting {self.applications_opening_date} default")
+            self._flags.set(key=self.applications_opening_date, value=self.default_opening_date_s)
+
+        if self._flags.get(key=self.applications_closing_date) == "":
+            logger.info(f"setting {self.applications_closing_date} default")
+            self._flags.set(key=self.applications_closing_date, value=self.default_closing_date_s)
+
+        if self._flags.get(key=self.coding_test_duration) == "":
+            logger.info(f"setting {self.coding_test_duration} default")
+            self._flags.set(key=self.coding_test_duration, value=self.default_coding_test_duration_s)
+
+    # signup
     def signups_are_open(self) -> bool:
         return self._flags.get(key=self.signups_are_open_key) == self.true
 
@@ -34,20 +63,37 @@ class DBFeatureFlagsClient(FeatureFlagsClient):
         self._flags.set(key=self.signups_are_open_key, value=self.false)
 
     # applications
-    applications_are_open_key = "applications_are_open"
+    def get_applications_opening_date(self) -> datetime:
+        s = self._flags.get(key=self.applications_opening_date)
+        return datetime.strptime(s, self.datetime_fmt)
 
-    def applications_are_open(self) -> bool:
-        return self._flags.get(key=self.applications_are_open_key) == self.true
+    def set_applications_opening_date(self, d: datetime) -> bool:
+        if d <= self.get_applications_closing_date():
+            s = d.strftime(self.datetime_fmt)
+            self._flags.set(key=self.applications_opening_date, value=s)
+            return True
+        return False
 
-    def open_applications(self) -> None:
-        self._flags.set(key=self.applications_are_open_key, value=self.true)
+    def get_applications_closing_date(self) -> datetime:
+        s = self._flags.get(key=self.applications_closing_date)
+        return datetime.strptime(s, self.datetime_fmt)
 
-    def close_applications(self) -> None:
-        self._flags.set(key=self.applications_are_open_key, value=self.false)
+    def set_applications_closing_date(self, d: datetime) -> bool:
+        if d >= self.get_applications_opening_date():
+            s = d.strftime(self.datetime_fmt)
+            self._flags.set(key=self.applications_closing_date, value=s)
+            return True
+        return False
+
+    def get_coding_test_duration(self) -> int:
+        s = self._flags.get(key=self.coding_test_duration)
+        return int(s)
+
+    def set_coding_test_duration(self, d: int) -> None:
+        s = str(d)
+        self._flags.set(key=self.coding_test_duration, value=s)
 
     # payments
-    accepting_payment_profs_key = "accepting_payment_profs"
-
     def accepting_payment_profs(self) -> bool:
         return self._flags.get(key=self.accepting_payment_profs_key) == self.true
 

@@ -143,7 +143,10 @@ class Command(BaseCommand):
         }
 
     def handle(self, *args, **options) -> None:
-        # staff user
+        # admin / staff user
+        logger.info(f"creating admin user: user=admin; pw=admin")
+        User.objects.create_admin_user(email="admin@adm.com", password="admin")
+
         logger.info(f"creating staff user: user=staff; pw=staff")
         User.objects.create_staff_user(email="staff@adm.com", password="staff")
 

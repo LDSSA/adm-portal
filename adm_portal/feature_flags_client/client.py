@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from datetime import datetime
 
 # https://configcat.com/#pricing
 
@@ -22,18 +23,29 @@ class FeatureFlagsClient(ABC):
 
     # applications
     @abstractmethod
-    def applications_are_open(self) -> bool:
-        """controls whether or not the candidates can submit exercise solutions"""
+    def get_applications_opening_date(self) -> datetime:
         pass
 
     @abstractmethod
-    def open_applications(self) -> None:
-        """opens applications. candidates will be able to submit exercise solutions"""
+    def set_applications_opening_date(self, d: datetime) -> bool:
         pass
 
     @abstractmethod
-    def close_applications(self) -> None:
-        """closes applications. candidates will NOT be able to submit exercise solutions"""
+    def get_applications_closing_date(self) -> datetime:
+        pass
+
+    @abstractmethod
+    def set_applications_closing_date(self, d: datetime) -> bool:
+        pass
+
+    @abstractmethod
+    def get_coding_test_duration(self) -> int:
+        """coding test duration in minutes"""
+        pass
+
+    @abstractmethod
+    def set_coding_test_duration(self, d: int) -> None:
+        """coding test duration in minutes"""
         pass
 
     # payments

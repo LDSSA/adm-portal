@@ -9,12 +9,14 @@ class UserManager(BaseUserManager):
     def create_user(self, **kwargs: Any):
         email_ = kwargs["email"]
         password = kwargs["password"]
+        is_admin = kwargs.get("is_admin", False)
         is_staff = kwargs.get("is_staff", False)
         email_confirmed = kwargs.get("email_confirmed", False)
         code_of_conduct_accepted = kwargs.get("code_of_conduct_accepted", False)
         email = self.normalize_email(email_)
         user = self.model(
             email=email,
+            is_admin=is_admin,
             is_staff=is_staff,
             email_confirmed=email_confirmed,
             code_of_conduct_accepted=code_of_conduct_accepted,
@@ -27,6 +29,11 @@ class UserManager(BaseUserManager):
 
     def create_staff_user(self, **kwargs: str):
         return self.create_user(is_staff=True, email_confirmed=True, code_of_conduct_accepted=True, **kwargs)
+
+    def create_admin_user(self, **kwargs: str):
+        return self.create_user(
+            is_admin=True, is_staff=True, email_confirmed=True, code_of_conduct_accepted=True, **kwargs
+        )
 
 
 def get_default_uuid():
@@ -46,7 +53,9 @@ class User(AbstractBaseUser):
 
     email = models.EmailField(blank=False, null=False, unique=True)
 
+    is_admin = models.BooleanField(default=False, null=False)
     is_staff = models.BooleanField(default=False, null=False)
+
     email_confirmed = models.BooleanField(default=False, null=False)
     code_of_conduct_accepted = models.BooleanField(default=False, null=False)
 

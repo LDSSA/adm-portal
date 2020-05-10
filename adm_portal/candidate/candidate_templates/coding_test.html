@@ -29,7 +29,7 @@
             <div class="card-deck">
                 <div class="card">
                     <div class="card-body d-flex flex-column">
-                        <p class="card-text">Once you download the coding test for the <strong>first time</strong> you have <strong>two hours</strong> to submit solutions!</p>
+                        <p class="card-text">Use the button below do download the coding test</p>
                         <a href="/candidate/coding-test/download" class="btn btn-primary {% if not download_enabled %} disabled {% endif %} mt-auto align-self-start" role="button" aria-pressed="true" target="_blank">Download Test</a>
                     </div>
                 </div>
@@ -60,7 +60,7 @@
 </div>
 
 <script>
-    var testDurationHours = 2; // TODO: Update this!!!
+    var testDurationHours = {{ coding_test_duration_hours }}; // TODO: Update this!!!
     var testStartedAt = {{ coding_test_started_at_ms }};
     var yourDateToGo = new Date(testStartedAt + testDurationHours * 60 * 60 * 1000);
     var timing = setInterval(
