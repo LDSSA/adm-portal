@@ -8,7 +8,7 @@ from users.models import User
 
 class TestDomain(TestCase):
     def setUp(self) -> None:
-        pass
+        self.staff_user = User.objects.create_staff_user(email="staff@adm.com", password="secret")
 
     def test_create_payment_regular(self) -> None:
         user = User.objects.create_user(email="user@adm.com", password="strong")
@@ -55,10 +55,11 @@ class TestDomain(TestCase):
         profile.ticket_type = "student"
         profile.save()
 
-        payment = Domain.reset_payment(payment, profile)
+        reset_payment = Domain.reset_payment(payment, self.staff_user)
 
-        self.assertEqual(Document.objects.count(), 0)
+        self.assertEqual(Document.objects.count(), 1)
         self.assertEqual(Payment.objects.count(), 1)
+        self.assertEqual(reset_payment.id, payment.id)
         self.assertEqual(payment.ticket_type, "student")
         self.assertEqual(payment.value, 300)
         self.assertEqual(payment.currency, "eur")
@@ -67,7 +68,7 @@ class TestDomain(TestCase):
         payment.status = "pending_verification"
         payment.save()
 
-        payment = Domain.reset_payment(payment, profile)
+        payment = Domain.reset_payment(payment, self.staff_user)
 
         self.assertEqual(Payment.objects.count(), 1)
         self.assertEqual(payment.ticket_type, "student")
@@ -79,7 +80,7 @@ class TestDomain(TestCase):
         payment.save()
 
         with self.assertRaises(DomainException):
-            Domain.reset_payment(payment, profile)
+            Domain.reset_payment(payment, self.staff_user)
 
         self.assertEqual(Payment.objects.count(), 1)
         self.assertEqual(payment.ticket_type, "student")
@@ -91,7 +92,7 @@ class TestDomain(TestCase):
         payment.save()
 
         with self.assertRaises(DomainException):
-            Domain.reset_payment(payment, profile)
+            Domain.reset_payment(payment, self.staff_user)
 
         self.assertEqual(Payment.objects.count(), 1)
         self.assertEqual(payment.ticket_type, "student")

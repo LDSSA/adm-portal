@@ -15,6 +15,7 @@
             <span class="badge badge-warning">{{ payment.get_status_display }}</span>
         {% endif %}
     </h2>
+
     <div class="row justify-content-md-center">
         <div class="col col-sm-9 col-md-8 col-lg-5">
             {% for d in docs %}
@@ -23,6 +24,7 @@
             {% endfor %}
         </div>
     </div>
+
     {% if can_reset %}
     <div class="row justify-content-md-center">
         <form action="/staff/payments/{{candidate_id}}/reset" enctype="multipart/form-data" method="POST" class="m-0 mt-auto">
@@ -31,12 +33,25 @@
         </form>
     </div>
     {% endif %}
+
+    <div class="row justify-content-md-center">
+        <div class="col text-center">
+            <form method="post">
+                {% csrf_token %}
+                    <label for="noteMsg">Informative Note (no side effects)</label>
+                    <textarea class="form-control" id="noteMsg" name="msg" rows="3" required></textarea>
+                    <input type="hidden" id="hiddenNote" name="action" value="note">
+                <button type="submit" class="btn btn-secondary">Add Note</button>
+            </form>
+        </div>
+    </div>
+
     <div class="row justify-content-md-center">
         <div class="col text-center">
             <form method="post">
                 {% csrf_token %}
                 <label for="rejectMsg">Explain why the the payment proof was refused*</label>
-                <textarea class="form-control" id="rejectMsg" rows="3" required></textarea>
+                <textarea class="form-control" id="rejectMsg" name="msg" rows="3" required></textarea>
                 <input type="hidden" id="hiddenReject" name="action" value="reject">
                 <button type="submit" class="btn btn-danger">Refuse payment proof</button>
             </form>
@@ -45,7 +60,7 @@
             <form method="post">
                 {% csrf_token %}
                 <label for="needAddMsg">Explain what additional proof is necessary*</label>
-                <textarea class="form-control" id="needAddMsg" rows="3" required></textarea>
+                <textarea class="form-control" id="needAddMsg" name="msg" rows="3" required></textarea>
                 <input type="hidden" id="hiddenNeedAdd" name="action" value="ask_additional">
                 <button type="submit" class="btn btn-warning">Request additional proof</button>
             </form>
@@ -54,11 +69,32 @@
             <form method="post">
                 {% csrf_token %}
                 <label for="acceptMsg">Welcome the candidate</label>
-                <textarea class="form-control" id="acceptMsg" rows="3"></textarea>
+                <textarea class="form-control" id="acceptMsg" name="msg" rows="3"></textarea>
                 <input type="hidden" id="hiddenAccept" name="action" value="accept">
                 <button type="submit" class="btn btn-success">Accept existing proof</button>
             </form>
         </div>
     </div>
+
+
+    <div class="row">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">message</th>
+                <th scope="col">created_at</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+            <tr>
+                <td> <pre>{{ log.message }}</pre> </td>
+                <td> {{ log.created_at }} </td>
+            </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
 </div>
 {% endblock %}

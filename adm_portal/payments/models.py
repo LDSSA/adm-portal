@@ -26,6 +26,15 @@ class Document(models.Model):
         return os.path.basename(self.file_location)
 
 
+class PaymentLogs(models.Model):
+    payment = models.ForeignKey("payments.Payment", on_delete=models.CASCADE, related_name="logs", editable=False)
+
+    event = models.CharField(null=False, max_length=20, editable=False)
+    message = models.TextField(null=False, editable=False)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
 class Payment(models.Model):
     user = models.OneToOneField("users.User", on_delete=models.CASCADE)
 

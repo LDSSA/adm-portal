@@ -5,7 +5,7 @@ from django.template import loader
 from django.views.decorators.http import require_http_methods
 
 from interface import interface
-from payments.domain import Domain, DomainException
+from payments.domain import Domain, DomainException, DomainQueries
 from payments.models import Payment
 from users.models import User
 
@@ -27,9 +27,9 @@ def staff_payment_view(request: HttpRequest, user_id: int) -> HttpResponse:
 
 @require_http_methods(["POST"])
 def reset_payment_view(request: HttpRequest, user_id: int) -> HttpResponse:
-    candidate, payment = _get_user_payment(user_id)
+    _, payment = _get_user_payment(user_id)
     try:
-        Domain.reset_payment(payment, candidate.profile)
+        Domain.reset_payment(payment, request.user)
     except DomainException:
         raise Http404
 
@@ -62,27 +62,27 @@ def _get_staff_payment_view(request: HttpRequest, payment: Payment, candidate_id
             }
             for doc in payment.documents.all()
         ],
+        "logs": DomainQueries.get_payment_logs(payment),
     }
     template = loader.get_template("./staff_templates/payment_id.html")
     return HttpResponse(template.render(ctx, request))
 
 
 def _post_staff_payment_view(request: HttpRequest, payment: Payment) -> HttpResponse:
+    staff_user = request.user
     action = request.POST["action"]
-    if action == "reject":
-        msg = request.POST["action"]
-        payment.status = "rejected"
-        payment.save()
+    msg = request.POST.get("msg", None)
+
+    if action == "note":
+        Domain.add_payment_note(payment, msg, staff_user)
+    elif action == "reject":
+        Domain.manual_update_status(payment, "rejected", staff_user, msg=msg)
         interface.email_client.send_payment_refused_proof_email(to=payment.user.email, msg=msg)
     elif action == "ask_additional":
-        msg = request.POST["action"]
-        payment.status = "waiting_for_documents"
-        payment.save()
+        Domain.manual_update_status(payment, "waiting_for_documents", staff_user, msg=msg)
         interface.email_client.send_payment_need_additional_proof_email(to=payment.user.email, msg=msg)
     elif action == "accept":
-        msg = request.POST.get("action")
-        payment.status = "accepted"
-        payment.save()
+        Domain.manual_update_status(payment, "accepted", staff_user, msg=msg)
         interface.email_client.send_payment_accepted_proof_email(to=payment.user.email, msg=msg)
 
     return _get_staff_payment_view(request, payment, payment.user.id)
