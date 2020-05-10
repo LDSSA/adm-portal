@@ -41,6 +41,11 @@
                         </select>
                     </div>
 
+                    <div class="form-group">
+                        <label for="id_company">Company:</label>
+                        <input type="text" name="company" maxlength="50" id="id_company" value="{{profile.company}}">
+                    </div>
+
                 </fieldset>
                 <button type="submit" class="btn btn-primary">{% if profile_exists %}Update profile{% else %}Create Profile{% endif %}</button>
             </form>

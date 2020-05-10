@@ -19,6 +19,7 @@ def _post_candidate_profile_view(request: HttpRequest, profile: Profile) -> Http
     profile.profession = request.POST["profession"]
     profile.gender = request.POST["gender"]
     profile.ticket_type = request.POST["ticket_type"]
+    profile.company = request.POST["company"]
     profile.save()
 
     return HttpResponseRedirect("/candidate/home")
@@ -34,24 +35,3 @@ def candidate_profile_view(request: HttpRequest) -> HttpResponse:
     if request.method == "GET":
         return _get_candidate_profile_view(request, profile)
     return _post_candidate_profile_view(request, profile)
-
-    # try:
-    #     profile = Profile.objects.get(user=request.user)
-    # except Profile.DoesNotExist:
-    #     profile = Profile()
-    #
-    # # if this is a POST request redirect to edit page
-    # if request.method == "POST":
-    #     return HttpResponseRedirect("/candidate/profile/edit")
-    #
-    # # if this is a GET (or any other method) we'll create a form
-    # # pre-filled with the current user's profile info
-    # else:
-    #     if created:
-    #         return HttpResponseRedirect("/candidate/profile/edit")
-    #     form = ProfileForm(instance=profile)
-    #
-    # template = loader.get_template("./candidate_templates/profile.html")
-    # context = build_context(request.user, {"form": form})
-    #
-    # return HttpResponse(template.render(context, request))
