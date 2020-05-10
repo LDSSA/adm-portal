@@ -25,15 +25,6 @@
         </div>
     </div>
 
-    {% if can_reset %}
-    <div class="row justify-content-md-center">
-        <form action="/staff/payments/{{candidate_id}}/reset" enctype="multipart/form-data" method="POST" class="m-0 mt-auto">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-info">Reset Payment</button>
-        </form>
-    </div>
-    {% endif %}
-
     <div class="row justify-content-md-center">
         <div class="col text-center">
             <form method="post">
@@ -44,6 +35,14 @@
                 <button type="submit" class="btn btn-secondary">Add Note</button>
             </form>
         </div>
+    </div>
+
+    {% if can_update %}
+    <div class="row justify-content-md-center">
+        <form action="/staff/payments/{{candidate_id}}/reset" enctype="multipart/form-data" method="POST" class="m-0 mt-auto">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-info">Reset Payment</button>
+        </form>
     </div>
 
     <div class="row justify-content-md-center">
@@ -75,7 +74,7 @@
             </form>
         </div>
     </div>
-
+    {% endif %}
 
     <div class="row">
         <table class="table table-striped">

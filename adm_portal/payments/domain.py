@@ -17,7 +17,6 @@ class DomainException(Exception):
 
 class PaymentEvents(Enum):
     created = "[Payment Created]"
-    failed_reset = "[Payment Failed Reset]"
     reset = "[Payment Reset]"
     add_doc = "[Added Payment Document]"
     status_update = "[Payment Status Updated]"
@@ -44,12 +43,13 @@ class Domain:
         return payment
 
     @staticmethod
+    def payment_can_be_updated(payment: Payment) -> bool:
+        return payment.status not in ["accepted", "rejected"]
+
+    @staticmethod
     def reset_payment(payment: Payment, staff: User) -> Payment:
-        if not Domain.can_reset_payment(payment):
-            Domain.payment_log(
-                payment, PaymentEvents.failed_reset, data={"payment-status": payment.status}, user=staff
-            )
-            raise DomainException(f"can't reset payment in state `{payment.status}`")
+        if not Domain.payment_can_be_updated(payment):
+            raise DomainException(f"payment is frozen (status=`{payment.status}`)")
 
         old_status = payment.status
         old_value = payment.value
@@ -79,11 +79,9 @@ class Domain:
         return payment
 
     @staticmethod
-    def can_reset_payment(payment: Payment) -> bool:
-        return payment.status in ["waiting_for_documents", "pending_verification"]
-
-    @staticmethod
     def add_document(payment: Payment, document: Document) -> None:
+        if not Domain.payment_can_be_updated(payment):
+            raise DomainException(f"payment is frozen (status=`{payment.status}`)")
         logger.info(f"payment_id={payment.id}: new document uploaded")
         document.payment = payment
         document.save()
@@ -110,6 +108,8 @@ class Domain:
     def update_status(
         payment: Payment, new_status: str, *, context: Optional[str] = None, staff: Optional[User] = None
     ) -> None:
+        if not Domain.payment_can_be_updated(payment):
+            raise DomainException(f"payment is frozen (status=`{payment.status}`)")
         old_status = payment.status
         payment.status = new_status
         payment.save()
@@ -123,7 +123,6 @@ class Domain:
 
     @staticmethod
     def manual_update_status(payment: Payment, new_status: str, staff: User, *, msg: Optional[str] = None) -> None:
-
         Domain.update_status(payment, new_status, context=msg, staff=staff)
 
     @staticmethod

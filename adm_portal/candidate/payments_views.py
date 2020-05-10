@@ -23,6 +23,7 @@ def candidate_payment_view(request: HttpRequest) -> HttpResponse:
 
     context = {
         "payment": payment,
+        "can_update": Domain.payment_can_be_updated(payment),
         "profile": request.user.profile,
         "payment_proofs": payment_proofs,
         "student_ids": student_ids,

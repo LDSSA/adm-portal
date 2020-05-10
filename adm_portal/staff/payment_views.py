@@ -53,7 +53,7 @@ def _get_user_payment(user_id: int) -> Tuple[User, Payment]:
 def _get_staff_payment_view(request: HttpRequest, payment: Payment, candidate_id: int) -> HttpResponse:
     ctx = {
         "payment": payment,
-        "can_reset": Domain.can_reset_payment(payment),
+        "can_update": Domain.payment_can_be_updated(payment),
         "candidate_id": candidate_id,
         "docs": [
             {

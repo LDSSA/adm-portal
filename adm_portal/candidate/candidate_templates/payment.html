@@ -63,7 +63,7 @@
                 <form action="/candidate/payment/upload-payment-proof" enctype="multipart/form-data" method="POST" class="mb-0">
                     {% csrf_token %}
                     <div class="custom-file mb-3">
-                        <input type="file" class="custom-file-input" id="paymentInputFile" name="file" required>
+                        <input type="file" class="custom-file-input" id="paymentInputFile" name="file" required {% if not can_update %} disabled {% endif %}>
                         <label class="custom-file-label" for="paymentInputFile">Choose file</label>
                     </div>
                     <script>
@@ -72,7 +72,7 @@
                             $(this).next('.custom-file-label').html(fileName);
                         })
                     </script>
-                    <button class="btn btn-primary" type="submit">Upload file</button>
+                    <button class="btn btn-primary" type="submit" {% if not can_update %} disabled {% endif %}>Upload file</button>
                 </form>
             </div>
         </div>
@@ -96,7 +96,7 @@
                 <form action="/candidate/payment/upload-student-id" enctype="multipart/form-data" method="POST" class="mb-0">
                     {% csrf_token %}
                     <div class="custom-file mb-3">
-                        <input type="file" class="custom-file-input" id="studentIdInputFile" name="file" required>
+                        <input type="file" class="custom-file-input" id="studentIdInputFile" name="file" required {% if not can_update %} disabled {% endif %}>
                         <label class="custom-file-label" for="studentIdInputFile">Choose file</label>
                     </div>
                     <script>
@@ -105,7 +105,7 @@
                             $(this).next('.custom-file-label').html(fileName);
                         })
                     </script>
-                    <button class="btn btn-primary" type="submit">Upload file</button>
+                    <button class="btn btn-primary" type="submit" {% if not can_update %} disabled {% endif %}>Upload file</button>
                 </form>
             </div>
         </div>
