@@ -28,6 +28,14 @@ class EmailClient(ABC):
     def send_payment_refused_proof_email(self, to: str, msg: str) -> None:
         pass
 
+    # bulk emails
+    # application is over
+    def send_application_is_over_passed(self, to: str) -> None:
+        pass
+
+    def send_application_is_over_failed(self, to: str) -> None:
+        pass
+
 
 class LocalEmailClient(EmailClient):
     def __init__(self, root: str) -> None:
@@ -37,7 +45,7 @@ class LocalEmailClient(EmailClient):
     def _dump_locally(self, f_name: str, **kwargs: Any) -> None:
         directory = os.path.join(self.root, f_name)
         os.makedirs(directory, exist_ok=True)
-        filename = datetime.now().strftime("%d_%m_%Y__%H_%M_%S")
+        filename = datetime.now().strftime("%d@%H_%M")
 
         with open(os.path.join(directory, filename), "w") as file:
             json.dump(kwargs, file, indent=4, separators=(",", ": "))
@@ -56,3 +64,9 @@ class LocalEmailClient(EmailClient):
 
     def send_payment_refused_proof_email(self, to: str, msg: str) -> None:
         self._dump_locally("send_payment_refused_proof_email", to=to, msg=msg)
+
+    def send_application_is_over_passed(self, to: str) -> None:
+        self._dump_locally("send_application_is_over_passed", to=to)
+
+    def send_application_is_over_failed(self, to: str) -> None:
+        self._dump_locally("send_application_is_over_failed", to=to)

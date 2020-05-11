@@ -5,6 +5,7 @@
 <div class="container">
     <h2 class="py-5">Staff Home</h2>
 
+    <hr>
     {% for f in datetime_flags %}
     <div class="row">
         <div class="col-md-4 order-md-4 mb-4 text-center">
@@ -23,6 +24,7 @@
             </form>
         </div>
     </div>
+    <hr>
     {% endfor %}
 
     {% for f in int_flags %}
@@ -43,6 +45,7 @@
             </form>
         </div>
     </div>
+    <hr>
     {% endfor %}
 
     {% for f in bool_flags %}
@@ -81,6 +84,8 @@
         </div>
         {% endif %}
     </div>
+    <hr>
+
     {% endfor %}
 </div>
 

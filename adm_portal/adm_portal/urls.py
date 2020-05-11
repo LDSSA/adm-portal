@@ -25,7 +25,7 @@ from candidate.views import candidate_code_of_conduct_view, candidate_home_view
 from staff.application_views import staff_applications_view
 from staff.payment_views import reset_payment_view, staff_payment_view, staff_payments_view
 from staff.profile_views import staff_profiles_view
-from staff.views import staff_home_view
+from staff.views import bulk_emails_view, staff_home_view
 from users.decorators import (
     requires_candidate_coc,
     requires_candidate_confirmed,
@@ -68,6 +68,7 @@ account_routs = [
 
 staff_routes = [
     Route(route="staff/home", view=staff_home_view, name="staff-home"),
+    Route(route="staff/bulk-emails", view=bulk_emails_view, name="bulk-emails"),
     Route(route="staff/profiles", view=staff_profiles_view, name="staff-profiles-list"),
     Route(route="staff/profiles/<int:user_id>/", view=todo_view, name="staff-profile"),
     Route(route="staff/applications", view=staff_applications_view, name="staff-applications-list"),

@@ -58,3 +58,11 @@ class Application(models.Model):
 
     # coding test ##########################################################
     coding_test_started_at = models.DateTimeField(null=True, default=None)
+
+    # stores data about sent email
+    # None -> email not sent
+    # passed -> `you have passed` email sent
+    # failed -> `you have failed` email sent
+    application_over_email_sent = models.CharField(
+        null=True, default=None, max_length=10, choices=[("passed", "failed")]
+    )

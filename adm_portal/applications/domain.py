@@ -146,3 +146,45 @@ class Domain:
         sub.application = application
         sub.submission_type = sub_type.uname
         sub.save()
+
+    @staticmethod
+    def send_application_over_emails() -> None:
+        if datetime.now() < interface.feature_flag_client.get_applications_closing_date():
+            logger.error("trying to send `applications over` bulk email but applications are still open")
+            raise DomainException("Can't send bulk email")
+
+        sent_count = 0
+        q = Application.objects.all()
+        for a in q:
+            try:
+                Domain.send_application_over_email(a)
+                sent_count += 1
+            except DomainException:
+                pass  # means that email was already sent
+
+        logger.info(f"sent {sent_count} `application_over` emails")
+
+    @staticmethod
+    def send_application_over_email(application: Application) -> None:
+        if application.application_over_email_sent is not None:
+            raise DomainException("email was already sent")
+
+        status = Domain.get_application_status(application)
+        if status == ApplicationStatus.passed:
+            interface.email_client.send_application_is_over_passed(application.user.email)
+            application.application_over_email_sent = "passed"
+            application.save()
+        else:
+            interface.email_client.send_application_is_over_failed(application.user.email)
+            application.application_over_email_sent = "failed"
+            application.save()
+
+
+class DomainQueries:
+    @staticmethod
+    def applications_count() -> int:
+        return Application.objects.all().count()
+
+    @staticmethod
+    def applications_with_sent_emails_count() -> int:
+        return Application.objects.filter(application_over_email_sent__isnull=False).count()
