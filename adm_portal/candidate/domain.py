@@ -1,4 +1,3 @@
-from enum import Enum
 from typing import Dict, NamedTuple, Optional
 
 from applications.domain import ApplicationStatus
@@ -7,19 +6,8 @@ from applications.domain import SubmissionStatus
 from applications.models import Application, SubmissionTypes
 from payments.models import Payment
 from profiles.models import Profile
+from selected.models import PassedCandidate
 from users.models import User
-
-
-class SelectedStatus(Enum):
-    selected = "Selected"
-    awaiting = "Awaiting Selection"
-    not_selected = "Not Selected"
-
-
-class AdmissionStatus(Enum):
-    ongoing = "Ongoing"
-    accepted = "Accepted"
-    rejected = "Rejected"
 
 
 class CandidateState(NamedTuple):
@@ -32,9 +20,8 @@ class CandidateState(NamedTuple):
     slu01_status: Optional[SubmissionStatus] = None
     slu02_status: Optional[SubmissionStatus] = None
     slu03_status: Optional[SubmissionStatus] = None
-    selected_status: Optional[SelectedStatus] = None
+    selection_status: Optional[str] = None
     payment_status: Optional[str] = None
-    admission_status: AdmissionStatus = AdmissionStatus.ongoing
 
 
 class DomainException(Exception):
@@ -68,26 +55,18 @@ class Domain:
             state["slu02_status"] = status[SubmissionTypes.slu02.uname]
             state["slu03_status"] = status[SubmissionTypes.slu03.uname]
 
-            if state["application_status"] == ApplicationStatus.passed:
-                state["selected_status"] = SelectedStatus.awaiting
-
-            if state["application_status"] == ApplicationStatus.failed:
-                state["admission_status"] = AdmissionStatus.rejected
-
         except Application.DoesNotExist:
             pass
 
         try:
+            passed_candidate = candidate.passedcandidate
+            state["selection_status"] = passed_candidate.status
+
+        except PassedCandidate.DoesNotExist:
+            pass
+        try:
             payment = candidate.payment
-            state["selected_status"] = SelectedStatus.selected
             state["payment_status"] = payment.status
-
-            if state["payment_status"] == "accepted":
-                state["admission_status"] = AdmissionStatus.accepted
-
-            if state["payment_status"] == "rejected":
-                state["admission_status"] = AdmissionStatus.rejected
-
         except Payment.DoesNotExist:
             pass
 

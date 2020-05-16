@@ -4,6 +4,8 @@ from logging import getLogger
 from typing import Any, Dict, List, Optional
 
 from profiles.models import Profile
+from selected.domain import Domain as SelectedDomain
+from selected.models import PassedCandidateStatus
 from users.models import User
 
 from .models import Document, Payment, PaymentLogs
@@ -113,6 +115,12 @@ class Domain:
         old_status = payment.status
         payment.status = new_status
         payment.save()
+
+        if payment.status == "accepted":
+            SelectedDomain.update_status(payment.user.passedcandidate, PassedCandidateStatus.accepted)
+
+        if payment.status == "rejected":
+            SelectedDomain.update_status(payment.user.passedcandidate, PassedCandidateStatus.rejected)
 
         Domain.payment_log(
             payment,

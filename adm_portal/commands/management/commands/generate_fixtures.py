@@ -213,7 +213,7 @@ class Command(BaseCommand):
         # random - users
         logger.info(f"creating {_random_n} random users with profiles and applications")
         for i in range(0, _random_n):
-            u = User(email=f"random_{i}")
+            u = User(email=f"random_{i}@adm.com")
             users.append(u)
 
         User.objects.bulk_create(users)

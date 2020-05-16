@@ -5,12 +5,10 @@ from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, HttpRes
 from django.template import loader
 from django.views.decorators.http import require_http_methods
 
-from applications.domain import Domain as ApplicationDomain
-from applications.domain import DomainException as ApplicationDomainException
-from applications.domain import DomainQueries as ApplicationDomainQueries
 from interface import interface
 
 logger = getLogger(__name__)
+
 
 DATETIME_FMT = "%d/%m/%Y %H:%M:%S"
 
@@ -93,52 +91,3 @@ def staff_home_view(request: HttpRequest) -> HttpResponse:
     if request.method == "GET":
         return _get_staff_home_view(request)
     return _post_staff_home_view(request)
-
-
-def _get_bulk_emails_view(request: HttpRequest) -> HttpResponse:
-    template = loader.get_template("./staff_templates/bulk_emails.html")
-
-    ctx = {
-        "user": request.user,
-        "datetime_fmt": DATETIME_FMT,
-        "emails": [
-            {
-                "key": "applications_over",
-                "sent_to": ApplicationDomainQueries.applications_with_sent_emails_count(),
-                "applicable_to": ApplicationDomainQueries.applications_count(),
-                "label": "Applications Over (Passed or Failed)",
-            },
-            {
-                "key": "admissions_over",
-                "sent_to": 0,
-                "applicable_to": 0,
-                "label": "Applications Over (Accepted or not)",
-            },
-        ],
-    }
-    return HttpResponse(template.render(ctx, request))
-
-
-def _post_bulk_emails_view(request: HttpRequest) -> HttpResponse:
-    if not request.user.is_admin:
-        return HttpResponseServerError(b"error sending admin emails. Only admins can send bulk emails")
-
-    key = request.POST["key"]
-
-    if key == "applications_over":
-        try:
-            ApplicationDomain.send_application_over_emails()
-        except ApplicationDomainException:
-            return HttpResponseServerError(b"error sending admin emails. Are you sure applications are over?")
-
-    elif key == "admissions_over":
-        return HttpResponseServerError(b"not implemented")
-
-    return HttpResponseRedirect("/staff/bulk-emails")
-
-
-@require_http_methods(["GET", "POST"])
-def bulk_emails_view(request: HttpRequest) -> HttpResponse:
-    if request.method == "GET":
-        return _get_bulk_emails_view(request)
-    return _post_bulk_emails_view(request)

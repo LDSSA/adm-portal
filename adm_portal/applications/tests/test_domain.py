@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from django.test import TestCase
 
-from applications.domain import ApplicationStatus, Domain, DomainException, DomainQueries, SubmissionStatus
+from applications.domain import ApplicationStatus, Domain, DomainException, SubmissionStatus
 from applications.models import Application, Submission, SubmissionTypes
 from interface import interface
 from users.models import User
@@ -255,51 +255,3 @@ class TestDomain(TestCase):
         a.save()
         self.assertEqual(Domain.get_sub_type_status(a, SubmissionTypes.slu02), SubmissionStatus.failed)
         self.assertEqual(Domain.get_application_status(a), ApplicationStatus.failed)
-
-    def test_get_send_application_over_emails_error(self) -> None:
-        # because applications are not closed
-        with self.assertRaises(DomainException):
-            Domain.send_application_over_emails()
-
-    def test_get_send_application_over_emails(self) -> None:
-        interface.feature_flag_client.set_applications_opening_date(self.aod - timedelta(minutes=60))
-        interface.feature_flag_client.set_applications_closing_date(self.acd - timedelta(minutes=60))
-
-        a1 = Application.objects.create(user=User.objects.create(email="a1@test.com"))
-        a2 = Application.objects.create(user=User.objects.create(email="a2@test.com"))
-        a3 = Application.objects.create(user=User.objects.create(email="a3@test.com"))
-
-        a4 = Application.objects.create(user=User.objects.create(email="a4@test.com"))
-        Submission.objects.create(application=a4, score=99, submission_type=SubmissionTypes.coding_test.uname)
-        Submission.objects.create(application=a4, score=99, submission_type=SubmissionTypes.slu01.uname)
-        Submission.objects.create(application=a4, score=99, submission_type=SubmissionTypes.slu02.uname)
-        Submission.objects.create(application=a4, score=99, submission_type=SubmissionTypes.slu03.uname)
-
-        a5 = Application.objects.create(
-            user=User.objects.create(email="a5@test.com"), application_over_email_sent="passed"
-        )
-
-        self.assertEqual(DomainQueries.applications_count(), 5)
-        self.assertEqual(DomainQueries.applications_with_sent_emails_count(), 1)
-
-        self.assertIsNone(a1.application_over_email_sent)
-        self.assertIsNone(a2.application_over_email_sent)
-        self.assertIsNone(a3.application_over_email_sent)
-        self.assertIsNone(a4.application_over_email_sent)
-        self.assertEqual(a5.application_over_email_sent, "passed")
-
-        Domain.send_application_over_emails()
-
-        self.assertEqual(DomainQueries.applications_count(), 5)
-        self.assertEqual(DomainQueries.applications_with_sent_emails_count(), 5)
-
-        a1.refresh_from_db()
-        self.assertEqual(a1.application_over_email_sent, "failed")
-        a2.refresh_from_db()
-        self.assertEqual(a2.application_over_email_sent, "failed")
-        a3.refresh_from_db()
-        self.assertEqual(a3.application_over_email_sent, "failed")
-        a4.refresh_from_db()
-        self.assertEqual(a4.application_over_email_sent, "passed")
-        a5.refresh_from_db()
-        self.assertEqual(a5.application_over_email_sent, "passed")

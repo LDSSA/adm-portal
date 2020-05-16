@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from enum import Enum
 from logging import getLogger
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 from django.db import models
 
@@ -148,24 +148,7 @@ class Domain:
         sub.save()
 
     @staticmethod
-    def send_application_over_emails() -> None:
-        if datetime.now() < interface.feature_flag_client.get_applications_closing_date():
-            logger.error("trying to send `applications over` bulk email but applications are still open")
-            raise DomainException("Can't send bulk email")
-
-        sent_count = 0
-        q = Application.objects.all()
-        for a in q:
-            try:
-                Domain.send_application_over_email(a)
-                sent_count += 1
-            except DomainException:
-                pass  # means that email was already sent
-
-        logger.info(f"sent {sent_count} `application_over` emails")
-
-    @staticmethod
-    def send_application_over_email(application: Application) -> None:
+    def application_over(application: Application) -> None:
         if application.application_over_email_sent is not None:
             raise DomainException("email was already sent")
 
@@ -174,6 +157,7 @@ class Domain:
             interface.email_client.send_application_is_over_passed(application.user.email)
             application.application_over_email_sent = "passed"
             application.save()
+
         else:
             interface.email_client.send_application_is_over_failed(application.user.email)
             application.application_over_email_sent = "failed"
@@ -182,8 +166,12 @@ class Domain:
 
 class DomainQueries:
     @staticmethod
+    def all() -> Any:
+        return Application.objects.all()
+
+    @staticmethod
     def applications_count() -> int:
-        return Application.objects.all().count()
+        return DomainQueries.all().count()
 
     @staticmethod
     def applications_with_sent_emails_count() -> int:

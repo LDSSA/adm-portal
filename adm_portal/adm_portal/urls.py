@@ -23,9 +23,16 @@ from candidate.payments_views import (
 from candidate.profile_views import candidate_profile_view
 from candidate.views import candidate_code_of_conduct_view, candidate_home_view
 from staff.application_views import staff_applications_view
+from staff.events_view import staff_events_view
 from staff.payment_views import reset_payment_view, staff_payment_view, staff_payments_view
 from staff.profile_views import staff_profiles_view
-from staff.views import bulk_emails_view, staff_home_view
+from staff.selected_views import (
+    staff_draw_candidates_view,
+    staff_reject_candidate_view,
+    staff_select_candidates_view,
+    staff_selected_candidates_view,
+)
+from staff.views import staff_home_view
 from users.decorators import (
     requires_candidate_coc,
     requires_candidate_confirmed,
@@ -62,17 +69,35 @@ account_routs = [
     Route(route="account/confirm-email", view=confirm_email_view, name="accounts-confirm-email"),
     Route(route="account/start-reset-password", view=start_reset_password_view, name="accounts-start-reset-password"),
     Route(route="account/reset-password", view=reset_password_view, name="accounts-reset-password"),
-    Route(route="account/send-confirmation-email", view=send_confirmation_email_view, name="send-confirmation-email"),
+    Route(
+        route="account/send-confirmation-email",
+        view=send_confirmation_email_view,
+        name="accounts-send-confirmation-email",
+    ),
 ]
 
 
 staff_routes = [
     Route(route="staff/home", view=staff_home_view, name="staff-home"),
-    Route(route="staff/bulk-emails", view=bulk_emails_view, name="bulk-emails"),
+    Route(route="staff/events", view=staff_events_view, name="staff-events"),
     Route(route="staff/profiles", view=staff_profiles_view, name="staff-profiles-list"),
     Route(route="staff/profiles/<int:user_id>/", view=todo_view, name="staff-profile"),
     Route(route="staff/applications", view=staff_applications_view, name="staff-applications-list"),
     Route(route="staff/applications/<int:user_id>", view=todo_view, name="staff-application"),
+    Route(route="staff/selected-candidates/", view=staff_selected_candidates_view, name="staff-selected-candidates"),
+    Route(
+        route="staff/selected-candidates/draw", view=staff_draw_candidates_view, name="staff-selected-candidates-draw"
+    ),
+    Route(
+        route="staff/selected-candidates/reject-draw/<int:candidate_id>",
+        view=staff_reject_candidate_view,
+        name="staff-selected-candidates-reject-draw",
+    ),
+    Route(
+        route="staff/selected-candidates/select",
+        view=staff_select_candidates_view,
+        name="staff-selected-candidates-select",
+    ),
     Route(route="staff/payments", view=staff_payments_view, name="staff-payments-list"),
     Route(route="staff/payments/<int:user_id>", view=staff_payment_view, name="staff-payment"),
     Route(route="staff/payments/<int:user_id>/reset", view=reset_payment_view, name="staff-reset-payment"),
