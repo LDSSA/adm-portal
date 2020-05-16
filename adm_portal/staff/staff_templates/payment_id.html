@@ -4,15 +4,16 @@
 
 <div class="container">
     <h2 class="py-5">
-        Candidate <a href="/staff/profiles/{{ payment.user.id }}">{{ payment.user.email }}</a> Payment
-        {% if payment.is_status_accepted %}
-            <span class="badge badge-success">{{ payment.get_status_display }}</span>
-        {% elif payment.is_status_rejected %}
-            <span class="badge badge-danger">{{ payment.get_status_display }}</span>
-        {% elif payment.is_status_pending_verification %}
-            <span class="badge badge-info">{{ payment.get_status_display }}</span>
+        Candidate <a href="/staff/profiles/{{ s.user.id }}">{{ s.user.email }}</a> Payment
+
+        {% if s.status == selection_status.ACCEPTED %}
+        <span class="badge badge-success">{{ s.status }}</span>
+        {% elif s.status == selection_status.REJECTED %}
+        <span class="badge badge-danger">{{ s.status }}</span>
+        {% elif s.status == selection_status.SELECTED %}
+        <span class="badge badge-info">{{ s.status }}</span>
         {% else %}
-            <span class="badge badge-warning">{{ payment.get_status_display }}</span>
+        <span class="badge badge-warning">{{ s.status }}</span>
         {% endif %}
     </h2>
 

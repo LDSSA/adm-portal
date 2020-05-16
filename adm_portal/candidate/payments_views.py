@@ -1,29 +1,32 @@
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.http import Http404, HttpRequest, HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.views.decorators.http import require_http_methods
 
 from interface import interface
-from payments.domain import Domain
-from payments.models import Document, Payment
+from selection.domain import SelectionDomain
+from selection.models import Selection, SelectionDocument
+from selection.payment import add_document, can_be_updated
+from selection.queries import SelectionDocumentQueries
+from selection.status import SelectionStatus
 from storage_client import StorageClient
 
 from .helpers import build_context
 
 
-def candidate_payment_view(request: HttpRequest) -> HttpResponse:
+def _get_candidate_payment_view(request: HttpRequest) -> HttpResponse:
     try:
-        payment = request.user.payment
-    except Payment.DoesNotExist:
-        return HttpResponse("This candidate has no payment!")
+        selection = request.user.selection
+    except Selection.DoesNotExist:
+        raise Http404
 
-    payment_proofs = payment.get_payment_proof_documents
-    student_ids = payment.get_student_id_documents
+    payment_proofs = SelectionDocumentQueries.get_payment_proof_documents(selection)
+    student_ids = SelectionDocumentQueries.get_student_id_documents(selection)
 
     template = loader.get_template("./candidate_templates/payment.html")
 
     context = {
-        "payment": payment,
-        "can_update": Domain.payment_can_be_updated(payment),
+        "s": selection,
+        "can_update": can_be_updated(selection),
         "profile": request.user.profile,
         "payment_proofs": payment_proofs,
         "student_ids": student_ids,
@@ -33,10 +36,29 @@ def candidate_payment_view(request: HttpRequest) -> HttpResponse:
     return HttpResponse(template.render(context, request))
 
 
+def _post_candidate_payment_view(request: HttpRequest) -> HttpResponse:
+    try:
+        selection = request.user.selection
+    except Selection.DoesNotExist:
+        raise Http404
+    SelectionDomain.manual_update_status(selection, SelectionStatus.TO_BE_ACCEPTED, request.user)
+    return HttpResponseRedirect("/candidate/payment")
+
+
+@require_http_methods(["GET", "POST"])
+def candidate_payment_view(request: HttpRequest) -> HttpResponse:
+    if request.method == "GET":
+        return _get_candidate_payment_view(request)
+    return _post_candidate_payment_view(request)
+
+
 @require_http_methods(["GET"])
 def candidate_document_download_view(request: HttpRequest, document_id: int) -> HttpResponse:
-    payment = Payment.objects.get(user=request.user)
-    document = Document.objects.get(id=document_id, payment=payment)
+    try:
+        selection = request.user.selection
+        document = SelectionDocument.objects.get(selection=selection, id=document_id)
+    except (Selection.DoesNotExist, SelectionDocument):
+        raise Http404
     url = interface.storage_client.get_attachment_url(document.file_location)
 
     return HttpResponseRedirect(url)
@@ -59,8 +81,8 @@ def _candidate_document_upload(request: HttpRequest, document_type: str) -> Http
 
     interface.storage_client.save(upload_key_unique, f)
 
-    document = Document(file_location=upload_key_unique, doc_type=document_type)
-    payment = Payment.objects.get(user=request.user)
-    Domain.add_document(payment, document)
+    document = SelectionDocument(file_location=upload_key_unique, doc_type=document_type)
+    selection = request.user.selection
+    add_document(selection, document)
 
     return HttpResponseRedirect("/candidate/payment")

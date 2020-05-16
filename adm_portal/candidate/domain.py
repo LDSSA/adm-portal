@@ -4,9 +4,10 @@ from applications.domain import ApplicationStatus
 from applications.domain import Domain as ApplicationsDomain
 from applications.domain import SubmissionStatus
 from applications.models import Application, SubmissionTypes
-from payments.models import Payment
 from profiles.models import Profile
-from selected.models import PassedCandidate
+from selection.domain import SelectionDomain
+from selection.models import Selection
+from selection.status import SelectionStatusType
 from users.models import User
 
 
@@ -20,8 +21,7 @@ class CandidateState(NamedTuple):
     slu01_status: Optional[SubmissionStatus] = None
     slu02_status: Optional[SubmissionStatus] = None
     slu03_status: Optional[SubmissionStatus] = None
-    selection_status: Optional[str] = None
-    payment_status: Optional[str] = None
+    selection_status: Optional[SelectionStatusType] = None
 
 
 class DomainException(Exception):
@@ -59,19 +59,10 @@ class Domain:
             pass
 
         try:
-            passed_candidate = candidate.passedcandidate
-            state["selection_status"] = passed_candidate.status
+            state["selection_status"] = SelectionDomain.get_status(candidate.selection)
 
-        except PassedCandidate.DoesNotExist:
+        except Selection.DoesNotExist:
             pass
-        try:
-            payment = candidate.payment
-            state["payment_status"] = payment.status
-        except Payment.DoesNotExist:
-            pass
-
-        # todo: set state["selected_status"] = SelectedStatus.not_selected when admissions are over
-        # todo: set state["admission_status"] = AdmissionStatus.rejected when admissions are over
 
         return CandidateState(**state)
 

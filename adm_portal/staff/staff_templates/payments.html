@@ -4,7 +4,7 @@
 
 <div class="container">
     <h2 class="py-5">
-        Candidate Payments
+        Selection Payments
     </h2>
     <div class="row">
         <div class="col-md-12 text-center">
@@ -14,30 +14,28 @@
                     <th scope="col">User</th>
                     <th scope="col">Value</th>
                     <th scope="col">Currency</th>
-                    <th scope="col">Due Date</th>
                     <th scope="col">Status</th>
                     <th scope="col">Update At</th>
                 </tr>
                 </thead>
                 <tbody>
-                {% for p in payments %}
+                {% for s in selections %}
                 <tr>
-                    <td><a href="/staff/profiles/{{ p.user.id }}">{{ p.user.email }}</a></td>
-                    <td>{{ p.value }}</td>
-                    <td>{{ p.currency }}</td>
-                    <td>{{ p.due_date }}</td>
-                    <td><a href="/staff/payments/{{ p.user.id }}">
-                        {% if p.is_status_accepted %}
-                        <span class="badge badge-success">{{ p.get_status_display }}</span>
-                        {% elif p.is_status_rejected %}
-                        <span class="badge badge-danger">{{ p.get_status_display }}</span>
-                        {% elif p.is_status_pending_verification %}
-                        <span class="badge badge-info">{{ p.get_status_display }}</span>
+                    <td><a href="/staff/profiles/{{ s.user.id }}">{{ s.user.email }}</a></td>
+                    <td>{{ s.payment_value }}</td>
+                    <td>€ (eur)</td>
+                    <td><a href="/staff/payments/{{ s.user.id }}">
+                        {% if s.status == selection_status.ACCEPTED %}
+                        <span class="badge badge-success">{{ s.status }}</span>
+                        {% elif s.status == selection_status.REJECTED %}
+                        <span class="badge badge-danger">{{ s.status }}</span>
+                        {% elif s.status == selection_status.SELECTED %}
+                        <span class="badge badge-info">{{ s.status }}</span>
                         {% else %}
-                        <span class="badge badge-warning">{{ p.get_status_display }}</span>
+                        <span class="badge badge-warning">{{ s.status }}</span>
                         {% endif %}
                     </a></td>
-                    <td>{{ p.updated_at }}</td>
+                    <td>{{ s.updated_at }}</td>
                 </tr>
                 {% endfor %}
                 </tbody>

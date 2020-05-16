@@ -4,7 +4,9 @@ from django.test import TestCase
 
 from applications.models import Application, Submission, SubmissionTypes
 from interface import interface
-from selected.models import PassedCandidate, PassedCandidateStatus
+from selection.domain import SelectionDomain
+from selection.queries import SelectionQueries
+from selection.status import SelectionStatus
 from staff.domain import Events, EventsException
 from users.models import User
 
@@ -72,18 +74,28 @@ class TestEvents(TestCase):
         interface.feature_flag_client.set_applications_opening_date(self.aod - timedelta(minutes=60))
         interface.feature_flag_client.set_applications_closing_date(self.acd - timedelta(minutes=60))
 
-        c = PassedCandidate.objects.create(
-            user=User.objects.create(email="u1@test.com"), status=PassedCandidateStatus.drawn
-        )
+        selection = SelectionDomain.create(user=User.objects.create(email="u1@test.com"))
+        SelectionDomain.update_status(selection, SelectionStatus.DRAWN)
 
-        # because the is a drawn candidate
+        # because the is a drawn selection
         with self.assertRaises(EventsException):
             Events.trigger_admissions_are_over()
 
-        c.status = PassedCandidateStatus.selected
-        c.save()
+        SelectionDomain.update_status(selection, SelectionStatus.INTERVIEW)
 
-        # because the is a selected candidate
+        # because the is a interview selection
+        with self.assertRaises(EventsException):
+            Events.trigger_admissions_are_over()
+
+        SelectionDomain.update_status(selection, SelectionStatus.SELECTED)
+
+        # because the is a selected selection
+        with self.assertRaises(EventsException):
+            Events.trigger_admissions_are_over()
+
+        SelectionDomain.update_status(selection, SelectionStatus.TO_BE_ACCEPTED)
+
+        # because the is a to_be_accepted selection
         with self.assertRaises(EventsException):
             Events.trigger_admissions_are_over()
 
@@ -91,26 +103,24 @@ class TestEvents(TestCase):
         interface.feature_flag_client.set_applications_opening_date(self.aod - timedelta(minutes=60))
         interface.feature_flag_client.set_applications_closing_date(self.acd - timedelta(minutes=60))
 
-        PassedCandidate.objects.create(
-            user=User.objects.create(email="u1@test.com"), status=PassedCandidateStatus.passed_test
+        SelectionDomain.update_status(
+            SelectionDomain.create(user=User.objects.create(email="u1@test.com")), SelectionStatus.PASSED_TEST
+        )
+        SelectionDomain.update_status(
+            SelectionDomain.create(user=User.objects.create(email="u2@test.com")), SelectionStatus.ACCEPTED
+        )
+        SelectionDomain.update_status(
+            SelectionDomain.create(user=User.objects.create(email="u3@test.com")), SelectionStatus.REJECTED
         )
 
-        PassedCandidate.objects.create(
-            user=User.objects.create(email="u2@test.com"), status=PassedCandidateStatus.accepted
-        )
-
-        PassedCandidate.objects.create(
-            user=User.objects.create(email="u3@test.com"), status=PassedCandidateStatus.rejected
-        )
-
-        self.assertEqual(PassedCandidate.objects.filter(status=PassedCandidateStatus.passed_test).count(), 1)
-        self.assertEqual(PassedCandidate.objects.filter(status=PassedCandidateStatus.accepted).count(), 1)
-        self.assertEqual(PassedCandidate.objects.filter(status=PassedCandidateStatus.rejected).count(), 1)
-        self.assertEqual(PassedCandidate.objects.filter(status=PassedCandidateStatus.not_selected).count(), 0)
+        self.assertEqual(SelectionQueries.filter_by_status_in([SelectionStatus.PASSED_TEST]).count(), 1)
+        self.assertEqual(SelectionQueries.filter_by_status_in([SelectionStatus.ACCEPTED]).count(), 1)
+        self.assertEqual(SelectionQueries.filter_by_status_in([SelectionStatus.REJECTED]).count(), 1)
+        self.assertEqual(SelectionQueries.filter_by_status_in([SelectionStatus.NOT_SELECTED]).count(), 0)
 
         Events.trigger_admissions_are_over()
 
-        self.assertEqual(PassedCandidate.objects.filter(status=PassedCandidateStatus.passed_test).count(), 0)
-        self.assertEqual(PassedCandidate.objects.filter(status=PassedCandidateStatus.accepted).count(), 1)
-        self.assertEqual(PassedCandidate.objects.filter(status=PassedCandidateStatus.rejected).count(), 1)
-        self.assertEqual(PassedCandidate.objects.filter(status=PassedCandidateStatus.not_selected).count(), 1)
+        self.assertEqual(SelectionQueries.filter_by_status_in([SelectionStatus.PASSED_TEST]).count(), 0)
+        self.assertEqual(SelectionQueries.filter_by_status_in([SelectionStatus.ACCEPTED]).count(), 1)
+        self.assertEqual(SelectionQueries.filter_by_status_in([SelectionStatus.REJECTED]).count(), 1)
+        self.assertEqual(SelectionQueries.filter_by_status_in([SelectionStatus.NOT_SELECTED]).count(), 1)

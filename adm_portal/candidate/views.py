@@ -3,7 +3,6 @@ from django.template import loader
 from django.views.decorators.http import require_http_methods
 
 from applications.domain import Status
-from selected.models import PassedCandidateStatus
 
 from .domain import Domain
 from .helpers import build_context
@@ -22,10 +21,8 @@ def candidate_home_view(request: HttpRequest) -> HttpResponse:
         action_point = "created_profile"
     elif state.application_status != Status.passed:
         action_point = "admission_test"
-    elif state.selection_status in [PassedCandidateStatus.passed_test, PassedCandidateStatus.drawn]:
-        action_point = "selection_results"
     else:
-        action_point = "payment"
+        action_point = "selection_results"
 
     first_name = None
     if state.created_profile:

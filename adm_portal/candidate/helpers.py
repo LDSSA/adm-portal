@@ -1,14 +1,13 @@
 from typing import Any, Dict, Optional
 
-from payments.models import Payment
+from selection.models import Selection
 from users.models import User
 
 
 def user_has_payment(user: User) -> bool:
     try:
-        user.payment
-        return True
-    except Payment.DoesNotExist:
+        return user.selection.payment_value is not None
+    except Selection.DoesNotExist:
         return False
 
 

@@ -32,9 +32,8 @@ INSTALLED_APPS = [
     "profiles",
     "email_client",
     "applications",
-    "payments",
     "commands",
-    "selected",
+    "selection",
 ]
 
 MIDDLEWARE = [

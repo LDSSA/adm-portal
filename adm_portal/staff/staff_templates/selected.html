@@ -71,13 +71,13 @@
     
         <div class="row pt-4">
             <div class="col-2">
-                <form action="/staff/selected-candidates/draw" enctype="multipart/form-data" method="POST" class="mb-0">
+                <form action="/staff/selections/draw" enctype="multipart/form-data" method="POST" class="mb-0">
                     {% csrf_token %}
                     <button class="btn btn-primary" type="submit">Draw Candidates</button>
                 </form>
             </div>
             <div class="col-2">
-                <form action="/staff/selected-candidates/select" enctype="multipart/form-data" method="POST" class="mb-0">
+                <form action="/staff/selections/select" enctype="multipart/form-data" method="POST" class="mb-0">
                     {% csrf_token %}
                     <button class="btn btn-primary" type="submit">Select Candidates</button>
                 </form>
@@ -126,7 +126,7 @@
                 <td>{{ c.user.profile.company }}</td>
                 <td>{{ c.status }}</td>
                 <td>
-                    <form action="/staff/selected-candidates/reject-draw/{{ c.id }}" enctype="multipart/form-data" method="POST" class="mb-0">
+                    <form action="/staff/selections/reject-draw/{{ c.id }}" enctype="multipart/form-data" method="POST" class="mb-0">
                         {% csrf_token %}
                         <button class="btn btn-danger" type="submit">
                             <i class="fas fa-trash-alt"></i>

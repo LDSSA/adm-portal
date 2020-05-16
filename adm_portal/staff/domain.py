@@ -5,9 +5,9 @@ from applications.domain import Domain as ApplicationDomain
 from applications.domain import DomainException as ApplicationDomainException
 from applications.domain import DomainQueries as ApplicationDomainQueries
 from interface import interface
-from selected.domain import Domain as SelectedDomain
-from selected.domain import DomainQueries as SelectedDomainQueries
-from selected.models import PassedCandidateStatus
+from selection.domain import SelectionDomain
+from selection.queries import SelectionQueries
+from selection.status import SelectionStatus
 
 logger = getLogger(__name__)
 
@@ -42,19 +42,17 @@ class Events:
 
             a.refresh_from_db()
             if a.application_over_email_sent == "passed":
-                SelectedDomain.new_candidate(a.user)
+                SelectionDomain.create(a.user)
 
         logger.info(f"sent {sent_count} `application_over` emails")
 
     @staticmethod
     def admissions_are_over_sent_emails() -> int:
-        return SelectedDomainQueries.get_by_status_in(
-            [PassedCandidateStatus.accepted, PassedCandidateStatus.rejected, PassedCandidateStatus.not_selected]
-        ).count()
+        return SelectionQueries.filter_by_status_in(SelectionStatus.FINAL_STATUS).count()
 
     @staticmethod
     def admissions_are_over_total_emails() -> int:
-        return SelectedDomainQueries.get_all().count()
+        return SelectionQueries.get_all().count()
 
     @staticmethod
     def trigger_admissions_are_over() -> None:
@@ -62,20 +60,26 @@ class Events:
             logger.error("trying to trigger `admissions over` event but applications are still open")
             raise EventsException("Can't trigger `admissions over` event (applications open)")
 
-        if SelectedDomainQueries.get_drawn().exists():
-            logger.error("trying to trigger `admissions over` event but drawn candidates exist")
-            raise EventsException("Can't trigger `admissions over` event (drawn candidates)")
-
-        if SelectedDomainQueries.get_selected().exists():
-            logger.error("trying to trigger `admissions over` event but selected candidates exist")
-            raise EventsException("Can't trigger `admissions over` event (selected candidates)")
+        if SelectionQueries.filter_by_status_in(
+            [
+                SelectionStatus.DRAWN,
+                SelectionStatus.INTERVIEW,
+                SelectionStatus.SELECTED,
+                SelectionStatus.TO_BE_ACCEPTED,
+            ]
+        ).exists():
+            logger.error("trying to trigger `admissions over` event but open selections exist")
+            raise EventsException(
+                "Can't trigger `admissions over` event (DRAWN, INTERVIEW, SELECTED, TO_BE_ACCEPTED exists)"
+            )
 
         sent_count = 0
-        for candidate in SelectedDomainQueries.get_all():
-            if candidate.status == PassedCandidateStatus.passed_test:
-                # this candidate was never selected
-                SelectedDomain.update_status(candidate, PassedCandidateStatus.not_selected)
-                interface.email_client.send_admissions_are_over_not_selected(candidate.user.email)
+        for selection in SelectionQueries.get_all():
+            selection_status = SelectionDomain.get_status(selection)
+            if selection_status == SelectionStatus.PASSED_TEST:
+                # this user was never selected
+                SelectionDomain.update_status(selection, SelectionStatus.NOT_SELECTED)
+                interface.email_client.send_admissions_are_over_not_selected(selection.user.email)
 
             sent_count += 1
 

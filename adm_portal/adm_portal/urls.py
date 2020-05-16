@@ -26,11 +26,11 @@ from staff.application_views import staff_applications_view
 from staff.events_view import staff_events_view
 from staff.payment_views import reset_payment_view, staff_payment_view, staff_payments_view
 from staff.profile_views import staff_profiles_view
-from staff.selected_views import (
+from staff.selection_views import (
     staff_draw_candidates_view,
-    staff_reject_candidate_view,
+    staff_reject_selection_view,
     staff_select_candidates_view,
-    staff_selected_candidates_view,
+    staff_selection_candidates_view,
 )
 from staff.views import staff_home_view
 from users.decorators import (
@@ -84,20 +84,15 @@ staff_routes = [
     Route(route="staff/profiles/<int:user_id>/", view=todo_view, name="staff-profile"),
     Route(route="staff/applications", view=staff_applications_view, name="staff-applications-list"),
     Route(route="staff/applications/<int:user_id>", view=todo_view, name="staff-application"),
-    Route(route="staff/selected-candidates/", view=staff_selected_candidates_view, name="staff-selected-candidates"),
+    Route(route="staff/selections/", view=staff_selection_candidates_view, name="staff-selections"),
+    Route(route="staff/selections-selected/", view=todo_view, name="staff-selections-selected"),
+    Route(route="staff/selections/draw", view=staff_draw_candidates_view, name="staff-selections-draw"),
     Route(
-        route="staff/selected-candidates/draw", view=staff_draw_candidates_view, name="staff-selected-candidates-draw"
+        route="staff/selections/reject-draw/<int:candidate_id>",
+        view=staff_reject_selection_view,
+        name="staff-selections-candidates-reject-draw",
     ),
-    Route(
-        route="staff/selected-candidates/reject-draw/<int:candidate_id>",
-        view=staff_reject_candidate_view,
-        name="staff-selected-candidates-reject-draw",
-    ),
-    Route(
-        route="staff/selected-candidates/select",
-        view=staff_select_candidates_view,
-        name="staff-selected-candidates-select",
-    ),
+    Route(route="staff/selections/select", view=staff_select_candidates_view, name="staff-selections-select"),
     Route(route="staff/payments", view=staff_payments_view, name="staff-payments-list"),
     Route(route="staff/payments/<int:user_id>", view=staff_payment_view, name="staff-payment"),
     Route(route="staff/payments/<int:user_id>/reset", view=reset_payment_view, name="staff-reset-payment"),
