@@ -8,9 +8,11 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from applications.models import Application, Submission, SubmissionType, SubmissionTypes
-from payments.domain import Domain as PaymentsDomain
-from payments.models import Document, Payment
 from profiles.models import Profile, gender_choices, ticket_types_choices
+from selection.domain import SelectionDomain
+from selection.models import Selection, SelectionDocument
+from selection.payment import add_document
+from selection.status import SelectionStatus
 from storage_client import LocalStorageClient
 from users.models import User
 
@@ -104,19 +106,18 @@ def with_payment() -> UserOption:
         with_submission(SubmissionTypes.slu02, 100)(u)
         with_submission(SubmissionTypes.slu03, 100)(u)
 
-        PaymentsDomain.create_payment(u.profile)
+        selection = SelectionDomain.create(u)
+        SelectionDomain.update_status(selection, SelectionStatus.SELECTED)
 
     return f
 
 
 def with_document(doc_type: str = "payment_proof", file_location: str = ASSET_PAYMENT_PROOF_PNG) -> UserOption:
     def f(u: User) -> None:
-        if not Payment.objects.filter(user=u).exists():
+        if not Selection.objects.filter(user=u).exists():
             with_payment()(u)
 
-        PaymentsDomain.add_document(
-            Payment.objects.get(user=u), Document(file_location=file_location, doc_type=doc_type)
-        )
+        add_document(Selection.objects.get(user=u), SelectionDocument(file_location=file_location, doc_type=doc_type))
         storage_cli.copy(file_location)
 
     return f
@@ -195,18 +196,18 @@ class Command(BaseCommand):
         )
 
         # users with payments
-        new_user("with_regular_payment", with_profile(ticket_type="regular"), with_payment())
-        new_user(
-            "with_regular_payment_with_docs", with_profile(ticket_type="regular"), with_payment(), with_document()
-        )
-        new_user(
-            "with_student_payment_with_docs",
-            with_profile(ticket_type="student"),
-            with_payment(),
-            with_document(),
-            with_document(doc_type="student_id", file_location=ASSET_STUDENT_ID_PNG),
-        )
-        new_user("with_company_payment", with_profile(ticket_type="company"), with_payment(), with_document())
+        # new_user("with_regular_payment", with_profile(ticket_type="regular"), with_payment())
+        # new_user(
+        #     "with_regular_payment_with_docs", with_profile(ticket_type="regular"), with_payment(), with_document()
+        # )
+        # new_user(
+        #     "with_student_payment_with_docs",
+        #     with_profile(ticket_type="student"),
+        #     with_payment(),
+        #     with_document(),
+        #     with_document(doc_type="student_id", file_location=ASSET_STUDENT_ID_PNG),
+        # )
+        # new_user("with_company_payment", with_profile(ticket_type="company"), with_payment(), with_document())
 
         # randoms (will be bulk created)
         users: List[User] = []
