@@ -23,8 +23,12 @@ def candidate_home_view(request: HttpRequest) -> HttpResponse:
         action_point = "created_profile"
     elif state.application_status != Status.passed or state.selection_status is None:
         action_point = "admission_test"
-    else:
+    elif (
+        state.selection_status is not None and state.selection_status not in SelectionStatus.SELECTION_POSITIVE_STATUS
+    ):
         action_point = "selection_results"
+    else:
+        action_point = "payments"
 
     first_name = None
     if state.created_profile:

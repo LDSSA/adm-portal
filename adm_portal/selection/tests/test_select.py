@@ -26,7 +26,7 @@ class TestSelect(TestCase):
         self.assertEqual(SelectionQueries.filter_by_status_in([SelectionStatus.SELECTED]).count(), 9)
         for selection in SelectionQueries.filter_by_status_in([SelectionStatus.SELECTED]):
             self.assertEqual(selection.ticket_type, "regular")
-            self.assertEqual(selection.payment_value, 500)
+            self.assertEqual(selection.payment_value, 250)
 
     # def test_select_to_interview(self) -> None:
     #     for i in range(9):

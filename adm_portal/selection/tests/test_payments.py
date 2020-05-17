@@ -19,7 +19,7 @@ class TestDomain(TestCase):
         load_payment_data(selection)
 
         self.assertEqual(selection.ticket_type, "regular")
-        self.assertEqual(selection.payment_value, 500)
+        self.assertEqual(selection.payment_value, 250)
         self.assertEqual(selection.status, SelectionStatus.SELECTED)
 
     def test_create_payment_student(self) -> None:
@@ -29,7 +29,7 @@ class TestDomain(TestCase):
         load_payment_data(selection)
 
         self.assertEqual(selection.ticket_type, "student")
-        self.assertEqual(selection.payment_value, 300)
+        self.assertEqual(selection.payment_value, 100)
         self.assertEqual(selection.status, SelectionStatus.SELECTED)
 
     def test_create_payment_company(self) -> None:
