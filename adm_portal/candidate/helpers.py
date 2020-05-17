@@ -1,7 +1,13 @@
+from datetime import datetime
 from typing import Any, Dict, Optional
 
+from interface import interface
 from selection.models import Selection
 from users.models import User
+
+
+def applications_are_open() -> bool:
+    return datetime.now() > interface.feature_flag_client.get_applications_opening_date()
 
 
 def user_has_payment(user: User) -> bool:
@@ -17,6 +23,7 @@ def build_context(user: User, ctx: Optional[Dict[str, Any]] = None) -> Dict[str,
         "user_confirmed_email": user.email_confirmed,
         "user_accepted_coc": user.code_of_conduct_accepted,
         "user_has_profile": getattr(user, "profile", None) is not None,
+        "applications_are_open": applications_are_open(),
     }
     ctx = ctx or {}
 

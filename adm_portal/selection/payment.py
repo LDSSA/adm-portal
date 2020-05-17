@@ -29,7 +29,7 @@ def load_payment_data(selection: Selection, staff: Optional[User] = None) -> Non
 
     selection.ticket_type = ticket_type
     selection.payment_value = value
-    selection.due_date = datetime.now() + timedelta(hours=48)
+    selection.payment_due_date = datetime.now() + timedelta(hours=48)
     selection.save()
 
     log_selection_event(

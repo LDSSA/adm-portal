@@ -22,14 +22,14 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/candidate/profile">Profile</a>
                 </li>
-                {% if user_has_profile %}
+                {% if user_has_profile and applications_are_open %}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       Submissions
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                      <a class="dropdown-item" href="/candidate/coding-test">Coding Test</a>
                       <a class="dropdown-item" href="/candidate/slu/slu01">SLU01</a>
+                      <a class="dropdown-item" href="/candidate/coding-test">Coding Test</a>
                       <a class="dropdown-item" href="/candidate/slu/slu02">SLU02</a>
                       <a class="dropdown-item" href="/candidate/slu/slu03">SLU03</a>
                     </div>

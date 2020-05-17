@@ -26,6 +26,7 @@ def _get_candidate_payment_view(request: HttpRequest) -> HttpResponse:
 
     context = {
         "s": selection,
+        "selection_status": SelectionStatus,
         "can_update": can_be_updated(selection),
         "profile": request.user.profile,
         "payment_proofs": payment_proofs,

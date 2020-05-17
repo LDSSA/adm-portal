@@ -10,13 +10,16 @@ from applications.domain import Domain
 from applications.models import Application, Submission, SubmissionType, SubmissionTypes
 from interface import interface
 
-from .helpers import build_context
+from .helpers import build_context, applications_are_open
 
 # coding test views
 
 
 @require_http_methods(["GET", "POST"])
 def candidate_before_coding_test_view(request: HttpRequest) -> HttpResponse:
+    if not applications_are_open():
+        return HttpResponseRedirect("/candidate/home")
+
     if request.method == "GET":
         template = loader.get_template("./candidate_templates/before_coding_test.html")
         ctx = {
@@ -36,6 +39,9 @@ def candidate_before_coding_test_view(request: HttpRequest) -> HttpResponse:
 
 @require_http_methods(["GET"])
 def candidate_coding_test_view(request: HttpRequest) -> HttpResponse:
+    if not applications_are_open():
+        return HttpResponseRedirect("/candidate/home")
+
     application, _ = Application.objects.get_or_create(user=request.user)
     if application.coding_test_started_at is None:
         return HttpResponseRedirect("/candidate/before-coding-test")
@@ -66,6 +72,8 @@ def candidate_coding_test_download_view(request: HttpRequest) -> HttpResponse:
 
 @require_http_methods(["GET"])
 def candidate_slu_view(request: HttpRequest, submission_type: str) -> HttpResponse:
+    if not applications_are_open():
+        return HttpResponseRedirect("/candidate/home")
     application, _ = Application.objects.get_or_create(user=request.user)
     submission_type_ = getattr(SubmissionTypes, submission_type)
     ctx = build_context(request.user, submission_view_ctx(application, submission_type_))
