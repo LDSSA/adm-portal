@@ -95,6 +95,8 @@ def candidate_submission_upload_view(request: HttpRequest, submission_type: str)
     )
     Domain.add_submission(application, submission_type_, sub)
 
+    if submission_type == SubmissionTypes.coding_test.uname:
+        return HttpResponseRedirect(f"/candidate/coding-test")
     return HttpResponseRedirect(f"/candidate/slu/{submission_type}")
 
 
@@ -112,7 +114,9 @@ def submission_view_ctx(application: Application, submission_type: SubmissionTyp
         "submissions": Submission.objects.filter(
             application=application, submission_type=submission_type.uname
         ).order_by("-updated_at"),
-        "coding_test_started_at_ms": int(application.coding_test_started_at.timestamp() * 1000),
+        "coding_test_started_at_ms": int(application.coding_test_started_at.timestamp() * 1000)
+        if application.coding_test_started_at is not None
+        else None,
     }
 
 

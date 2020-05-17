@@ -23,5 +23,5 @@ STORAGE_CLIENT_NAMESPACE = "ldssa-adm-portal-601"
 FF_CLIENT = "DB"
 
 GRADER_CLIENT = "HTTP"
-GRADER_CLIENT_URL = os.environ.get("ADM_GRADER_URL", "http://0.0.0.0:3000")
-GRADER_CLIENT_AUTH_TOKEN = os.environ.get("ADM_GRADER_AUTH_TOKEN", "dev-secret")
+GRADER_CLIENT_URL = os.environ.get("ADM_GRADER_URL", "http://0.0.0.0:3000")  # noqa: F405
+GRADER_CLIENT_AUTH_TOKEN = os.environ.get("ADM_GRADER_AUTH_TOKEN", "dev-secret")  # noqa: F405

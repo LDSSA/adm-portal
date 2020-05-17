@@ -68,11 +68,11 @@ class Domain:
         start_date = Domain.get_start_date(application, sub_type)
         end_date = Domain.get_end_date(application, sub_type)
 
-        if start_date is None or start_date > dt_now:
-            return SubmissionStatus.not_started
-
         if end_date < dt_now:
             return SubmissionStatus.failed
+
+        if start_date is None or start_date > dt_now:
+            return SubmissionStatus.not_started
 
         return SubmissionStatus.ongoing
 
