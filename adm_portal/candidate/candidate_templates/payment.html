@@ -12,6 +12,8 @@
         <span class="badge badge-danger">{{ s.status }}</span>
         {% elif s.status == selection_status.SELECTED %}
         <span class="badge badge-info">{{ s.status }}</span>
+        {% elif s.status == selection_status.TO_BE_ACCEPTED %}
+        <span class="badge badge-info">{{ s.status }}</span>
         {% else %}
         <span class="badge badge-warning">{{ s.status }}</span>
         {% endif %}
@@ -59,6 +61,7 @@
             </div>
             {% endif %}
 
+            {% if can_update %}
             <div class="card-body">
                 <h5 class="card-title">Submit new</h5>
                 <form action="/candidate/payment/upload-payment-proof" enctype="multipart/form-data" method="POST" class="mb-0">
@@ -76,10 +79,10 @@
                     <button class="btn btn-primary" type="submit" {% if not can_update %} disabled {% endif %}>Upload file</button>
                 </form>
             </div>
+            {% endif %}
         </div>
 
-
-        {% if payment.ticket_type_is_student %}
+        {% if s.ticket_type == "student" %}
         <div class="card mb-4">
             <h5 class="card-header">Student ID</h5>
 
@@ -92,6 +95,7 @@
             </div>
             {% endif %}
 
+            {% if can_update %}
             <div class="card-body">
                 <h5 class="card-title">Submit new</h5>
                 <form action="/candidate/payment/upload-student-id" enctype="multipart/form-data" method="POST" class="mb-0">
@@ -109,26 +113,28 @@
                     <button class="btn btn-primary" type="submit" {% if not can_update %} disabled {% endif %}>Upload file</button>
                 </form>
             </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% if can_update %}
+        <div class="card mb-4">
+            <div class="card-body">
+            <p>
+                When you've uploaded all your documents and you're ready for
+                us to review them, click the "Submit" button below.
+            </p>
+
+            <form method="post" class="mb-0">
+            {% csrf_token %}
+                <button type="submit" class="btn btn-primary" {% if not can_update %} disabled {% endif %}>Submit</button>
+            </form>
+            </div>
         </div>
         {% endif %}
 
         </div>
 
-        
-    </div>
-
-    <div class="card">
-        <div class="card-body">
-        <p>
-            When you've uploaded all your documents and you're ready for
-            us to analyse them, click the "Submit" button below.
-        </p>
-
-        <form method="post" class="mb-0">
-        {% csrf_token %}
-            <button type="submit" class="btn btn-primary" {% if not can_update %} disabled {% endif %}>Submit</button>
-        </form>
-        </div>
     </div>
 </div>
 

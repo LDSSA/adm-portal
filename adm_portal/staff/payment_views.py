@@ -44,6 +44,7 @@ def reset_payment_view(request: HttpRequest, user_id: int) -> HttpResponse:
     _, selection = _get_user_selection(user_id)
     try:
         load_payment_data(selection, request.user)
+        SelectionDomain.update_status(selection, SelectionStatus.SELECTED, user=request.user)
     except Exception:
         raise Http404
 
