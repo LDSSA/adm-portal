@@ -105,7 +105,7 @@ def submission_view_ctx(application: Application, submission_type: SubmissionTyp
     return {
         "submission_type": submission_type,
         "status": Domain.get_sub_type_status(application, submission_type).name,
-        "submissions_closes_at": Domain.get_end_date(application, submission_type),
+        "submissions_closes_at": Domain.get_end_date(application, submission_type).strftime("%Y-%m-%d %H:%M"),
         "best_score": Domain.get_best_score(application, submission_type),
         "download_enabled": Domain.can_add_submission(application, submission_type),
         "upload_enabled": Domain.can_add_submission(application, submission_type),

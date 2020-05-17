@@ -111,7 +111,7 @@
               <div class="card-body">
                 {% if state.application_status.name == "passed" %}
                     Congratulations! You've passed the admission test.
-                    From the X, we'll let you know if you've been (randomly) selected to participate in this batch of the LDSSA.
+                    From the {{ applications_close_date }}, we'll let you know if you've been (randomly) selected to participate in this batch of the LDSSA.
                 {% elif state.application_status.name == "failed" %}
                     <p>We're sorry, but you didn't pass the admission test...</p>
                     
@@ -123,10 +123,10 @@
                     </p>
 
                 {% else %}
-                    <p>You have until X to pass all the assignments.</p>
+                    <p>You have until <b>{{ applications_close_datetime }}</b> to pass all the assignments.</p>
                     
-                    <p>For the SLUs, you can start them at any time, submit them for grading as many times as you want, and the due date will always be the X.
-                    For the coding test, you can also submit it for grading as many times as you want, but once you start it, <b>you only have Y hours to finish it</b>.</p>
+                    <p>For the SLUs, you can start them at any time, submit them for grading as many times as you want, and the due date will always be the {{ applications_close_datetime }}.
+                    For the coding test, you can also submit it for grading as many times as you want, but once you start it, <b>you only have {{ coding_test_duration|floatformat }} hours to finish it</b>.</p>
                     
                     <p>Make sure that you only start the coding test when you have enough free and uninterrupted time to spend.
                     Also, we suggest that you complete SLU01 before doing the coding test.
@@ -179,16 +179,16 @@
             </div>
         </div>
 
-        <!-- selection results (only shows if candidate passed admission test) -->
-        {% if state.application_status.name == "passed" %}
+        <!-- selection results (only shows if candidate passed admission test and selection has started) -->
+        {% if state.application_status.name == "passed" and state.selection_status is not None %}
             <div class="card">
                 <div class="card-header" id="headingFive">
                 <h5 class="mb-0">
                     <button class="btn btn-link" data-toggle="collapse" data-target="#collapseFive" aria-controls="collapseFive">
-                        {% if state.selected_status.name != "awaiting" %}
-                            <i class="fas fa-check-circle"></i>
+                        {% if state.selection_status == selection_status_values.PASSED_TEST or state.selection_status == selection_status_values.DRAWN %}
+                        <i class="far fa-circle"></i>
                         {% else %}
-                            <i class="far fa-circle"></i>
+                            <i class="fas fa-check-circle"></i>
                         {% endif %}
                         Selection Results
                     </button>
@@ -196,13 +196,21 @@
                 </div>
                 <div id="collapseFive" class="collapse {% if action_point == 'selection_results' %} show {% endif %}" aria-labelledby="collapseFive" data-parent="#accordion">
                 <div class="card-body">
-                    {% if state.selected_status.name == "awaiting" %}
+                    <!-- Passed test, applications are closed, we're doing selections, this candidate wasn't selected yet -->
+                    <!-- selection_status in [PASSED_TEST, DRAWN] -->
+                    {% if state.selection_status in selection_status_values.SELECTION_AWAITING_STATUS %}
                         We're in the process of randomly selecting this year's students for the Lisbon Data Science Starters Academy.</p>
                         We'll send you an email soon to let you if you were selected or not.
                         This page will also be updated with the results. Stay tuned!
-                    {% elif state.selected_status.name == "selected" %}
+                    
+                    <!-- We're doing selections, this candidate was selected -->
+                    <!-- selection_status in [SELECTED, TO_BE_ACCEPTED, ACCEPTED, REJECTED (this is rejected after payment)] -->
+                    {% elif state.selection_status in selection_status_values.SELECTION_POSITIVE_STATUS %}
                         You've been selected to participate in this batch of the Lisbon Data Science Starters Academy!
-                    {% else %}
+                    
+                    <!-- We're finished with selections, this candidate was not selected -->
+                    <!-- selection_status in [NOT_SELECTED] -->
+                    {% elif state.selection_status in selection_status_values.SELECTION_NEGATIVE_STATUS %}
                         Unfortunately, you have not been selected for this batch of the Lisbon Data Science Starters Academy.
 
                         <p>Remember that all the contents used in the Academy are available in our <a href="https://github.com/LDSSA/batch4-students">GitHub</a>, for free.</p>
@@ -211,6 +219,9 @@
                             If you want to give it another try next year, we hope that you have better luck.
                             Check our <a href="https://www.lisbondatascience.org/">website</a> for updates about our courses.
                         </p>
+                    
+                    {% else %}
+                        ERROR!!!
                     {% endif %}
                 </div>
                 </div>
