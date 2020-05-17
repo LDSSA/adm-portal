@@ -58,7 +58,7 @@ class LocalEmailClient(EmailClient):
         self._dump_locally("send_signup_email", to=to, email_confirmation_url=email_confirmation_url)
 
     def send_reset_password_email(self, to: str, reset_pw_url: str) -> None:
-        self._dump_locally("send_signup_email", to=to, reset_pw_url=reset_pw_url)
+        self._dump_locally("send_reset_password_email", to=to, reset_pw_url=reset_pw_url)
 
     def send_payment_accepted_proof_email(self, to: str, msg: Optional[str] = None) -> None:
         self._dump_locally("send_payment_accepted_proof_email", to=to, msg=msg or "default")
