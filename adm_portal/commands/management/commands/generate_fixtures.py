@@ -16,12 +16,6 @@ from selection.status import SelectionStatus
 from storage_client import LocalStorageClient
 from users.models import User
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-handler = logging.StreamHandler()
-formatter = logging.Formatter("[%(asctime)s] %(message)s", "%Y-%m-%d %H:%M:%S")
-handler.setFormatter(formatter)
-logger.addHandler(handler)
 
 _assets = os.path.join(".", "commands", "assets")
 ASSET_SUBMISSION_FEEDBACK_HTML = os.path.join(_assets, "submission-feedback.html")
