@@ -10,7 +10,7 @@ from applications.domain import Domain
 from applications.models import Application, Submission, SubmissionType, SubmissionTypes
 from interface import interface
 
-from .helpers import build_context, applications_are_open
+from .helpers import applications_are_open, build_context
 
 # coding test views
 

@@ -2,11 +2,13 @@ from django.contrib import auth
 from django.db import transaction
 from django.test import Client, TestCase
 
+from interface import interface
 from users.models import User, UserConfirmEmail, UserResetPassword
 
 
 class TestUserSignupViews(TestCase):
     def setUp(self) -> None:
+        interface.feature_flag_client.open_signups()
         self.user = User.objects.create_user(email="joao@protonmail.com", password="joao_pw")
         self.staff_user = User.objects.create_staff_user(email="chi@adm.com", password="chi_pw")
 
@@ -57,6 +59,17 @@ class TestUserSignupViews(TestCase):
             response = Client().post("/account/signup", {"email": "chi@adm.com", "password": "pw"})
         self.assertEqual(response.status_code, 409)
         self.assertFalse(auth.get_user(self.client).is_authenticated)
+
+    def test_get_signup_closed_400(self) -> None:
+        interface.feature_flag_client.close_signups()
+        response = Client().get("/account/signup")
+        self.assertEqual(response.status_code, 400)
+
+    def test_post_signup_closed_302(self) -> None:
+        interface.feature_flag_client.close_signups()
+        client = Client()
+        response = client.post("/account/signup", {"email": "vasco@sf.com", "password": "vasco_pw"})
+        self.assertEqual(response.status_code, 400)
 
 
 class TestUserLoginViews(TestCase):

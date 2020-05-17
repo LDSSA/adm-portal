@@ -20,11 +20,21 @@ def _get_signup_view(request: HttpRequest) -> HttpResponse:
             return HttpResponseRedirect("/staff/home")
         return HttpResponseRedirect("/candidate/home")
 
+    if not interface.feature_flag_client.signups_are_open():
+        ctx = {"msg": "signup period is over"}
+        template = loader.get_template("./user_templates/error.html")
+        return HttpResponse(template.render(ctx, request), status=400)
+
     template = loader.get_template("./user_templates/signup.html")
     return HttpResponse(template.render({}, request))
 
 
 def _post_signup_view(request: HttpRequest) -> HttpResponse:
+    if not interface.feature_flag_client.signups_are_open():
+        ctx = {"msg": "signup period is over"}
+        template = loader.get_template("./user_templates/error.html")
+        return HttpResponse(template.render(ctx, request), status=400)
+
     email = request.POST["email"]
     password = request.POST["password"]
 
