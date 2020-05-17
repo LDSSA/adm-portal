@@ -111,72 +111,82 @@
             </div>
             <div id="collapseFour" class="collapse {% if action_point == 'admission_test' %} show {% endif %}" aria-labelledby="collapseFour" data-parent="#accordion">
               <div class="card-body">
-                {% if state.application_status.name == "passed" %}
-                    Congratulations! You've passed the admission test.
-                    From the {{ applications_close_date }}, we'll let you know if you've been (randomly) selected to participate in this batch of the LDSSA.
-                {% elif state.application_status.name == "failed" %}
-                    <p>We're sorry, but you didn't pass the admission test...</p>
-                    
-                    <p>Remember that all the contents used in the Academy are available in our <a href="https://github.com/LDSSA/batch4-students">GitHub</a>, for free.</p>
-
-                    <p>
-                        If you want to give it another try next year, we hope that you have better luck.
-                        Check our <a href="https://www.lisbondatascience.org/">website</a> for updates about our courses.
-                    </p>
-
+                {% if not is_applications_open %}
+                    <p>The admission tests will open on the <b>{{ applications_open_datetime }}</b>.</p>
+                    <p>Come back then to start working on the tests!</p>
                 {% else %}
-                    <p>You have until <b>{{ applications_close_datetime }}</b> to pass all the assignments.</p>
-                    
-                    <p>For the SLUs, you can start them at any time, submit them for grading as many times as you want, and the due date will always be the {{ applications_close_datetime }}.
-                    For the coding test, you can also submit it for grading as many times as you want, but once you start it, <b>you only have {{ coding_test_duration|floatformat }} hours to finish it</b>.</p>
-                    
-                    <p>Make sure that you only start the coding test when you have enough free and uninterrupted time to spend.
-                    Also, we suggest that you complete SLU01 before doing the coding test.
-                    This way, you'll first get familiar with the grading system, and will be better prepared to face the coding test's time constraints.</p>
-                {% endif %}
 
-                <ul class="list-group list-group-flush pt-3">
-                    <li class="list-group-item">
-                        {% if state.slu01_status.name == "passed" %}
-                            <i class="far fa-check-circle"></i>
-                        {% elif state.slu01_status.name == "failed" %}
-                            <i class="far fa-times-circle"></i>
-                        {% else %}
-                            <i class="far fa-circle"></i>
-                        {% endif %}
-                        <a href="/candidate/slu/slu01">SLU01</a>
-                    </li>
-                    <li class="list-group-item">
-                        {% if state.coding_test_status.name == "passed" %}
-                            <i class="far fa-check-circle"></i>
-                        {% elif state.coding_test_status.name == "failed" %}
-                            <i class="far fa-times-circle"></i>
-                        {% else %}
-                            <i class="far fa-circle"></i>
-                        {% endif %}
-                        <a href="/candidate/coding-test">Coding Test</a>
-                    </li>
-                    <li class="list-group-item">
-                        {% if state.slu02_status.name == "passed" %}
-                            <i class="far fa-check-circle"></i>
-                        {% elif state.slu02_status.name == "failed" %}
-                            <i class="far fa-times-circle"></i>
-                        {% else %}
-                            <i class="far fa-circle"></i>
-                        {% endif %}
-                        <a href="/candidate/slu/slu02">SLU02</a>
-                    </li>
-                    <li class="list-group-item">
-                        {% if state.slu03_status.name == "passed" %}
-                            <i class="far fa-check-circle"></i>
-                        {% elif state.slu03_status.name == "failed" %}
-                            <i class="far fa-times-circle"></i>
-                        {% else %}
-                            <i class="far fa-circle"></i>
-                        {% endif %}
-                        <a href="/candidate/slu/slu03">SLU03</a>
-                    </li>
-                </ul>
+                    {% if state.application_status.name == "passed" %}
+                        Congratulations! You've passed the admission test.
+                        From the {{ applications_close_date }}, we'll let you know if you've been (randomly) selected to participate in this batch of the LDSSA.
+                    {% elif state.application_status.name == "failed" %}
+                        <p>We're sorry, but you didn't pass the admission test...</p>
+                        
+                        <p>Remember that all the contents used in the Academy are available in our <a href="https://github.com/LDSSA/batch4-students">GitHub</a>, for free.</p>
+
+                        <p>
+                            If you want to give it another try next year, we hope that you have better luck.
+                            Check our <a href="https://www.lisbondatascience.org/">website</a> for updates about our courses.
+                        </p>
+
+                    {% elif is_applications_open %}
+                        <p>You have until <b>{{ applications_close_datetime }}</b> to pass all the assignments.</p>
+                        
+                        <p>For the SLUs, you can start them at any time, submit them for grading as many times as you want, and the due date will always be the {{ applications_close_datetime }}.
+                        For the coding test, you can also submit it for grading as many times as you want, but once you start it, <b>you only have {{ coding_test_duration|floatformat }} hours to finish it</b>.</p>
+                        
+                        <p>Make sure that you only start the coding test when you have enough free and uninterrupted time to spend.
+                        Also, we suggest that you complete SLU01 before doing the coding test.
+                        This way, you'll first get familiar with the grading system, and will be better prepared to face the coding test's time constraints.</p>
+                    
+                    {% else %}
+                        ERROR!!
+                    {% endif %}
+
+                    <ul class="list-group list-group-flush pt-3">
+                        <li class="list-group-item">
+                            {% if state.slu01_status.name == "passed" %}
+                                <i class="far fa-check-circle"></i>
+                            {% elif state.slu01_status.name == "failed" %}
+                                <i class="far fa-times-circle"></i>
+                            {% else %}
+                                <i class="far fa-circle"></i>
+                            {% endif %}
+                            <a href="/candidate/slu/slu01">SLU01</a>
+                        </li>
+                        <li class="list-group-item">
+                            {% if state.coding_test_status.name == "passed" %}
+                                <i class="far fa-check-circle"></i>
+                            {% elif state.coding_test_status.name == "failed" %}
+                                <i class="far fa-times-circle"></i>
+                            {% else %}
+                                <i class="far fa-circle"></i>
+                            {% endif %}
+                            <a href="/candidate/coding-test">Coding Test</a>
+                        </li>
+                        <li class="list-group-item">
+                            {% if state.slu02_status.name == "passed" %}
+                                <i class="far fa-check-circle"></i>
+                            {% elif state.slu02_status.name == "failed" %}
+                                <i class="far fa-times-circle"></i>
+                            {% else %}
+                                <i class="far fa-circle"></i>
+                            {% endif %}
+                            <a href="/candidate/slu/slu02">SLU02</a>
+                        </li>
+                        <li class="list-group-item">
+                            {% if state.slu03_status.name == "passed" %}
+                                <i class="far fa-check-circle"></i>
+                            {% elif state.slu03_status.name == "failed" %}
+                                <i class="far fa-times-circle"></i>
+                            {% else %}
+                                <i class="far fa-circle"></i>
+                            {% endif %}
+                            <a href="/candidate/slu/slu03">SLU03</a>
+                        </li>
+                    </ul>
+
+                {% endif %}
               </div>
             </div>
         </div>
@@ -192,7 +202,7 @@
                         {% elif state.selection_status in selection_status_values.SELECTION_NEGATIVE_STATUS %}
                             <i class="fas fa-times-circle"></i>
                         {% else %}
-                            <i class="fas fa-circle"></i>
+                            <i class="far fa-circle"></i>
                         {% endif %}
                         Selection Results
                     </button>

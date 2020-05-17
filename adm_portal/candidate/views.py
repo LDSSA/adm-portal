@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.views.decorators.http import require_http_methods
@@ -42,6 +44,10 @@ def candidate_home_view(request: HttpRequest) -> HttpResponse:
             "selection_status_values": SelectionStatus,
             "action_point": action_point,
             "first_name": first_name,
+            "is_applications_open": datetime.now() >= interface.feature_flag_client.get_applications_opening_date(),
+            "applications_open_datetime": interface.feature_flag_client.get_applications_opening_date().strftime(
+                "%Y-%m-%d %H:%M"
+            ),
             "applications_close_datetime": interface.feature_flag_client.get_applications_closing_date().strftime(
                 "%Y-%m-%d %H:%M"
             ),

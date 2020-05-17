@@ -112,14 +112,23 @@
         </div>
         {% endif %}
 
-    </div>
+        </div>
+
+        
     </div>
 
-    <div class="col text-center">
-        <form method="post">
+    <div class="card">
+        <div class="card-body">
+        <p>
+            When you've uploaded all your documents and you're ready for
+            us to analyse them, click the "Submit" button below.
+        </p>
+
+        <form method="post" class="mb-0">
         {% csrf_token %}
-            <button type="submit" class="btn btn-primary" {% if not can_update %} disabled {% endif %}>Request Payment Proof Review</button>
+            <button type="submit" class="btn btn-primary" {% if not can_update %} disabled {% endif %}>Submit</button>
         </form>
+        </div>
     </div>
 </div>
 
