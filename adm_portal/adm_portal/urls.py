@@ -37,6 +37,7 @@ from users.decorators import (
     requires_candidate_coc,
     requires_candidate_confirmed,
     requires_candidate_login,
+    requires_candidate_profile,
     requires_staff_login,
 )
 from users.views import (
@@ -109,6 +110,9 @@ coc_candidate_routes = [
     # profile
     Route(route="candidate/profile", view=candidate_profile_view, name="candidate-profile"),
     # coding test
+]
+
+candidate_with_profile_routes = [
     Route(
         route="candidate/before-coding-test",
         view=candidate_before_coding_test_view,
@@ -174,4 +178,5 @@ urlpatterns = [
     *[path(r.route, requires_candidate_login(r.view), name=r.name) for r in candidate_routes],
     *[path(r.route, requires_candidate_confirmed(r.view), name=r.name) for r in confirmed_candidate_routes],
     *[path(r.route, requires_candidate_coc(r.view), name=r.name) for r in coc_candidate_routes],
+    *[path(r.route, requires_candidate_profile(r.view), name=r.name) for r in candidate_with_profile_routes],
 ]
