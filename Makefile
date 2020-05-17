@@ -44,4 +44,5 @@ docker-stop:
 # AWS cloudformation
 
 aws-deploy-s3:
-	aws cloudformation deploy --template-file aws-cloudformation/s3.yaml --stack-name adm-portal-storage
+	@ aws cloudformation deploy --template-file aws-cloudformation/s3.yaml --stack-name adm-portal-storage --no-fail-on-empty-changeset
+	@ echo "Checking if required files exits"; aws s3api head-object --bucket ldssa-adm-portal-601 --key coding_test.ipynb > /dev/null 2>&1
