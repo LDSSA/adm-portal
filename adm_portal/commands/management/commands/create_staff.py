@@ -4,11 +4,11 @@ from users.models import User
 
 
 class Command(BaseCommand):
-    domain = ""
+    domain = "lisbondatascience.org"
 
     def add_arguments(self, parser) -> None:
-        parser.add_argument("email", type=str)
-        parser.add_argument("password", type=str)
+        parser.add_argument("--email", type=str)
+        parser.add_argument("--password", type=str)
 
     def handle(self, *args, **options) -> None:
         email = options["email"]
