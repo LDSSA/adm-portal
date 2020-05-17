@@ -28,7 +28,7 @@ def candidate_home_view(request: HttpRequest) -> HttpResponse:
     ):
         action_point = "selection_results"
     else:
-        action_point = "payments"
+        action_point = "payment"
 
     first_name = None
     if state.created_profile:
