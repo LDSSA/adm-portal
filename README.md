@@ -32,7 +32,7 @@ $ python manage.py runserver
 ```
 
 
-### `ldssa-adm-portal`bucket structure
+### `ldssa-adm-portal-601`bucket structure
 
 ```
 ├── coding_test.ipynb
@@ -65,3 +65,12 @@ $ python manage.py runserver
         └── user_1
             └── file_1
 ```
+
+
+### Notes
+
+- when moving to another aws account search for `601` and replaced it for something else everywhere.
+- do we have ssh access if the is deployed in the k8 cluster?
+- do we have logs on aws-cloudwatch or something like that?
+- how do we go about creating admin/staff users?
+- list of permissions necessary for the role running this code? (s3, secrets)

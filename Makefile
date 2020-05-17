@@ -3,6 +3,8 @@
 CI_SETTINGS=adm_portal.settings.ci
 DEV_SETTINGS=adm_portal.settings.dev
 
+# development
+
 default: format test-all
 
 format:
@@ -37,3 +39,9 @@ docker-stop:
 	@ echo "Stopping docker image"
 	@ docker stop adm-portal-dev
 	@ docker rm adm-portal-dev
+
+
+# AWS cloudformation
+
+aws-deploy-s3:
+	aws cloudformation deploy --template-file aws-cloudformation/s3.yaml --stack-name adm-portal-storage

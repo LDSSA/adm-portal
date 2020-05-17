@@ -1,5 +1,7 @@
 from .base import *  # noqa: F403 F401
 
+ENV = "ci"
+
 SECRET_KEY = "CI-SECRET"
 
 DEBUG = False

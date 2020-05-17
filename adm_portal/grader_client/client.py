@@ -1,8 +1,11 @@
 import random
 from abc import ABC, abstractmethod
+from logging import getLogger
 from typing import NamedTuple
 
 import requests
+
+logger = getLogger(__name__)
 
 
 class SubmissionResult(NamedTuple):
@@ -40,6 +43,8 @@ class GraderClientHttp(GraderClient):
             "submissionS3Bucket": submission_s3_bucket,
             "submissionS3Key": submission_s3_key,
         }
+
+        logger.info(f"grade request: url={url}, body={body}, authorization={self.auth_token[0:3]}***")
 
         r: requests.Response = requests.post(url=url, headers=headers, json=body)
         if not r.ok:
