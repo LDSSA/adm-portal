@@ -4,7 +4,7 @@
 
 <div class="container">
     <h2 class="py-5">
-        Candidate <a href="/staff/profiles/{{ s.user.id }}">{{ s.user.email }}</a> Payment
+        Candidate <a href="/staff/candidates/{{ s.user.id }}">{{ s.user.email }}</a> Payment
 
         {% if s.status == selection_status.ACCEPTED %}
         <span class="badge badge-success">{{ s.status }}</span>

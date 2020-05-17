@@ -38,7 +38,7 @@
                 <tbody>
                 {% for a in applications %}
                 <tr>
-                    <td><a href="/staff/profiles/{{ a.ref.user.id }}">{{ a.ref.user.email }}</a></td>
+                    <td><a href="/staff/candidates/{{ a.ref.user.id }}">{{ a.ref.user.email }}</a></td>
                     {% for status in a.status_list %}
                     <td>
                         {% if status.name == "not_started" %}

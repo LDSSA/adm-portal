@@ -37,6 +37,8 @@ class Submission(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    objects = models.Manager()
+
 
 class SubmissionsException(Exception):
     detail = "submission error"
@@ -66,3 +68,5 @@ class Application(models.Model):
     application_over_email_sent = models.CharField(
         null=True, default=None, max_length=10, choices=[("passed", "failed")]
     )
+
+    objects = models.Manager()

@@ -21,7 +21,7 @@
                 <tbody>
                 {% for s in selections %}
                 <tr>
-                    <td><a href="/staff/profiles/{{ s.user.id }}">{{ s.user.email }}</a></td>
+                    <td><a href="/staff/candidates/{{ s.user.id }}">{{ s.user.email }}</a></td>
                     <td>{{ s.payment_value }}</td>
                     <td>€ (eur)</td>
                     <td><a href="/staff/payments/{{ s.user.id }}">

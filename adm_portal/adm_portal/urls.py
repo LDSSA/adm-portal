@@ -23,9 +23,9 @@ from candidate.payments_views import (
 from candidate.profile_views import candidate_profile_view
 from candidate.views import candidate_code_of_conduct_view, candidate_home_view
 from staff.application_views import staff_applications_view
+from staff.candidates_views import staff_candidate_view, staff_candidates_view
 from staff.events_view import staff_events_view
 from staff.payment_views import reset_payment_view, staff_payment_view, staff_payments_view
-from staff.profile_views import staff_profiles_view
 from staff.selection_views import (
     staff_draw_candidates_view,
     staff_reject_selection_view,
@@ -81,8 +81,8 @@ account_routs = [
 staff_routes = [
     Route(route="staff/home", view=staff_home_view, name="staff-home"),
     Route(route="staff/events", view=staff_events_view, name="staff-events"),
-    Route(route="staff/profiles", view=staff_profiles_view, name="staff-profiles-list"),
-    Route(route="staff/profiles/<int:user_id>/", view=todo_view, name="staff-profile"),
+    Route(route="staff/candidates", view=staff_candidates_view, name="staff-profiles-list"),
+    Route(route="staff/candidates/<int:user_id>/", view=staff_candidate_view, name="staff-profile"),
     Route(route="staff/applications", view=staff_applications_view, name="staff-applications-list"),
     Route(route="staff/applications/<int:user_id>", view=todo_view, name="staff-application"),
     Route(route="staff/selections/", view=staff_selection_candidates_view, name="staff-selections"),
