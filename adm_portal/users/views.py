@@ -129,8 +129,8 @@ def start_reset_password_view(request: HttpRequest) -> HttpResponse:
     try:
         user = User.objects.get(email=email)
         reset_password, _ = UserResetPassword.objects.get_or_create(user=user)
-        reset_pw_url = f"{request.get_host()}/account/reset-password?token={reset_password.token}"
-        interface.email_client.send_reset_password_email(to=email, reset_pw_url=reset_pw_url)
+        reset_password_url = f"{request.get_host()}/account/reset-password?token={reset_password.token}"
+        interface.email_client.send_reset_password_email(to=email, reset_password_url=reset_password_url)
     except User.DoesNotExist:
         # we will not disclose that such email is not in our db
         pass

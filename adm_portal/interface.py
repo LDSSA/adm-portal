@@ -2,7 +2,7 @@ from typing import Optional
 
 from django.conf import settings
 
-from email_client.client import EmailClient, LocalEmailClient
+from email_client import ElasticEmailClient, EmailClient, LocalEmailClient
 from feature_flags_client import DBFeatureFlagsClient, FeatureFlagsClient, MockFeatureFlagsClient
 from flags.domain import FlagsGetSet
 from grader_client import GraderClient, GraderClientFakeScores, GraderClientHttp
@@ -42,7 +42,9 @@ class _Interface:
     @staticmethod
     def new_email_client(client_id: Optional[str] = None) -> EmailClient:
         client_id = client_id or settings.EMAIL_CLIENT
-        if client_id == "LOCAL":
+        if client_id == "ELASTIC":
+            return ElasticEmailClient(api_key=settings.ELASTIC_EMAIL_API_KEY, sender=settings.ELASTIC_EMAIL_SENDER)
+        elif client_id == "LOCAL":
             return LocalEmailClient(root=settings.LOCAL_EMAIL_CLIENT_ROOT)
         raise InterfaceException(msg=f"No EmailClient implementation for `{client_id}`")
 

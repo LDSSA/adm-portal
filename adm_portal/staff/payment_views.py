@@ -93,12 +93,12 @@ def _post_staff_payment_view(request: HttpRequest, selection: Selection) -> Http
         add_note(selection, msg, staff_user)
     elif action == "reject":
         SelectionDomain.manual_update_status(selection, SelectionStatus.REJECTED, staff_user, msg=msg)
-        interface.email_client.send_payment_refused_proof_email(to=selection.user.email, msg=msg)
+        interface.email_client.send_payment_refused_proof_email(to=selection.user.email, message=msg)
     elif action == "ask_additional":
         SelectionDomain.manual_update_status(selection, SelectionStatus.SELECTED, staff_user, msg=msg)
-        interface.email_client.send_payment_need_additional_proof_email(to=selection.user.email, msg=msg)
+        interface.email_client.send_payment_need_additional_proof_email(to=selection.user.email, message=msg)
     elif action == "accept":
         SelectionDomain.manual_update_status(selection, SelectionStatus.ACCEPTED, staff_user, msg=msg)
-        interface.email_client.send_payment_accepted_proof_email(to=selection.user.email, msg=msg)
+        interface.email_client.send_payment_accepted_proof_email(to=selection.user.email, message=msg)
 
     return _get_staff_payment_view(request, selection, selection.user.id)

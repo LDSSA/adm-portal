@@ -6,14 +6,6 @@ SECRET_KEY = "SECRET"
 
 DEBUG = True
 
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "handlers": {"console": {"class": "logging.StreamHandler"}},
-    "root": {"handlers": ["console"], "level": "INFO"},
-    "loggers": {"django": {"handlers": ["console"], "level": "INFO", "propagate": False}},
-}
-
 EMAIL_CLIENT = "LOCAL"
 LOCAL_EMAIL_CLIENT_ROOT = os.path.join(os.path.dirname(BASE_DIR), ".mailbox")  # noqa: F405
 
