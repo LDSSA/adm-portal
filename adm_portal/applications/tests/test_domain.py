@@ -92,11 +92,11 @@ class TestDomain(TestCase):
         Submission.objects.create(application=target_app, score=10, submission_type=SubmissionTypes.coding_test.uname)
         Submission.objects.create(application=target_app, score=89, submission_type=SubmissionTypes.coding_test.uname)
 
-        Submission.objects.create(application=target_app, score=73, submission_type=SubmissionTypes.slu01.uname)
+        Submission.objects.create(application=target_app, score=15, submission_type=SubmissionTypes.slu01.uname)
 
-        Submission.objects.create(application=target_app, score=71, submission_type=SubmissionTypes.slu03.uname)
-        Submission.objects.create(application=target_app, score=21, submission_type=SubmissionTypes.slu03.uname)
-        Submission.objects.create(application=target_app, score=92, submission_type=SubmissionTypes.slu03.uname)
+        Submission.objects.create(application=target_app, score=14, submission_type=SubmissionTypes.slu03.uname)
+        Submission.objects.create(application=target_app, score=5, submission_type=SubmissionTypes.slu03.uname)
+        Submission.objects.create(application=target_app, score=19, submission_type=SubmissionTypes.slu03.uname)
 
         self.assertEqual(Domain.has_positive_score(target_app, SubmissionTypes.coding_test), True)
         self.assertEqual(Domain.has_positive_score(target_app, SubmissionTypes.slu01), False)

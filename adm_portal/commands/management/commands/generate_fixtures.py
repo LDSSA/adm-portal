@@ -1,7 +1,7 @@
-import logging
 import os
 import random
 from datetime import datetime, timedelta
+from logging import getLogger
 from typing import Callable, Dict, List, Optional
 
 from django.conf import settings
@@ -16,6 +16,7 @@ from selection.status import SelectionStatus
 from storage_client import LocalStorageClient
 from users.models import User
 
+logger = getLogger(__name__)
 
 _assets = os.path.join(".", "commands", "assets")
 ASSET_SUBMISSION_FEEDBACK_HTML = os.path.join(_assets, "submission-feedback.html")
