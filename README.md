@@ -1,5 +1,4 @@
-##
-
+# Admissions Portal
 
 ## Local development
 
@@ -67,10 +66,77 @@ $ python manage.py runserver
 ```
 
 
-### Notes
+## Deployment Details Summary
 
-- when moving to another aws account search for `601` and replaced it for something else everywhere.
-- do we have ssh access if the is deployed in the k8 cluster?
-- do we have logs on aws-cloudwatch or something like that?
-- how do we go about creating admin/staff users?
-- list of permissions necessary for the role running this code? (s3, secrets)
+### Requirements
+
+##### AWS RDS Instance (PostgreSQL)
+
+- DB details (host, port, user, pw) are taken from the environment
+- It would be nice to be able to query the database without going through the service
+
+
+##### AWS S3 Bucket 
+
+- Read permission required
+- Write permission required
+- Bucket name is taken from the environment
+
+
+### Django Commands
+
+These must be ran on the instance.
+
+Create Admin User:
+```bash
+$ cd app/adm_portal
+$ python manage.py create_admin --email admin@lisbondatascience.org --password 
+```
+
+Create Staff User:
+```bash
+$ cd app/adm_portal
+$ python manage.py create_staff --email staff@lisbondatascience.org --password 
+```
+
+
+### Docker Image
+
+[DockerFile](./Dockerfile)
+
+(Currently using `python3.8-buster` instead of `python3.8-alpine` because of postgresql dependency `psycopg2`)
+
+[ci](./.github/workflows/ci_cd.yml) 
+
+Building and Pushing new docker image on green commits on master 
+
+[@dockerhub](`https://hub.docker.com/r/acci/adm-portal/tags`)
+
+
+### Production ENV
+
+- `DJANGO_SETTINGS_MODULE`: `adm_portal.settings.prod`
+
+- `DJANGO_SECRET_KEY`: secret, can be generated
+
+- `POSTGRES_NAME`: dependent on the created `AWS RDS` instance
+- `POSTGRES_USER`: dependent on the created `AWS RDS` instance
+- `POSTGRES_PASSWORD`: dependent on the created `AWS RDS` instance
+- `POSTGRES_HOST`: dependent on the created `AWS RDS` instance
+- `POSTGRES_PORT`: dependent on the created `AWS RDS` instance
+
+- `ELASTIC_EMAIL_API_KEY`: provided by us
+- `ELASTIC_EMAIL_SENDER`: provided by us
+
+- `S3_BUCKET_NAME`: dependent on the created `S3 Bucket` name
+
+- `ADM_GRADER_URL`: dependent on the AWS LAMBDA (for now it can be provided by us)
+- `ADM_GRADER_AUTH_TOKEN`: secret, can be generated, needs to be consistent with the one on the AWS LAMBDA
+
+
+### Nice to have / Later
+
+- SSH access?
+- logs on cloudwatch?
+- take secrets (for example `ADM_GRADER_AUTH_TOKEN`) from AWS SECRETS MANAGER
+- Deal with admin/staff creation on deploy (how to manage secrets?)

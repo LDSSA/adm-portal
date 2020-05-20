@@ -104,7 +104,7 @@ def candidate_submission_upload_view(request: HttpRequest, submission_type: str)
     Domain.add_submission(application, submission_type_, sub)
 
     if submission_type == SubmissionTypes.coding_test.uname:
-        return HttpResponseRedirect(f"/candidate/coding-test")
+        return HttpResponseRedirect("/candidate/coding-test")
     return HttpResponseRedirect(f"/candidate/slu/{submission_type}")
 
 

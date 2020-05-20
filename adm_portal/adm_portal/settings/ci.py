@@ -1,11 +1,19 @@
-from .base import *  # noqa: F403 F401
+from .base import *  # noqa: F401 F403
 
 ENV = "ci"
 
+
+# Django Settings
 SECRET_KEY = "CI-SECRET"
 
 DEBUG = False
 
+DATABASES = {
+    "default": {"ENGINE": "django.db.backends.sqlite3", "NAME": os.path.join(BASE_DIR, "ci-db.sqlite3")}  # noqa: F405
+}
+
+
+# Custom Settings
 EMAIL_CLIENT = "LOCAL"
 LOCAL_EMAIL_CLIENT_ROOT = os.path.join(os.path.dirname(BASE_DIR), ".ci-mailbox")  # noqa: F405
 

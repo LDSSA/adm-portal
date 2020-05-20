@@ -31,16 +31,6 @@ docker-build:
 	@ echo "Building docker image"
 	@ docker image build -t adm-portal .
 
-docker-run:
-	@ echo "Running docker image"
-	@ docker container run -d -p 8000:8000 --name adm-portal-dev -e DJANGO_SETTINGS_MODULE -e SECRET_KEY -e AUTH_TOKEN -e ELASTICEMAIL_API_KEY adm-portal
-
-docker-stop:
-	@ echo "Stopping docker image"
-	@ docker stop adm-portal-dev
-	@ docker rm adm-portal-dev
-
-
 # AWS cloudformation
 
 aws-deploy-s3:

@@ -12,10 +12,15 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options) -> None:
         email = options["email"]
-        password = options["password"]
+        if email is None:
+            raise CommandError("--email is required")
 
-        if self.domain not in email:
-            raise CommandError("email not valid")
+        password = options["password"]
+        if password is None:
+            raise CommandError("--password is required")
+
+        if not email.endswith(self.domain):
+            raise CommandError(f"email not valid, must end with `{self.domain}`")
 
         User.objects.create_admin_user(email=email, password=password)
         self.stdout.write(self.style.SUCCESS("Done"))

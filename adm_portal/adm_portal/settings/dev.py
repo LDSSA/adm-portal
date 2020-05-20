@@ -1,11 +1,19 @@
-from .base import *  # noqa: F403 F401
+from .base import *  # noqa: F401 F403
 
 ENV = "dev"
 
+
+# Django Settings
 SECRET_KEY = "SECRET"
 
 DEBUG = True
 
+DATABASES = {
+    "default": {"ENGINE": "django.db.backends.sqlite3", "NAME": os.path.join(BASE_DIR, "dev-db.sqlite3")}  # noqa: F405
+}
+
+
+# Custom Settings
 EMAIL_CLIENT = "LOCAL"
 LOCAL_EMAIL_CLIENT_ROOT = os.path.join(os.path.dirname(BASE_DIR), ".mailbox")  # noqa: F405
 

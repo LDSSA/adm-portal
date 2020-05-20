@@ -9,7 +9,7 @@ The Local Email Client doesn't actually send emails, it just dumps data in to th
 
 ```python
 EMAIL_CLIENT="LOCAL"
-LOCAL_EMAIL_CLIENT_ROOT = os.path.join(os.path.dirname(BASE_DIR), ".mailbox")  # noqa: F405
+LOCAL_EMAIL_CLIENT_ROOT = os.path.join(os.path.dirname(BASE_DIR), ".mailbox")
 ```
 
 #### Elastic
@@ -19,7 +19,7 @@ The Elastic Email Client uses the elastic email api to send emails.
 
 ```python
 EMAIL_CLIENT = "ELASTIC"
-ELASTIC_EMAIL_API_KEY = os.environ["ELASTIC_EMAIL_API_KEY"]  # noqa: F405
+ELASTIC_EMAIL_API_KEY = os.environ["ELASTIC_EMAIL_API_KEY"]
 ELASTIC_EMAIL_SENDER = "sender@adm.org"
 ```
 
@@ -33,7 +33,7 @@ The Local Storage Client saves files in the local disk and server them via http.
 
 ```python
 STORAGE_CLIENT = "LOCAL"
-STORAGE_CLIENT_NAMESPACE = os.path.join(os.path.dirname(BASE_DIR), ".storage")  # noqa: F405
+STORAGE_CLIENT_NAMESPACE = os.path.join(os.path.dirname(BASE_DIR), ".storage")
 ```
 
 
@@ -85,6 +85,6 @@ The Http Grader Client makes an http request go get the grade.
 
 ```python
 GRADER_CLIENT = "HTTP"
-GRADER_CLIENT_URL = os.environ["ADM_GRADER_URL"]  # noqa: F405
-GRADER_CLIENT_AUTH_TOKEN = os.environ["ADM_GRADER_AUTH_TOKEN"]  # noqa: F405
+GRADER_CLIENT_URL = os.environ["ADM_GRADER_URL"]
+GRADER_CLIENT_AUTH_TOKEN = os.environ["ADM_GRADER_AUTH_TOKEN"]
 ```

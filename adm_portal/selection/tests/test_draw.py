@@ -233,7 +233,7 @@ class TestDraw(TestCase):
         )
 
     def test_reject_draw(self) -> None:
-        u = User.objects.create(email=f"drawn_female_user@amd.com")
+        u = User.objects.create(email="drawn_female_user@amd.com")
         Profile.objects.create(user=u, ticket_type="company", gender="f")
         selection = Selection.objects.create(user=u, status=SelectionStatus.DRAWN)
 
@@ -243,7 +243,7 @@ class TestDraw(TestCase):
         self.assertEqual(SelectionQueries.filter_by_status_in([SelectionStatus.PASSED_TEST]).count(), 1)
 
     def test_reject_draw_expection(self) -> None:
-        u = User.objects.create(email=f"selected_female_user@amd.com")
+        u = User.objects.create(email="selected_female_user@amd.com")
         Profile.objects.create(user=u, ticket_type="company", gender="f")
         selection = Selection.objects.create(user=u, status=SelectionStatus.SELECTED)
 
