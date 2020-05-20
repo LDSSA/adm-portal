@@ -110,7 +110,7 @@ $ python manage.py create_staff --email staff@lisbondatascience.org --password
 
 Building and Pushing new docker image on green commits on master 
 
-[@dockerhub](`https://hub.docker.com/r/acci/adm-portal/tags`)
+[@dockerhub](https://hub.docker.com/r/acci/adm-portal/tags)
 
 
 ### Production ENV
