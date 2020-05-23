@@ -33,10 +33,10 @@ def staff_payments_view(request: HttpRequest) -> HttpResponse:
 
 @require_http_methods(["GET", "POST"])
 def staff_payment_view(request: HttpRequest, user_id: int) -> HttpResponse:
-    _, payment = _get_user_selection(user_id)
+    _, selection = _get_user_selection(user_id)
     if request.method == "GET":
-        return _get_staff_payment_view(request, payment, user_id)
-    return _post_staff_payment_view(request, payment)
+        return _get_staff_payment_view(request, selection, user_id)
+    return _post_staff_payment_view(request, selection)
 
 
 @require_http_methods(["POST"])

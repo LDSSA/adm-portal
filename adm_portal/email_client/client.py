@@ -12,6 +12,13 @@ class EmailClient(ABC):
     def send_reset_password_email(self, to: str, *, reset_password_url: str) -> None:
         pass
 
+    # interviews
+    def send_interview_passed_email(self, to: str) -> None:
+        pass
+
+    def send_interview_failed_email(self, to: str, *, message: str) -> None:
+        pass
+
     # payments
     @abstractmethod
     def send_payment_accepted_proof_email(self, to: str, *, message: Optional[str] = None) -> None:

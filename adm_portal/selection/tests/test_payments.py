@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from profiles.models import Profile
+from profiles.models import Profile, ProfileTicketTypes
 from users.models import User
 
 from ..models import Selection
@@ -14,38 +14,38 @@ class TestDomain(TestCase):
 
     def test_load_payment_data(self) -> None:
         user = User.objects.create_user(email="user@adm.com", password="strong")
-        Profile.objects.create(user=user, full_name="name", ticket_type="regular")
+        Profile.objects.create(user=user, full_name="name", ticket_type=ProfileTicketTypes.regular)
         selection = Selection.objects.create(user=user, status=SelectionStatus.SELECTED)
         load_payment_data(selection)
 
-        self.assertEqual(selection.ticket_type, "regular")
+        self.assertEqual(selection.ticket_type, ProfileTicketTypes.regular)
         self.assertEqual(selection.payment_value, 250)
         self.assertEqual(selection.status, SelectionStatus.SELECTED)
 
     def test_create_payment_student(self) -> None:
         user = User.objects.create_user(email="student@adm.com", password="strong")
-        Profile.objects.create(user=user, full_name="name", ticket_type="student")
+        Profile.objects.create(user=user, full_name="name", ticket_type=ProfileTicketTypes.student)
         selection = Selection.objects.create(user=user, status=SelectionStatus.SELECTED)
         load_payment_data(selection)
 
-        self.assertEqual(selection.ticket_type, "student")
+        self.assertEqual(selection.ticket_type, ProfileTicketTypes.student)
         self.assertEqual(selection.payment_value, 100)
         self.assertEqual(selection.status, SelectionStatus.SELECTED)
 
     def test_create_payment_company(self) -> None:
         user = User.objects.create_user(email="company@adm.com", password="strong")
-        Profile.objects.create(user=user, full_name="name", ticket_type="company")
+        Profile.objects.create(user=user, full_name="name", ticket_type=ProfileTicketTypes.company)
         selection = Selection.objects.create(user=user, status=SelectionStatus.SELECTED)
         load_payment_data(selection)
 
-        self.assertEqual(selection.ticket_type, "company")
+        self.assertEqual(selection.ticket_type, ProfileTicketTypes.company)
         self.assertEqual(selection.payment_value, 1500)
         self.assertEqual(selection.status, SelectionStatus.SELECTED)
 
     #
     # def test_add_document_regular(self) -> None:
     #     user = User.objects.create_user(email="user@adm.com", password="strong")
-    #     Profile.objects.create(user=user, full_name="name", ticket_type="regular")
+    #     Profile.objects.create(user=user, full_name="name", ticket_type=ProfileTicketTypes.regular)
     #     selection = Selection.objects.create(user=user, status=SelectionStatus.SELECTED)
     #
     #     self.assertFalse(selection.has_payment_proof_document)
@@ -62,7 +62,7 @@ class TestDomain(TestCase):
     #
     # def test_add_document_student(self) -> None:
     #     user = User.objects.create_user(email="user@adm.com", password="strong")
-    #     profile = Profile.objects.create(user=user, full_name="name", ticket_type="student")
+    #     profile = Profile.objects.create(user=user, full_name="name", ticket_type=ProfileTicketTypes.student)
     #     SelectedDomain.new_candidate(user)
     #     payment = Domain.create_payment(profile)
     #

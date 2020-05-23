@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from logging import getLogger
 from typing import Optional
 
+from profiles.models import ProfileTicketTypes
 from users.models import User
 
 from .domain import SelectionDomain
@@ -12,7 +13,12 @@ from .status import SelectionStatus
 logger = getLogger(__name__)
 
 
-PRICE_TABLE = {"student": 100, "regular": 250, "company": 1500}
+PRICE_TABLE = {
+    ProfileTicketTypes.student: 100,
+    ProfileTicketTypes.regular: 250,
+    ProfileTicketTypes.company: 1500,
+    ProfileTicketTypes.scholarship: 20,
+}
 
 
 class PaymentException(Exception):

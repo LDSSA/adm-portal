@@ -3,6 +3,7 @@ from typing import List, Optional
 from django.db.models import Max
 
 from custom_typing.queryset import QuerySet
+from profiles.models import ProfileTicketTypes
 
 from .models import Selection, SelectionDocument
 from .status import SelectionStatus, SelectionStatusType
@@ -35,6 +36,14 @@ class SelectionQueries:
     @staticmethod
     def max_rank(q: SelectionQuerySet) -> int:
         return q.aggregate(Max("draw_rank"))["draw_rank__max"] or 0
+
+    @staticmethod
+    def scholarships(q: SelectionQuerySet) -> SelectionQuerySet:
+        return q.filter(user__profile__ticket_type=ProfileTicketTypes.scholarship)
+
+    @staticmethod
+    def no_scholarships(q: SelectionQuerySet) -> SelectionQuerySet:
+        return q.exclude(user__profile__ticket_type=ProfileTicketTypes.scholarship)
 
 
 class SelectionDocumentQueries:

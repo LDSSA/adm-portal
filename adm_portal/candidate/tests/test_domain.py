@@ -14,8 +14,10 @@ class TestDomain(TestCase):
         candidate_state = CandidateState()
         self.assertEqual(candidate_state.signed_up, False)
         self.assertEqual(candidate_state.confirmed_email, False)
-        self.assertEqual(candidate_state.created_profile, False)
         self.assertEqual(candidate_state.accepted_coc, False)
+        self.assertEqual(candidate_state.decided_scholarship, False)
+        self.assertEqual(candidate_state.applying_for_scholarship, None)
+        self.assertEqual(candidate_state.created_profile, False)
         self.assertIsNone(candidate_state.application_status)
         self.assertIsNone(candidate_state.coding_test_status)
         self.assertIsNone(candidate_state.slu01_status)
@@ -52,8 +54,10 @@ class TestDomain(TestCase):
         expected = {
             "signed_up": "Signed Up",
             "confirmed_email": "Confirmed Email",
-            "created_profile": "Created Profile",
             "accepted_coc": "Accepted Coc",
+            "decided_scholarship": "Decided Scholarship",
+            "applying_for_scholarship": "Applying For Scholarship",
+            "created_profile": "Created Profile",
             "application_status": "Application Status",
             "coding_test_status": "Coding Test Status",
             "slu01_status": "SLU 01 Status",

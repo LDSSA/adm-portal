@@ -20,6 +20,10 @@
                 </li>
                 {% if user_accepted_coc %}
                 <li class="nav-item">
+                    <a class="nav-link" href="/candidate/scholarship">Scholarship</a>
+                </li>
+                {% if scholarship_decided %}
+                <li class="nav-item">
                     <a class="nav-link" href="/candidate/profile">Profile</a>
                 </li>
                 {% if user_has_profile and applications_are_open %}
@@ -38,6 +42,7 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/candidate/payment">Payment</a>
                     </li>
+                {% endif %}
                 {% endif %}
                 {% endif %}
                 {% endif %}

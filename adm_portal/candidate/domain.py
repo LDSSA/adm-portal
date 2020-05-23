@@ -14,8 +14,10 @@ from users.models import User
 class CandidateState(NamedTuple):
     signed_up: bool = False
     confirmed_email: bool = False
-    created_profile: bool = False
     accepted_coc: bool = False
+    decided_scholarship: bool = False
+    applying_for_scholarship: Optional[bool] = None
+    created_profile: bool = False
     application_status: Optional[ApplicationStatus] = None
     coding_test_status: Optional[SubmissionStatus] = None
     slu01_status: Optional[SubmissionStatus] = None
@@ -34,17 +36,21 @@ class Domain:
         state = CandidateState()._asdict()
         if candidate.id is not None:
             state["signed_up"] = True
+
         if candidate.email_confirmed:
             state["confirmed_email"] = True
+
+        if candidate.code_of_conduct_accepted:
+            state["accepted_coc"] = True
+
+        state["decided_scholarship"] = candidate.applying_for_scholarship is not None
+        state["applying_for_scholarship"] = candidate.applying_for_scholarship
 
         try:
             _ = candidate.profile
             state["created_profile"] = True
         except Profile.DoesNotExist:
             pass
-
-        if candidate.code_of_conduct_accepted:
-            state["accepted_coc"] = True
 
         try:
             application = candidate.application

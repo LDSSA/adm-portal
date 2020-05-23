@@ -9,11 +9,11 @@
 <div class="container pb-5">
 
     <h2 class="py-5">
-        Candidate Selection
+        Candidate Selections
     </h2>
 
     <div class="jumbotron py-4">
-        <h3>Summary</h3>
+        <h3>Summary (No Scholarships)</h3>
         <table class="table bg-white mb-5">
             <thead>
                 <tr>
@@ -27,31 +27,67 @@
             <tbody>
                 <tr>
                 <th scope="row">Candidates</th>
-                <td>{{ summary.drawn_candidates }}</td>
-                <td>{{ summary.selected_accepted_candidates }}</td>
-                <td>{{ summary.total_candidates }}</td>
-                <td>{{ summary.pct_candidates }}</td>
+                <td>{{ summary.no_scholarship.drawn_candidates }}</td>
+                <td>{{ summary.no_scholarship.selected_accepted_candidates }}</td>
+                <td>{{ summary.no_scholarship.total_candidates }}</td>
+                <td>{{ summary.no_scholarship.pct_candidates }}</td>
                 </tr>
                 <tr>
                 <th scope="row">Female</th>
-                <td>{{ summary.drawn_female }}</td>
-                <td>{{ summary.selected_accepted_female }}</td>
-                <td>{{ summary.total_female }}</td>
-                <td>{{ summary.pct_female }}</td>
+                <td>{{ summary.no_scholarship.drawn_female }}</td>
+                <td>{{ summary.no_scholarship.selected_accepted_female }}</td>
+                <td>{{ summary.no_scholarship.total_female }}</td>
+                <td>{{ summary.no_scholarship.pct_female }}</td>
                 </tr>
                 <tr>
                 <th scope="row">Company</th>
-                <td>{{ summary.drawn_company }}</td>
-                <td>{{ summary.selected_accepted_company }}</td>
-                <td>{{ summary.total_company }}</td>
-                <td>{{ summary.pct_company }}</td>
+                <td>{{ summary.no_scholarship.drawn_company }}</td>
+                <td>{{ summary.no_scholarship.selected_accepted_company }}</td>
+                <td>{{ summary.no_scholarship.total_company }}</td>
+                <td>{{ summary.no_scholarship.pct_company }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Summary (Scholarships)</h3>
+        <table class="table bg-white mb-5">
+            <thead>
+                <tr>
+                <th scope="col"></th>
+                <th scope="col">Drawn</th>
+                <th scope="col">Selected & Accepted</th>
+                <th scope="col">Total (#)</th>
+                <th scope="col">Total (%)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                <th scope="row">Candidates</th>
+                <td>{{ summary.scholarship.drawn_candidates }}</td>
+                <td>{{ summary.scholarship.selected_accepted_candidates }}</td>
+                <td>{{ summary.scholarship.total_candidates }}</td>
+                <td>{{ summary.scholarship.pct_candidates }}</td>
+                </tr>
+                <tr>
+                <th scope="row">Female</th>
+                <td>{{ summary.scholarship.drawn_female }}</td>
+                <td>{{ summary.scholarship.selected_accepted_female }}</td>
+                <td>{{ summary.scholarship.total_female }}</td>
+                <td>{{ summary.scholarship.pct_female }}</td>
+                </tr>
+                <tr>
+                <th scope="row">Company</th>
+                <td>{{ summary.scholarship.drawn_company }}</td>
+                <td>{{ summary.scholarship.selected_accepted_company }}</td>
+                <td>{{ summary.scholarship.total_company }}</td>
+                <td>{{ summary.scholarship.pct_company }}</td>
                 </tr>
             </tbody>
         </table>
 
         <p></p>
 
-        <h3>Left out candidates</h3>
+        <h3>Left out candidates (No Scholarships)</h3>
         <table class="table bg-white">
             <thead>
                 <tr>
@@ -62,9 +98,27 @@
             </thead>
             <tbody>
                 <tr>
-                <td>{{ summary.left_out_candidates }}</td>
-                <td>{{ summary.left_out_females }}</td>
-                <td>{{ summary.left_out_non_company }}</td>
+                <td>{{ summary.no_scholarship.left_out_candidates }}</td>
+                <td>{{ summary.no_scholarship.left_out_females }}</td>
+                <td>{{ summary.no_scholarship.left_out_non_company }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Left out candidates (Scholarships)</h3>
+        <table class="table bg-white">
+            <thead>
+                <tr>
+                <th scope="col">Candidates</th>
+                <th scope="col">Female</th>
+                <th scope="col">Non company</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                <td>{{ summary.scholarship.left_out_candidates }}</td>
+                <td>{{ summary.scholarship.left_out_females }}</td>
+                <td>{{ summary.scholarship.left_out_non_company }}</td>
                 </tr>
             </tbody>
         </table>

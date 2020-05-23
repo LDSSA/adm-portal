@@ -58,6 +58,7 @@ class User(AbstractBaseUser):
 
     email_confirmed = models.BooleanField(default=False, null=False)
     code_of_conduct_accepted = models.BooleanField(default=False, null=False)
+    applying_for_scholarship = models.BooleanField(default=None, null=True)
 
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)

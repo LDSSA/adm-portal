@@ -2,7 +2,7 @@ from typing import List
 
 from django.test import TestCase
 
-from profiles.models import Profile
+from profiles.models import Profile, ProfileGenders, ProfileTicketTypes
 from users.models import User
 
 from ..domain import SelectionDomain
@@ -46,14 +46,17 @@ class TestDraw(TestCase):
 
         for i in range(15):
             u = User.objects.create(email=f"female_user_{i}@amd.com")
-            Profile.objects.create(user=u, ticket_type="regular", gender="f")
+            Profile.objects.create(user=u, ticket_type=ProfileTicketTypes.regular, gender=ProfileGenders.female)
             Selection.objects.create(user=u, status=SelectionStatus.PASSED_TEST)
 
-        draw(params)
+        draw(params, scholarships=False)
 
         self.assertEqual(SelectionQueries.filter_by_status_in([SelectionStatus.DRAWN]).count(), 10)
         self.assertEqual(
-            SelectionQueries.filter_by_status_in([SelectionStatus.DRAWN]).filter(user__profile__gender="f").count(), 10
+            SelectionQueries.filter_by_status_in([SelectionStatus.DRAWN])
+            .filter(user__profile__gender=ProfileGenders.female)
+            .count(),
+            10,
         )
         self.assertEqual(SelectionQueries.filter_by_status_in([SelectionStatus.PASSED_TEST]).count(), 5)
 
@@ -62,21 +65,27 @@ class TestDraw(TestCase):
 
         for i in range(9):
             u = User.objects.create(email=f"female_user_{i}@amd.com")
-            Profile.objects.create(user=u, ticket_type="regular", gender="f")
+            Profile.objects.create(user=u, ticket_type=ProfileTicketTypes.regular, gender=ProfileGenders.female)
             Selection.objects.create(user=u, status=SelectionStatus.PASSED_TEST)
 
             u = User.objects.create(email=f"male_user_{i}@amd.com")
-            Profile.objects.create(user=u, ticket_type="regular", gender="m")
+            Profile.objects.create(user=u, ticket_type=ProfileTicketTypes.regular, gender=ProfileGenders.male)
             Selection.objects.create(user=u, status=SelectionStatus.PASSED_TEST)
 
-        draw(params)
+        draw(params, scholarships=False)
 
         self.assertEqual(SelectionQueries.filter_by_status_in([SelectionStatus.DRAWN]).count(), 10)
         self.assertEqual(
-            SelectionQueries.filter_by_status_in([SelectionStatus.DRAWN]).filter(user__profile__gender="f").count(), 9
+            SelectionQueries.filter_by_status_in([SelectionStatus.DRAWN])
+            .filter(user__profile__gender=ProfileGenders.female)
+            .count(),
+            9,
         )
         self.assertEqual(
-            SelectionQueries.filter_by_status_in([SelectionStatus.DRAWN]).filter(user__profile__gender="m").count(), 1
+            SelectionQueries.filter_by_status_in([SelectionStatus.DRAWN])
+            .filter(user__profile__gender=ProfileGenders.male)
+            .count(),
+            1,
         )
         self.assertEqual(SelectionQueries.filter_by_status_in([SelectionStatus.PASSED_TEST]).count(), 8)
 
@@ -85,18 +94,21 @@ class TestDraw(TestCase):
 
         for i in range(9):
             u = User.objects.create(email=f"female_user_{i}@amd.com")
-            Profile.objects.create(user=u, ticket_type="regular", gender="f")
+            Profile.objects.create(user=u, ticket_type=ProfileTicketTypes.regular, gender=ProfileGenders.female)
             Selection.objects.create(user=u, status=SelectionStatus.PASSED_TEST)
 
             u = User.objects.create(email=f"male_user_{i}@amd.com")
-            Profile.objects.create(user=u, ticket_type="regular", gender="m")
+            Profile.objects.create(user=u, ticket_type=ProfileTicketTypes.regular, gender=ProfileGenders.male)
             Selection.objects.create(user=u, status=SelectionStatus.PASSED_TEST)
 
-        draw(params)
+        draw(params, scholarships=False)
 
         self.assertEqual(SelectionQueries.filter_by_status_in([SelectionStatus.DRAWN]).count(), 6)
         self.assertTrue(
-            SelectionQueries.filter_by_status_in([SelectionStatus.DRAWN]).filter(user__profile__gender="f").count() > 0
+            SelectionQueries.filter_by_status_in([SelectionStatus.DRAWN])
+            .filter(user__profile__gender=ProfileGenders.female)
+            .count()
+            > 0
         )
 
     def test_draw_0_companies(self) -> None:
@@ -104,23 +116,23 @@ class TestDraw(TestCase):
 
         for i in range(9):
             u = User.objects.create(email=f"company_female_user_{i}@amd.com")
-            Profile.objects.create(user=u, ticket_type="company", gender="f")
+            Profile.objects.create(user=u, ticket_type=ProfileTicketTypes.company, gender=ProfileGenders.female)
             Selection.objects.create(user=u, status=SelectionStatus.PASSED_TEST)
 
             u = User.objects.create(email=f"male_user_{i}@amd.com")
-            Profile.objects.create(user=u, ticket_type="regular", gender="m")
+            Profile.objects.create(user=u, ticket_type=ProfileTicketTypes.regular, gender=ProfileGenders.male)
             Selection.objects.create(user=u, status=SelectionStatus.PASSED_TEST)
 
             u = User.objects.create(email=f"student_male_user_{i}@amd.com")
-            Profile.objects.create(user=u, ticket_type="student", gender="m")
+            Profile.objects.create(user=u, ticket_type=ProfileTicketTypes.student, gender=ProfileGenders.male)
             Selection.objects.create(user=u, status=SelectionStatus.PASSED_TEST)
 
-        draw(params)
+        draw(params, scholarships=False)
 
         self.assertEqual(SelectionQueries.filter_by_status_in([SelectionStatus.DRAWN]).count(), 8)
         self.assertEqual(
             SelectionQueries.filter_by_status_in([SelectionStatus.DRAWN])
-            .filter(user__profile__ticket_type="company")
+            .filter(user__profile__ticket_type=ProfileTicketTypes.company)
             .count(),
             0,
         )
@@ -130,58 +142,172 @@ class TestDraw(TestCase):
 
         for i in range(100):
             u = User.objects.create(email=f"rejected_female_user_{i}@amd.com")
-            Profile.objects.create(user=u, ticket_type="regular", gender="f")
+            Profile.objects.create(user=u, ticket_type=ProfileTicketTypes.regular, gender=ProfileGenders.female)
             Selection.objects.create(user=u, status=SelectionStatus.REJECTED)
 
             u = User.objects.create(email=f"male_user_{i}@amd.com")
-            Profile.objects.create(user=u, ticket_type="regular", gender="m")
+            Profile.objects.create(user=u, ticket_type=ProfileTicketTypes.regular, gender=ProfileGenders.male)
             Selection.objects.create(user=u, status=SelectionStatus.PASSED_TEST)
 
         to_draw_selections: List[Selection] = []
         for i in range(10):
             u = User.objects.create(email=f"female_user_{i}@amd.com")
-            Profile.objects.create(user=u, ticket_type="regular", gender="f")
+            Profile.objects.create(user=u, ticket_type=ProfileTicketTypes.regular, gender=ProfileGenders.female)
             to_draw_selections.append(Selection.objects.create(user=u, status=SelectionStatus.PASSED_TEST))
 
-        draw(params)
+        draw(params, scholarships=False)
 
         self.assertEqual(SelectionQueries.filter_by_status_in([SelectionStatus.DRAWN]).count(), 10)
         self.assertEqual(
-            SelectionQueries.filter_by_status_in([SelectionStatus.DRAWN]).filter(user__profile__gender="f").count(), 10
+            SelectionQueries.filter_by_status_in([SelectionStatus.DRAWN])
+            .filter(user__profile__gender=ProfileGenders.female)
+            .count(),
+            10,
         )
         for selection in to_draw_selections:
             selection.refresh_from_db()
             self.assertEqual(SelectionDomain.get_status(selection), SelectionStatus.DRAWN)
+
+    def test_draw_dont_pick_scholarships(self) -> None:
+        params = DrawParams(number_of_seats=5, min_female_quota=0, max_company_quota=0)
+
+        to_draw_selections: List[Selection] = []
+        for i in range(3):
+            u = User.objects.create(email=f"female_user_{i}@amd.com")
+            Profile.objects.create(user=u, ticket_type=ProfileTicketTypes.regular, gender=ProfileGenders.female)
+            to_draw_selections.append(Selection.objects.create(user=u, status=SelectionStatus.PASSED_TEST))
+
+        for i in range(2):
+            u = User.objects.create(email=f"scholarship_female_user_{i}@amd.com")
+            Profile.objects.create(user=u, ticket_type=ProfileTicketTypes.scholarship, gender=ProfileGenders.female)
+            Selection.objects.create(user=u, status=SelectionStatus.PASSED_TEST)
+
+        draw(params, scholarships=False)
+
+        self.assertEqual(SelectionQueries.filter_by_status_in([SelectionStatus.DRAWN]).count(), 3)
+        for selection in to_draw_selections:
+            selection.refresh_from_db()
+            self.assertEqual(SelectionDomain.get_status(selection), SelectionStatus.DRAWN)
+
+    def test_draw_pick_scholarships(self) -> None:
+        params = DrawParams(number_of_seats=5, min_female_quota=0, max_company_quota=0)
+
+        to_draw_selections: List[Selection] = []
+        for i in range(3):
+            u = User.objects.create(email=f"female_user_{i}@amd.com")
+            Profile.objects.create(user=u, ticket_type=ProfileTicketTypes.regular, gender=ProfileGenders.female)
+            to_draw_selections.append(Selection.objects.create(user=u, status=SelectionStatus.PASSED_TEST))
+
+        for i in range(6):
+            u = User.objects.create(email=f"scholarship_female_user_{i}@amd.com")
+            Profile.objects.create(user=u, ticket_type=ProfileTicketTypes.scholarship, gender=ProfileGenders.female)
+            Selection.objects.create(user=u, status=SelectionStatus.PASSED_TEST)
+
+        draw(params, scholarships=True)
+
+        self.assertEqual(SelectionQueries.filter_by_status_in([SelectionStatus.DRAWN]).count(), 5)
+        self.assertEqual(
+            SelectionQueries.filter_by_status_in([SelectionStatus.DRAWN])
+            .filter(user__profile__ticket_type=ProfileTicketTypes.scholarship)
+            .count(),
+            5,
+        )
+
+    def test_draw_pick_scholarships_not_enough_females(self) -> None:
+        params = DrawParams(number_of_seats=5, min_female_quota=0.5, max_company_quota=0)
+
+        to_draw_selections: List[Selection] = []
+        for i in range(2):
+            u = User.objects.create(email=f"scholarship_female_user_{i}@amd.com")
+            Profile.objects.create(user=u, ticket_type=ProfileTicketTypes.scholarship, gender=ProfileGenders.female)
+            to_draw_selections.append(Selection.objects.create(user=u, status=SelectionStatus.PASSED_TEST))
+
+        for i in range(5):
+            u = User.objects.create(email=f"scholarship_male_user_{i}@amd.com")
+            Profile.objects.create(user=u, ticket_type=ProfileTicketTypes.scholarship, gender=ProfileGenders.male)
+            Selection.objects.create(user=u, status=SelectionStatus.PASSED_TEST)
+
+            u = User.objects.create(email=f"female_user_{i}@amd.com")
+            Profile.objects.create(user=u, ticket_type=ProfileTicketTypes.regular, gender=ProfileGenders.female)
+            Selection.objects.create(user=u, status=SelectionStatus.PASSED_TEST)
+
+        draw(params, scholarships=True)
+
+        self.assertEqual(SelectionQueries.filter_by_status_in([SelectionStatus.DRAWN]).count(), 5)
+        self.assertEqual(
+            SelectionQueries.filter_by_status_in([SelectionStatus.DRAWN])
+            .filter(user__profile__ticket_type=ProfileTicketTypes.scholarship)
+            .filter(user__profile__gender=ProfileGenders.female)
+            .count(),
+            2,
+        )
+        self.assertEqual(
+            SelectionQueries.filter_by_status_in([SelectionStatus.DRAWN])
+            .filter(user__profile__ticket_type=ProfileTicketTypes.scholarship)
+            .filter(user__profile__gender=ProfileGenders.male)
+            .count(),
+            3,
+        )
+
+    def test_draw_pick_scholarships_not_enough(self) -> None:
+        params = DrawParams(number_of_seats=4, min_female_quota=0, max_company_quota=0)
+
+        to_draw_selections: List[Selection] = []
+        for i in range(2):
+            u = User.objects.create(email=f"female_user_{i}@amd.com")
+            Profile.objects.create(user=u, ticket_type=ProfileTicketTypes.regular, gender=ProfileGenders.male)
+            to_draw_selections.append(Selection.objects.create(user=u, status=SelectionStatus.PASSED_TEST))
+
+        for i in range(2):
+            u = User.objects.create(email=f"scholarship_female_user_{i}@amd.com")
+            Profile.objects.create(user=u, ticket_type=ProfileTicketTypes.scholarship, gender=ProfileGenders.female)
+            Selection.objects.create(user=u, status=SelectionStatus.PASSED_TEST)
+
+        draw(params, scholarships=True)
+
+        self.assertEqual(SelectionQueries.filter_by_status_in([SelectionStatus.DRAWN]).count(), 4)
+        self.assertEqual(
+            SelectionQueries.filter_by_status_in([SelectionStatus.DRAWN])
+            .filter(user__profile__ticket_type=ProfileTicketTypes.scholarship)
+            .count(),
+            2,
+        )
+        self.assertEqual(
+            SelectionQueries.filter_by_status_in([SelectionStatus.DRAWN])
+            .exclude(user__profile__ticket_type=ProfileTicketTypes.scholarship)
+            .count(),
+            2,
+        )
 
     def test_draw_none(self) -> None:
         params = DrawParams(number_of_seats=8, min_female_quota=0, max_company_quota=0)
 
         for i in range(2):
             u = User.objects.create(email=f"female_user_{i}@amd.com")
-            Profile.objects.create(user=u, ticket_type="regular", gender="f")
+            Profile.objects.create(user=u, ticket_type=ProfileTicketTypes.regular, gender=ProfileGenders.female)
             Selection.objects.create(user=u, status=SelectionStatus.PASSED_TEST)
 
             u = User.objects.create(email=f"selected_female_user_{i}@amd.com")
-            Profile.objects.create(user=u, ticket_type="regular", gender="f")
+            Profile.objects.create(user=u, ticket_type=ProfileTicketTypes.regular, gender=ProfileGenders.female)
             Selection.objects.create(user=u, status=SelectionStatus.SELECTED)
 
             u = User.objects.create(email=f"accpeted_female_user_{i}@amd.com")
-            Profile.objects.create(user=u, ticket_type="regular", gender="f")
+            Profile.objects.create(user=u, ticket_type=ProfileTicketTypes.regular, gender=ProfileGenders.female)
             Selection.objects.create(user=u, status=SelectionStatus.ACCEPTED)
 
             u = User.objects.create(email=f"male_user_{i}@amd.com")
-            Profile.objects.create(user=u, ticket_type="regular", gender="m")
+            Profile.objects.create(user=u, ticket_type=ProfileTicketTypes.regular, gender=ProfileGenders.male)
             Selection.objects.create(user=u, status=SelectionStatus.PASSED_TEST)
 
             u = User.objects.create(email=f"selected_male_user_{i}@amd.com")
-            Profile.objects.create(user=u, ticket_type="regular", gender="m")
+            Profile.objects.create(user=u, ticket_type=ProfileTicketTypes.regular, gender=ProfileGenders.male)
             Selection.objects.create(user=u, status=SelectionStatus.SELECTED)
 
             u = User.objects.create(email=f"accepted_male_user_{i}@amd.com")
-            Profile.objects.create(user=u, ticket_type="regular", gender="m")
+            Profile.objects.create(user=u, ticket_type=ProfileTicketTypes.regular, gender=ProfileGenders.male)
             Selection.objects.create(user=u, status=SelectionStatus.ACCEPTED)
 
-        draw(params)
+        draw(params, scholarships=False)
 
         self.assertEqual(SelectionQueries.filter_by_status_in([SelectionStatus.DRAWN]).count(), 0)
 
@@ -190,51 +316,53 @@ class TestDraw(TestCase):
 
         for i in range(100):
             u = User.objects.create(email=f"male_user_{i}@amd.com")
-            Profile.objects.create(user=u, ticket_type="regular", gender="m")
+            Profile.objects.create(user=u, ticket_type=ProfileTicketTypes.regular, gender=ProfileGenders.male)
             Selection.objects.create(user=u, status=SelectionStatus.PASSED_TEST)
 
         for i in range(30):
             u = User.objects.create(email=f"company_male_user_{i}@amd.com")
-            Profile.objects.create(user=u, ticket_type="company", gender="m")
+            Profile.objects.create(user=u, ticket_type=ProfileTicketTypes.company, gender=ProfileGenders.male)
             Selection.objects.create(user=u, status=SelectionStatus.PASSED_TEST)
 
         for i in range(15):
             u = User.objects.create(email=f"student_male_user_{i}@amd.com")
-            Profile.objects.create(user=u, ticket_type="student", gender="m")
+            Profile.objects.create(user=u, ticket_type=ProfileTicketTypes.student, gender=ProfileGenders.male)
             Selection.objects.create(user=u, status=SelectionStatus.PASSED_TEST)
 
         for i in range(20):
             u = User.objects.create(email=f"female_user_{i}@amd.com")
-            Profile.objects.create(user=u, ticket_type="regular", gender="f")
+            Profile.objects.create(user=u, ticket_type=ProfileTicketTypes.regular, gender=ProfileGenders.female)
             Selection.objects.create(user=u, status=SelectionStatus.PASSED_TEST)
 
         for i in range(5):
             u = User.objects.create(email=f"company_female_user_{i}@amd.com")
-            Profile.objects.create(user=u, ticket_type="company", gender="f")
+            Profile.objects.create(user=u, ticket_type=ProfileTicketTypes.company, gender=ProfileGenders.female)
             Selection.objects.create(user=u, status=SelectionStatus.PASSED_TEST)
 
         for i in range(7):
             u = User.objects.create(email=f"student_female_user_{i}@amd.com")
-            Profile.objects.create(user=u, ticket_type="student", gender="f")
+            Profile.objects.create(user=u, ticket_type=ProfileTicketTypes.student, gender=ProfileGenders.female)
             Selection.objects.create(user=u, status=SelectionStatus.PASSED_TEST)
 
-        draw(params)
+        draw(params, scholarships=False)
 
         self.assertEqual(SelectionQueries.filter_by_status_in([SelectionStatus.DRAWN]).count(), 50)
         self.assertTrue(
-            SelectionQueries.filter_by_status_in([SelectionStatus.DRAWN]).filter(user__profile__gender="f").count()
+            SelectionQueries.filter_by_status_in([SelectionStatus.DRAWN])
+            .filter(user__profile__gender=ProfileGenders.female)
+            .count()
             > params.number_of_seats * params.min_female_quota
         )
         self.assertTrue(
             SelectionQueries.filter_by_status_in([SelectionStatus.DRAWN])
-            .filter(user__profile__ticket_type="company")
+            .filter(user__profile__ticket_type=ProfileTicketTypes.company)
             .count()
             < params.number_of_seats * params.max_company_quota
         )
 
     def test_reject_draw(self) -> None:
         u = User.objects.create(email="drawn_female_user@amd.com")
-        Profile.objects.create(user=u, ticket_type="company", gender="f")
+        Profile.objects.create(user=u, ticket_type=ProfileTicketTypes.company, gender=ProfileGenders.female)
         selection = Selection.objects.create(user=u, status=SelectionStatus.DRAWN)
 
         reject_draw(selection)
@@ -244,7 +372,7 @@ class TestDraw(TestCase):
 
     def test_reject_draw_expection(self) -> None:
         u = User.objects.create(email="selected_female_user@amd.com")
-        Profile.objects.create(user=u, ticket_type="company", gender="f")
+        Profile.objects.create(user=u, ticket_type=ProfileTicketTypes.company, gender=ProfileGenders.female)
         selection = Selection.objects.create(user=u, status=SelectionStatus.SELECTED)
 
         with self.assertRaises(DrawException):

@@ -30,4 +30,8 @@ def log_selection_event(
 
 
 def get_selection_logs(selection: Selection) -> List[Dict[str, Any]]:
-    return SelectionLogs.objects.filter(selection=selection).values("event", "message", "created_at")
+    return (
+        SelectionLogs.objects.filter(selection=selection)
+        .order_by("-created_at")
+        .values("event", "message", "created_at")
+    )

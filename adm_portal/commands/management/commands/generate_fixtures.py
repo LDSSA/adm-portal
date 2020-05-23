@@ -8,7 +8,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from applications.models import Application, Submission, SubmissionType, SubmissionTypes
-from profiles.models import Profile, gender_choices, ticket_types_choices
+from profiles.models import Profile, ProfileGenders, ProfileTicketTypes
 from selection.domain import SelectionDomain
 from selection.models import Selection, SelectionDocument
 from selection.payment import add_document
@@ -46,8 +46,8 @@ def with_accepted_coc() -> UserOption:
 
 def with_profile(
     *,
-    gender: str = "other",
-    ticket_type: str = "regular",
+    gender: str = ProfileGenders.other,
+    ticket_type: str = ProfileTicketTypes.regular,
     full_name: Optional[str] = None,
     profession: Optional[str] = None,
 ) -> UserOption:
@@ -159,19 +159,28 @@ class Command(BaseCommand):
         new_user(
             "profile_student",
             with_profile(
-                full_name="User With Student Profile", profession="Student", gender="f", ticket_type="student"
+                full_name="User With Student Profile",
+                profession="Student",
+                gender=ProfileGenders.female,
+                ticket_type=ProfileTicketTypes.student,
             ),
         )
         new_user(
             "profile_regular",
             with_profile(
-                full_name="User With Regular Profile", profession="Worker", gender="m", ticket_type="regular"
+                full_name="User With Regular Profile",
+                profession="Worker",
+                gender=ProfileGenders.male,
+                ticket_type=ProfileTicketTypes.regular,
             ),
         )
         new_user(
             "profile_company",
             with_profile(
-                full_name="User With Company Profile", profession="Spotify", gender="other", ticket_type="company"
+                full_name="User With Company Profile",
+                profession="Spotify",
+                gender=ProfileGenders.other,
+                ticket_type=ProfileTicketTypes.company,
             ),
         )
 
@@ -191,18 +200,21 @@ class Command(BaseCommand):
         )
 
         # users with payments
-        # new_user("with_regular_payment", with_profile(ticket_type="regular"), with_payment())
+        # new_user("with_regular_payment", with_profile(ticket_type=ProfileTicketTypes.regular), with_payment())
         # new_user(
-        #     "with_regular_payment_with_docs", with_profile(ticket_type="regular"), with_payment(), with_document()
+        #     "with_regular_payment_with_docs",
+        #     with_profile(ticket_type=ProfileTicketTypes.regular),
+        #     with_payment(), with_document()
         # )
         # new_user(
         #     "with_student_payment_with_docs",
-        #     with_profile(ticket_type="student"),
+        #     with_profile(ticket_type=ProfileTicketTypes.student),
         #     with_payment(),
         #     with_document(),
         #     with_document(doc_type="student_id", file_location=ASSET_STUDENT_ID_PNG),
         # )
-        # new_user("with_company_payment", with_profile(ticket_type="company"), with_payment(), with_document())
+        # new_user("with_company_payment", with_profile(ticket_type=ProfileTicketTypes.company),
+        # with_payment(), with_document())
 
         # randoms (will be bulk created)
         users: List[User] = []
@@ -218,8 +230,10 @@ class Command(BaseCommand):
         # random - profiles
         profiles: List[Profile] = []
         for prof_u in users:
-            gender = random.choice(gender_choices)[0]
-            ticket_type = random.choice(ticket_types_choices)[0]
+            gender = random.choice([ProfileGenders.female, ProfileGenders.male, ProfileGenders.other])[0]
+            ticket_type = random.choice(
+                ProfileTicketTypes.regular, ProfileTicketTypes.company, ProfileTicketTypes.student
+            )[0]
             p = Profile(
                 user=prof_u,
                 full_name=f"Random User {prof_u.id}",

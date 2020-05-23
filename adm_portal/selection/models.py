@@ -24,7 +24,6 @@ class Selection(models.Model):
 
 # todo: review
 doc_type_choices = [("payment_proof", "Payment Proof"), ("student_id", "Student ID")]
-ticket_types_choices = [("student", "Student"), ("regular", "Regular"), ("company", "Company")]
 
 
 class SelectionDocument(models.Model):

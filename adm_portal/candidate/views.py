@@ -21,6 +21,8 @@ def candidate_home_view(request: HttpRequest) -> HttpResponse:
         action_point = "confirmed_email"
     elif not state.accepted_coc:
         action_point = "accepted_coc"
+    elif not state.decided_scholarship:
+        action_point = "decided_scholarship"
     elif not state.created_profile:
         action_point = "created_profile"
     elif state.application_status != Status.passed or state.selection_status is None:
@@ -62,12 +64,33 @@ def candidate_home_view(request: HttpRequest) -> HttpResponse:
 
 @require_http_methods(["GET", "POST"])
 def candidate_code_of_conduct_view(request: HttpRequest) -> HttpResponse:
+    user = request.user
     if request.method == "GET":
         template = loader.get_template("./candidate_templates/code_of_conduct.html")
-        ctx = build_context(request.user, {"code_of_conduct_accepted": request.user.code_of_conduct_accepted})
+        ctx = build_context(user, {"code_of_conduct_accepted": user.code_of_conduct_accepted})
         return HttpResponse(template.render(ctx, request))
 
-    request.user.code_of_conduct_accepted = True
-    request.user.save()
+    user.code_of_conduct_accepted = True
+    user.save()
+
+    return HttpResponseRedirect("/candidate/home")
+
+
+@require_http_methods(["GET", "POST"])
+def candidate_scholarship_view(request: HttpRequest) -> HttpResponse:
+    user = request.user
+    if request.method == "GET":
+        template = loader.get_template("./candidate_templates/scholarship.html")
+        ctx = build_context(
+            request.user,
+            {
+                "decision_made": user.applying_for_scholarship is not None,
+                "applying_for_scholarship": user.applying_for_scholarship,
+            },
+        )
+        return HttpResponse(template.render(ctx, request))
+
+    user.applying_for_scholarship = request.POST["decision"] == "yes"
+    user.save()
 
     return HttpResponseRedirect("/candidate/home")

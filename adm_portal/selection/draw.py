@@ -1,6 +1,8 @@
 from logging import getLogger
 from typing import Iterable, List, NamedTuple, Optional
 
+from profiles.models import ProfileGenders, ProfileTicketTypes
+
 from .domain import SelectionDomain
 from .models import Selection
 from .queries import SelectionQueries
@@ -34,10 +36,10 @@ class DrawCounters:
 
         self.total += 1
 
-        if profile.gender == "f":
+        if profile.gender == ProfileGenders.female:
             self.female += 1
 
-        if profile.ticket_type == "company":
+        if profile.ticket_type == ProfileTicketTypes.company:
             self.company += 1
 
 
@@ -60,11 +62,22 @@ def get_draw_counters(candidates: Iterable[Selection]) -> DrawCounters:
     return counters
 
 
-def draw_next(forbidden_genders: List[str], forbidden_ticket_types: List[str]) -> Optional[Selection]:
-    return SelectionQueries.random(SelectionQueries.draw_filter(forbidden_genders, forbidden_ticket_types))
+def draw_next(
+    scholarships: bool, forbidden_genders: List[str], forbidden_ticket_types: List[str]
+) -> Optional[Selection]:
+    if not scholarships:
+        q = SelectionQueries.draw_filter(forbidden_genders, forbidden_ticket_types).exclude(
+            user__profile__ticket_type=ProfileTicketTypes.scholarship
+        )
+    else:
+        q = SelectionQueries.draw_filter(forbidden_genders, forbidden_ticket_types).filter(
+            user__profile__ticket_type=ProfileTicketTypes.scholarship
+        )
+
+    return SelectionQueries.random(q)
 
 
-def draw(params: DrawParams) -> None:
+def draw(params: DrawParams, *, scholarships: bool) -> None:
     current_candidates = SelectionQueries.filter_by_status_in(
         [
             SelectionStatus.DRAWN,
@@ -74,26 +87,33 @@ def draw(params: DrawParams) -> None:
             SelectionStatus.ACCEPTED,
         ]
     )
+    if scholarships:
+        current_candidates = current_candidates.filter(user__profile__ticket_type=ProfileTicketTypes.scholarship)
+    else:
+        current_candidates = current_candidates.exclude(user__profile__ticket_type=ProfileTicketTypes.scholarship)
+
     counters = get_draw_counters(current_candidates)
     draw_rank = SelectionQueries.max_rank(current_candidates) + 1
 
     while counters.total != params.number_of_seats:
-        forbidden_genders = ["m", "other"] if must_pick_female(params, counters) else []
-        forbidden_ticket_types = ["company"] if must_not_pick_company(params, counters) else []
+        forbidden_genders = [ProfileGenders.male, ProfileGenders.other] if must_pick_female(params, counters) else []
+        forbidden_ticket_types = [ProfileTicketTypes.company] if must_not_pick_company(params, counters) else []
 
-        candidate = draw_next(forbidden_genders, forbidden_ticket_types)
-        if candidate is None:
-            candidate = draw_next([], forbidden_ticket_types)
-        if candidate is None:
-            candidate = draw_next(forbidden_genders, [])
-        if candidate is None:
-            candidate = draw_next([], [])
-        if candidate is None:
+        selection = draw_next(scholarships, forbidden_genders, forbidden_ticket_types)
+        if selection is None:
+            selection = draw_next(scholarships, [], forbidden_ticket_types)
+        if selection is None:
+            selection = draw_next(scholarships, forbidden_genders, [])
+        if selection is None:
+            selection = draw_next(scholarships, [], [])
+        if selection is None:
+            selection = draw_next(False, [], [])
+        if selection is None:
             # no more suitable candidates
             break
 
-        SelectionDomain.update_status(candidate, SelectionStatus.DRAWN, draw_rank=draw_rank)
-        counters.update(candidate)
+        SelectionDomain.update_status(selection, SelectionStatus.DRAWN, draw_rank=draw_rank)
+        counters.update(selection)
         draw_rank += 1
 
 

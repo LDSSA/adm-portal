@@ -25,19 +25,20 @@
                         <label for="id_gender">Gender:</label>
                         <select name="gender" id="id_gender" required>
                           <option value="" {% if profile.gender == "" %}selected{% endif %}>---------</option>
-                          <option value="f" {% if profile.gender == "f" %}selected{% endif %}>Female</option>
-                          <option value="m" {% if profile.gender == "m" %}selected{% endif %}>Male</option>
-                          <option value="other" {% if profile.gender == "other" %}selected{% endif %}>Other/Prefer not to say</option>
+                          <option value="{{profile_genders.female}}" {% if profile.gender == profile_genders.female %}selected{% endif %}>{{profile_genders.female}}</option>
+                          <option value="{{profile_genders.male}}" {% if profile.gender == profile_genders.male %}selected{% endif %}>{{profile_genders.male}}</option>
+                          <option value="{{profile_genders.other}}" {% if profile.gender == profile_genders.other %}selected{% endif %}>{{profile_genders.other}}</option>
                         </select>
                     </div>
 
+                    {% if not applying_for_scholarship %}
                     <div class="form-group">
                         <label for="id_ticket_type">Ticket type:</label>
                         <select name="ticket_type" id="id_ticket_type"required>
                           <option value="" {% if profile.ticket_type == "" %}selected{% endif %}>---------</option>
-                          <option value="student" {% if profile.ticket_type == "student" %}selected{% endif %}>Student</option>
-                          <option value="regular" {% if profile.ticket_type == "regular" %}selected{% endif %}>Regular</option>
-                          <option value="company" {% if profile.ticket_type == "company" %}selected{% endif %}>Company</option>
+                          <option value="{{profile_ticket_types.student}}" {% if profile_ticket_type == profile_ticket_types.student %}selected{% endif %}>{{profile_ticket_types.student}}</option>
+                          <option value="{{profile_ticket_types.regular}}" {% if profile_ticket_type == profile_ticket_types.regular %}selected{% endif %}>{{profile_ticket_types.regular}}</option>
+                          <option value="{{profile_ticket_types.company}}" {% if profile_ticket_type == profile_ticket_types.company %}selected{% endif %}>{{profile_ticket_types.company}}</option>
                         </select>
                     </div>
 
@@ -45,6 +46,7 @@
                         <label for="id_company">Company:</label>
                         <input type="text" name="company" maxlength="50" id="id_company" value="{{profile.company}}">
                     </div>
+                    {% endif %}
 
                 </fieldset>
                 <button type="submit" class="btn btn-primary">{% if profile_exists %}Update profile{% else %}Create Profile{% endif %}</button>

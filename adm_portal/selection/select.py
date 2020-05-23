@@ -1,5 +1,7 @@
 from logging import getLogger
 
+from profiles.models import ProfileTicketTypes
+
 from .domain import SelectionDomain
 from .models import Selection
 from .payment import load_payment_data
@@ -10,7 +12,7 @@ logger = getLogger(__name__)
 
 
 def requires_interview(selection: Selection) -> bool:
-    return False  # todo: consider scholarships
+    return selection.user.profile.ticket_type == ProfileTicketTypes.scholarship
 
 
 def select() -> None:

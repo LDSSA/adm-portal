@@ -21,10 +21,11 @@ from candidate.payments_views import (
     candidate_student_id_upload_view,
 )
 from candidate.profile_views import candidate_profile_view
-from candidate.views import candidate_code_of_conduct_view, candidate_home_view
+from candidate.views import candidate_code_of_conduct_view, candidate_home_view, candidate_scholarship_view
 from staff.application_views import staff_applications_view
 from staff.candidates_views import staff_candidate_view, staff_candidates_view
 from staff.events_view import staff_events_view
+from staff.interview_views import staff_interview_view, staff_interviews_view
 from staff.payment_views import reset_payment_view, staff_payment_view, staff_payments_view
 from staff.selection_views import (
     staff_draw_candidates_view,
@@ -38,6 +39,7 @@ from users.decorators import (
     requires_candidate_confirmed,
     requires_candidate_login,
     requires_candidate_profile,
+    requires_scholarship_decision,
     requires_staff_login,
 )
 from users.views import (
@@ -94,6 +96,8 @@ staff_routes = [
         name="staff-selections-candidates-reject-draw",
     ),
     Route(route="staff/selections/select", view=staff_select_candidates_view, name="staff-selections-select"),
+    Route(route="staff/interviews", view=staff_interviews_view, name="staff-interviews-list"),
+    Route(route="staff/interviews/<int:user_id>", view=staff_interview_view, name="staff-interview"),
     Route(route="staff/payments", view=staff_payments_view, name="staff-payments-list"),
     Route(route="staff/payments/<int:user_id>", view=staff_payment_view, name="staff-payment"),
     Route(route="staff/payments/<int:user_id>/reset", view=reset_payment_view, name="staff-reset-payment"),
@@ -102,17 +106,22 @@ staff_routes = [
 candidate_routes = [Route(route="candidate/home", view=candidate_home_view, name="candidate-home")]
 
 confirmed_candidate_routes = [
-    # conde of conduct
+    # code of conduct
     Route(route="candidate/code-of-conduct", view=candidate_code_of_conduct_view, name="candidate-code-of-conduct")
 ]
 
 coc_candidate_routes = [
+    # scholarship
+    Route(route="candidate/scholarship", view=candidate_scholarship_view, name="candidate-scholarship")
+]
+
+scholarship_candidate_routes = [
     # profile
-    Route(route="candidate/profile", view=candidate_profile_view, name="candidate-profile"),
-    # coding test
+    Route(route="candidate/profile", view=candidate_profile_view, name="candidate-profile")
 ]
 
 candidate_with_profile_routes = [
+    # coding test
     Route(
         route="candidate/before-coding-test",
         view=candidate_before_coding_test_view,
@@ -178,5 +187,6 @@ urlpatterns = [
     *[path(r.route, requires_candidate_login(r.view), name=r.name) for r in candidate_routes],
     *[path(r.route, requires_candidate_confirmed(r.view), name=r.name) for r in confirmed_candidate_routes],
     *[path(r.route, requires_candidate_coc(r.view), name=r.name) for r in coc_candidate_routes],
+    *[path(r.route, requires_scholarship_decision(r.view), name=r.name) for r in scholarship_candidate_routes],
     *[path(r.route, requires_candidate_profile(r.view), name=r.name) for r in candidate_with_profile_routes],
 ]

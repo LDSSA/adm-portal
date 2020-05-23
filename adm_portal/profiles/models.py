@@ -1,26 +1,31 @@
 from django.db import models
 
-gender_choices = [("f", "Female"), ("m", "Male"), ("other", "Other/Prefer not to say")]
-ticket_types_choices = [("student", "Student"), ("regular", "Regular"), ("company", "Company")]
+
+class ProfileGenders:
+    female = "Female"
+    male = "Male"
+    other = "Other/Prefer not to say"
 
 
-# todo: add more fields, this model is incomplete, add NIF
+class ProfileTicketTypes:
+    student = "Student"
+    regular = "Regular"
+    company = "Company"
+    scholarship = "Scholarship"
+
+
 class Profile(models.Model):
     user = models.OneToOneField("users.User", on_delete=models.CASCADE)
 
-    full_name = models.CharField(blank=False, null=False, max_length=100)
+    full_name = models.CharField(null=False, max_length=100)
 
-    profession = models.CharField(blank=False, null=False, max_length=50)
+    profession = models.CharField(null=False, max_length=50)
 
-    gender = models.CharField(blank=False, null=False, choices=gender_choices, max_length=10)
+    gender = models.CharField(null=False, max_length=25)
 
-    ticket_type = models.CharField(blank=False, null=False, choices=ticket_types_choices, max_length=15)
+    ticket_type = models.CharField(null=False, max_length=25)
 
-    company = models.CharField(blank=False, null=False, default="", max_length=40)
+    company = models.CharField(null=False, default="", max_length=40)
 
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
-
-    @property
-    def is_student(self) -> bool:
-        return self.ticket_type == "student"

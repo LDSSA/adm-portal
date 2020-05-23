@@ -1,0 +1,59 @@
+{% extends './base.html' %}
+
+{% block content %}
+
+<div class="container">
+    <h2 class="py-5">Lisbon Data Science Academy Scholarships</h2>
+
+    {% if applying_for_scholarship %}
+        You are applying for a scholarship
+    {% endif %}
+    {% if not decision_made and not applying_for_scholarship %}
+        You are not applying for a scholarship
+    {% endif %}
+
+
+    <div>
+        <h3>
+        <a id="user-content-application-to-the-academy" class="anchor" aria-hidden="true"></a>Scholarships Text Title</h3>
+        <p class="text-justify">Hello GoodBye.</p>
+    </div>
+
+    {% if not decision_made %}
+    <div class="col text-center">
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="decision" value="yes">
+                <button type="submit" class="btn btn-primary">Yes</button>
+            </form>
+        </div>
+        <div class="col text-center">
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="decision" value="no">
+                <button type="submit" class="btn btn-primary">No</button>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    (function() {
+      'use strict';
+      window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        var validation = Array.prototype.filter.call(forms, function(form) {
+          form.addEventListener('submit', function(event) {
+            if (form.checkValidity() === false) {
+              event.preventDefault();
+              event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+          }, false);
+        });
+      }, false);
+    })();
+</script>
+
+{% endblock %}
