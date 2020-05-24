@@ -54,32 +54,51 @@ class ElasticEmailClient(EmailClient):
         logger.info(f"email sent: template_id={template_id}, to={receiver}")
 
     def send_signup_email(self, to: str, *, email_confirmation_url: str) -> None:
-        subject = "subject (todo)"
-        template_id = 8280
+        subject = "Action needed: Confirm your email address"
+        template_id = 2034
         merge = {"email_confirmation_url": email_confirmation_url}
         self._send_email(to, template_id, subject, merge=merge)
 
     def send_reset_password_email(self, to: str, *, reset_password_url: str) -> None:
-        subject = "subject (todo)"
-        template_id = 0
+        subject = "Reset your Password on the LDSSA Admissions Portal"
+        template_id = 2654
         merge = {"reset_password_url": reset_password_url}
         self._send_email(to, template_id, subject, merge=merge)
 
-    def send_payment_accepted_proof_email(self, to: str, *, message: Optional[str] = None) -> None:
-        subject = "subject (todo)"
-        template_id = 0
-        default_msg = "default message (todo)"
-        merge = {"message": message or default_msg}
+    def send_application_is_over_passed(self, to: str) -> None:
+        subject = "Keep your fingers crossed!"
+        template_id = 2687
+        self._send_email(to, template_id, subject)
+
+    def send_application_is_over_failed(self, to: str) -> None:
+        subject = "Sorry! Try again next year"
+        template_id = 2745
+        self._send_email(to, template_id, subject)
+
+    def send_admissions_are_over_not_selected(self, to: str) -> None:
+        subject = "Sorry! Try again next year"
+        template_id = 2867
+        self._send_email(to, template_id, subject)
+
+    def send_selected_and_payment_details(self, to: str, *, payment_value: int, payment_due_date: str) -> None:
+        subject = "You’re ALMOST IN!"
+        template_id = 2891
+        merge = {"payment_value": payment_value, "payment_due_date": payment_due_date}
         self._send_email(to, template_id, subject, merge=merge)
 
+    def send_payment_accepted_proof_email(self, to: str, *, message: Optional[str] = None) -> None:
+        subject = "You’re IN!"
+        template_id = 2964
+        self._send_email(to, template_id, subject)
+
     def send_payment_need_additional_proof_email(self, to: str, *, message: str) -> None:
-        subject = "subject (todo)"
-        template_id = 0
+        subject = "You’re ALMOST IN!"
+        template_id = 3019
         merge = {"message": message}
         self._send_email(to, template_id, subject, merge=merge)
 
     def send_payment_refused_proof_email(self, to: str, *, message: str) -> None:
-        subject = "subject (todo)"
-        template_id = 0
+        subject = "Oh no! There was something wrong here..."
+        template_id = 3045
         merge = {"msg": message}
         self._send_email(to, template_id, subject, merge=merge)

@@ -40,6 +40,11 @@ class LocalEmailClient(EmailClient):
     def send_application_is_over_failed(self, to: str) -> None:
         self._dump_locally("send_application_is_over_failed", to=to)
 
+    def send_selected_and_payment_details(self, to: str, *, payment_value: int, payment_due_date: str) -> None:
+        self._dump_locally(
+            "send_selected_and_payment_details", to=to, payment_value=payment_value, payment_due_date=payment_due_date
+        )
+
     # admissions are over
     def send_admissions_are_over_not_selected(self, to: str) -> None:
         self._dump_locally("send_admissions_are_over_not_selected", to=to)

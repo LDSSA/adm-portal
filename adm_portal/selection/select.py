@@ -1,5 +1,6 @@
 from logging import getLogger
 
+from interface import interface
 from profiles.models import ProfileTicketTypes
 
 from .domain import SelectionDomain
@@ -26,6 +27,11 @@ def select() -> None:
 def to_selected(selection: Selection) -> None:
     SelectionDomain.update_status(selection, SelectionStatus.SELECTED)
     load_payment_data(selection)
+
+    payment_due_date = selection.payment_due_date.strftime("%Y-%m-%d")
+    interface.email_client.send_selected_and_payment_details(
+        selection.user.email, payment_value=selection.payment_value, payment_due_date=payment_due_date
+    )
 
 
 def to_interview(selection: Selection) -> None:

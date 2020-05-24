@@ -34,12 +34,20 @@ class EmailClient(ABC):
 
     # bulk emails
     # application is over
+    @abstractmethod
     def send_application_is_over_passed(self, to: str) -> None:
         pass
 
+    @abstractmethod
     def send_application_is_over_failed(self, to: str) -> None:
         pass
 
+    # selected
+    @abstractmethod
+    def send_selected_and_payment_details(self, to: str, *, payment_value: int, payment_due_date: str) -> None:
+        pass
+
     # admissions are over
+    @abstractmethod
     def send_admissions_are_over_not_selected(self, to: str) -> None:
         pass
