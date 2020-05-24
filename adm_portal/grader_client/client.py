@@ -66,8 +66,8 @@ class GraderClientFakeScores(GraderClient):
         self, assignment_id: str, user_uuid: str, submission_s3_bucket: str, submission_s3_key: str
     ) -> SubmissionResult:
         return SubmissionResult(
-            score=random.randrange(60, 100, 2),
-            max_score=100,
+            score=random.randrange(10, 20, 2),
+            max_score=20,
             feedback_s3_bucket=submission_s3_bucket,
             feedback_s3_key="coding-test-feedback/example_feedback.html",
         )

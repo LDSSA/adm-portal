@@ -1,3 +1,6 @@
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
 from .base import *  # noqa: F401 F403 F405
 
 ENV = "prod"
@@ -32,3 +35,7 @@ FF_CLIENT = "DB"
 GRADER_CLIENT = "HTTP"
 GRADER_CLIENT_URL = os.environ["ADM_GRADER_URL"]  # noqa: F405
 GRADER_CLIENT_AUTH_TOKEN = os.environ["ADM_GRADER_AUTH_TOKEN"]  # noqa: F405
+
+
+# Custom Integrations
+sentry_sdk.init(dsn=os.environ["SENTRY_URL"], integrations=[DjangoIntegration()], send_default_pii=True)  # noqa: F405

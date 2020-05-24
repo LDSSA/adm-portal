@@ -19,7 +19,7 @@ class AWSS3StorageClient(StorageClient):
             s3_obj = s3.Bucket(self.bucket_name).put_object(Key=key, Body=file)
             logger.info(f"s3 upload success: {s3_obj.bucket_name}/{s3_obj.key}")
         except Boto3Error as e:
-            logger.info(f"s3 upload error: {e}")
+            logger.error(f"s3 upload error: {e}")
             raise StorageClientException(e)
 
     def get_url(self, key: str, *, content_type: Optional[str] = None) -> str:
