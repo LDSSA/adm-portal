@@ -1,0 +1,12 @@
+{% extends './base.html' %}
+
+{% block content %}
+
+<div class="container">
+    <div class="alert alert-success" role="alert">
+        Email sent to <strong>{{ email }}</strong>.
+        <a href="/candidate/home" class="alert-link">Go back</a>
+    </div>
+</div>
+
+{% endblock %}

@@ -8,7 +8,6 @@ from selection.models import Selection, SelectionDocument
 from selection.payment import add_document, can_be_updated
 from selection.queries import SelectionDocumentQueries
 from selection.status import SelectionStatus
-from storage_client import StorageClient
 
 from .helpers import build_context
 
@@ -78,7 +77,7 @@ def candidate_student_id_upload_view(request: HttpRequest) -> HttpResponse:
 def _candidate_document_upload(request: HttpRequest, document_type: str) -> HttpResponse:
     f = request.FILES["file"]
     upload_key = f"payments/{document_type}/{request.user.uuid}/{f.name}"
-    upload_key_unique = StorageClient.key_append_uuid(upload_key)
+    upload_key_unique = interface.storage_client.key_append_uuid(upload_key)
 
     interface.storage_client.save(upload_key_unique, f)
 

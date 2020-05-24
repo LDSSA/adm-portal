@@ -98,6 +98,15 @@
             <input type="text" class="form-control" id="selection_payment_due_date" value="{{user.selection.payment_ticket_type}}" disabled>
         </div>
 
+        {% if id_card_url %}
+        <label>ID Card</label>
+        <div class="row justify-content-md-center">
+            <div class="col col-sm-10 col-md-8 col-lg-6">
+                <img src="{{ id_card_url }}" class="img-fluid" alt="Responsive image">
+            </div>
+        </div>
+        {% endif %}
+
     </form>
 </div>
 

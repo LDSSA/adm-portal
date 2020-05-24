@@ -8,7 +8,7 @@
     <div class="row">
         <div class="col-md-6 order-md-6 mb-6">
 
-            <form method="post">
+            <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
 
                 <fieldset>
@@ -47,6 +47,17 @@
                         <input type="text" name="company" maxlength="50" id="id_company" value="{{profile.company}}">
                     </div>
                     {% endif %}
+
+                    <div class="custom-file mb-3">
+                        <input type="file" class="custom-file-input" id="id_card_file" name="id_card" required>
+                        <label class="custom-file-label" for="id_card_file">Choose file</label>
+                    </div>
+                    <script>
+                        $('#id_card_file').on('change',function(e){
+                            var fileName = e.target.files[0].name;
+                            $(this).next('.custom-file-label').html(fileName);
+                        })
+                    </script>
 
                 </fieldset>
                 <button type="submit" class="btn btn-primary">{% if profile_exists %}Update profile{% else %}Create Profile{% endif %}</button>

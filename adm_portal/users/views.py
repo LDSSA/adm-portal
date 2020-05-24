@@ -192,4 +192,5 @@ def send_confirmation_email_view(request: HttpRequest) -> HttpResponse:
                 to=request.user.email, email_confirmation_url=email_confirmation_url
             )
 
-    return HttpResponseRedirect("/candidate/home")
+    template = loader.get_template("./user_templates/confirmation-email.html")
+    return HttpResponse(template.render({"email": request.user.email}, request))

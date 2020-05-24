@@ -221,15 +221,14 @@ class TestSendConfirmationEmailView(TestCase):
     def setUp(self) -> None:
         self.user = User.objects.create_user(email="joao@protonmail.com", password="joao_pw")
 
-    def test_get_success_302(self) -> None:
+    def test_get_success_200(self) -> None:
         client = Client()
         client.login(email=self.user.email, password="joao_pw")
         response = client.get("/account/send-confirmation-email")
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, "/candidate/home")
+        self.assertEqual(response.status_code, 200)
 
     def test_get_error_302(self) -> None:
-        response = Client().get("/account/logout")
+        response = Client().get("/account/send-confirmation-email")
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, "/account/login")
 

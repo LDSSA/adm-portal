@@ -6,7 +6,6 @@
             <thead>
             <tr>
                 <th scope="col">Result</th>
-                <th scope="col">ID</th>
                 <th scope="col">Submitted At</th>
                 <th scope="col">Score</th>
                 <th scope="col">Source</th>
@@ -23,7 +22,6 @@
                     <span class="badge badge-danger">Failed</span>
                     {% endif %}
                 </td>
-                <td>{{ s.id }}</td>
                 <td>{{ s.created_at }}</td>
                 <td>{{ s.score }}</td>
                 <td> <a href="/candidate/submission/{{ submission_type.uname }}/{{ s.id }}" class="badge badge-secondary" target="_blank">Open</a></td>

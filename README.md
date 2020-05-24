@@ -35,6 +35,9 @@ $ python manage.py runserver
 
 ```
 ├── coding_test.ipynb
+├── profiles/id-card
+│   ├── user_1
+│   |       └── file_2
 ├── applications
 │   ├── coding_test
 │   |   └── user_1
