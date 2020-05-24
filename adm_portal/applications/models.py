@@ -14,7 +14,7 @@ class SubmissionType(NamedTuple):
 
 
 class SubmissionTypes:
-    coding_test = SubmissionType(uname="coding_test", max_score=100, pass_score=75, repo=None)
+    coding_test = SubmissionType(uname="coding_test", max_score=20, pass_score=16, repo=None)
     slu01 = SubmissionType(uname="slu01", max_score=20, pass_score=16, repo="https://github.com/Chi-Acci/adm-portal")
     slu02 = SubmissionType(uname="slu02", max_score=20, pass_score=16, repo="https://github.com/Chi-Acci/adm-portal")
     slu03 = SubmissionType(uname="slu03", max_score=20, pass_score=16, repo="https://github.com/Chi-Acci/adm-portal")
