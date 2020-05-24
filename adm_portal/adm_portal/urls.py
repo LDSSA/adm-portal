@@ -1,9 +1,13 @@
+import json
+import time
 from typing import Any, Callable, NamedTuple
 
 from django.contrib import admin
-from django.http import HttpRequest, HttpResponse
+from django.contrib.auth import authenticate
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import redirect
 from django.urls import path
+from django.views.decorators.csrf import csrf_exempt
 
 from candidate.application_views import (
     candidate_before_coding_test_view,
@@ -171,8 +175,21 @@ candidate_with_profile_routes = [
 ]
 
 
-def my_d(f: Callable[..., Any]) -> Callable[..., Any]:
-    return lambda a: f
+@csrf_exempt
+def sleep(request: HttpRequest, duration: int) -> HttpResponse:
+    if request.method != "POST":
+        return JsonResponse(status=404, data={})
+
+    payload = json.loads(request.body.decode("utf-8"))
+    user = authenticate(request, email=payload.get("email", ""), password=payload.get("password", ""))
+    try:
+        if not user.is_admin:
+            raise Exception
+    except Exception:
+        return JsonResponse(status=404, data={})
+
+    time.sleep(duration)
+    return JsonResponse(status=200, data={"duration": duration})
 
 
 urlpatterns = [
@@ -189,4 +206,5 @@ urlpatterns = [
     *[path(r.route, requires_candidate_coc(r.view), name=r.name) for r in coc_candidate_routes],
     *[path(r.route, requires_scholarship_decision(r.view), name=r.name) for r in scholarship_candidate_routes],
     *[path(r.route, requires_candidate_profile(r.view), name=r.name) for r in candidate_with_profile_routes],
+    path("loadtest/sleep/<int:duration>", sleep, name="loadtest-sleep"),
 ]

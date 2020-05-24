@@ -28,9 +28,24 @@ dev-run:
 	@ cd adm_portal && DJANGO_SETTINGS_MODULE=$(DEV_SETTINGS) python manage.py migrate
 	@ cd adm_portal && DJANGO_SETTINGS_MODULE=$(DEV_SETTINGS) python manage.py runserver
 
+loadtest:
+	@locust -f loadtest.py -u 40 -r 4 --web-host 0.0.0.0 --web-port 8089
+
+DOCKER_TAG=adm-portal
+CONTAINER_NAME=adm-portal-dev
+
 docker-build:
 	@ echo "Building docker image"
-	@ docker image build -t adm-portal .
+	@ docker image build -t $(DOCKER_TAG) .
+
+dev-run-docker: docker-build
+	@ echo "Running docker container"
+	@ DJANGO_SETTINGS_MODULE=$(DEV_SETTINGS) docker container run -d -p 8000:8000 --name $(CONTAINER_NAME) -e DJANGO_SETTINGS_MODULE $(DOCKER_TAG)
+
+dev-kill-docker:
+	@ echo "Killing docker container"
+	@ docker stop $(CONTAINER_NAME)
+	@ docker rm $(CONTAINER_NAME)
 
 # AWS cloudformation
 
