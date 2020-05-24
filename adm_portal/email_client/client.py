@@ -13,9 +13,11 @@ class EmailClient(ABC):
         pass
 
     # interviews
+    @abstractmethod
     def send_interview_passed_email(self, to: str) -> None:
         pass
 
+    @abstractmethod
     def send_interview_failed_email(self, to: str, *, message: str) -> None:
         pass
 
@@ -42,9 +44,14 @@ class EmailClient(ABC):
     def send_application_is_over_failed(self, to: str) -> None:
         pass
 
-    # selected
+    # selected for payment
     @abstractmethod
     def send_selected_and_payment_details(self, to: str, *, payment_value: int, payment_due_date: str) -> None:
+        pass
+
+    # select for interview
+    @abstractmethod
+    def send_selected_interview_details(self, to: str) -> None:
         pass
 
     # admissions are over

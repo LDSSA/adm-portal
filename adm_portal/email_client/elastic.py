@@ -100,5 +100,23 @@ class ElasticEmailClient(EmailClient):
     def send_payment_refused_proof_email(self, to: str, *, message: str) -> None:
         subject = "Oh no! There was something wrong here..."
         template_id = 3045
-        merge = {"msg": message}
+        merge = {"message": message}
+        self._send_email(to, template_id, subject, merge=merge)
+
+    def send_interview_passed_email(self, to: str) -> None:
+        subject = "Subject (todo)"
+        template_id = 0
+        merge = None
+        self._send_email(to, template_id, subject, merge=merge)
+
+    def send_interview_failed_email(self, to: str, *, message: str) -> None:
+        subject = "Subject (todo)"
+        template_id = 0
+        merge = {"message": message}
+        self._send_email(to, template_id, subject, merge=merge)
+
+    def send_selected_interview_details(self, to: str) -> None:
+        subject = "Subject (todo)"
+        template_id = 0
+        merge = None
         self._send_email(to, template_id, subject, merge=merge)

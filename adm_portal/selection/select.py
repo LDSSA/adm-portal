@@ -36,3 +36,4 @@ def to_selected(selection: Selection) -> None:
 
 def to_interview(selection: Selection) -> None:
     SelectionDomain.update_status(selection, SelectionStatus.INTERVIEW)
+    interface.email_client.send_selected_interview_details(selection.user.email)

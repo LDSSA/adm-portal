@@ -25,6 +25,12 @@ class LocalEmailClient(EmailClient):
     def send_reset_password_email(self, to: str, *, reset_password_url: str) -> None:
         self._dump_locally("send_reset_password_email", to=to, reset_password_url=reset_password_url)
 
+    def send_interview_passed_email(self, to: str) -> None:
+        self._dump_locally("send_interview_passed_email", to=to)
+
+    def send_interview_failed_email(self, to: str, *, message: str) -> None:
+        self._dump_locally("send_interview_failed_email", to=to)
+
     def send_payment_accepted_proof_email(self, to: str, *, message: Optional[str] = None) -> None:
         self._dump_locally("send_payment_accepted_proof_email", to=to, msg=message or "default")
 
@@ -45,6 +51,8 @@ class LocalEmailClient(EmailClient):
             "send_selected_and_payment_details", to=to, payment_value=payment_value, payment_due_date=payment_due_date
         )
 
-    # admissions are over
+    def send_selected_interview_details(self, to: str) -> None:
+        self._dump_locally("send_selected_interview_details", to=to)
+
     def send_admissions_are_over_not_selected(self, to: str) -> None:
         self._dump_locally("send_admissions_are_over_not_selected", to=to)
