@@ -22,7 +22,6 @@ class Selection(models.Model):
     objects = models.Manager()
 
 
-# todo: review
 doc_type_choices = [("payment_proof", "Payment Proof"), ("student_id", "Student ID")]
 
 

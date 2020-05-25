@@ -26,7 +26,9 @@ def _get_signup_view(request: HttpRequest) -> HttpResponse:
         return HttpResponse(template.render(ctx, request), status=400)
 
     template = loader.get_template("./user_templates/signup.html")
-    return HttpResponse(template.render({}, request))
+    return HttpResponse(
+        template.render({"logo_url": interface.storage_client.get_url("public-assets/ldssa_logo.png")}, request)
+    )
 
 
 def _post_signup_view(request: HttpRequest) -> HttpResponse:
@@ -67,7 +69,9 @@ def _get_login_view(request: HttpRequest) -> HttpResponse:
         return HttpResponseRedirect("/candidate/home")
 
     template = loader.get_template("./user_templates/login.html")
-    return HttpResponse(template.render({}, request))
+    return HttpResponse(
+        template.render({"logo_url": interface.storage_client.get_url("public-assets/ldssa_logo.png")}, request)
+    )
 
 
 def _post_login_view(request: HttpRequest) -> HttpResponse:
