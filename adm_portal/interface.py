@@ -6,7 +6,7 @@ from email_client import ElasticEmailClient, EmailClient, LocalEmailClient
 from feature_flags_client import DBFeatureFlagsClient, FeatureFlagsClient, MockFeatureFlagsClient
 from flags.domain import FlagsGetSet
 from grader_client import GraderClient, GraderClientFakeScores, GraderClientHttp
-from storage_client import AWSS3StorageClient, LocalStorageClient, StorageClient
+from storage_client import AWSS3StorageClient, LocalStorageClient, LocalStorageClientWithServer, StorageClient
 
 
 class InterfaceException(Exception):
@@ -31,6 +31,8 @@ class _Interface:
             return AWSS3StorageClient(bucket_name=settings.STORAGE_BUCKET)
         elif client_id == "LOCAL":
             return LocalStorageClient(workspace=settings.STORAGE_LOCAL_DIR)
+        elif client_id == "LOCALSERVER":
+            return LocalStorageClientWithServer(workspace=settings.STORAGE_LOCAL_DIR)
         raise InterfaceException(msg=f"No StorageClient implementation for `{client_id}`")
 
     @property
