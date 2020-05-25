@@ -14,7 +14,8 @@ class SelectionStatus:
     NOT_SELECTED = SelectionStatusType("Not Selected")
 
     SELECTION_AWAITING_STATUS = [PASSED_TEST, DRAWN]
-    # REJECTED is on this list (which refers to candidates who are or have been SELECTED) because to be in status REJECTED, the candidate was previously SELECTED
+    # REJECTED is on this list (which refers to candidates who are or have been SELECTED)
+    # because to be in status REJECTED, the candidate was previously SELECTED
     SELECTION_POSITIVE_STATUS = [SELECTED, TO_BE_ACCEPTED, ACCEPTED, REJECTED]
     SELECTION_NEGATIVE_STATUS = [NOT_SELECTED]
 
