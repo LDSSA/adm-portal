@@ -4,20 +4,46 @@
 
 <div class="container">
 
-    <h1 class="py-5">Hello{% if first_name %} {{ first_name }}{% endif %}!</h2>
+    <h1 class="py-5">Hello{% if first_name %} {{ first_name }}{% endif %}</h2>
 
-    {% if state.admission_status.name == "accepted" %}
-        <div class="alert alert-success" role="alert">
-            <b>Congratulations!</b> This application process is now closed and you've been accepted in batch4 of the LDSSA.
+    {% if state.selection_status == selection_status_values.ACCEPTED %}
+        <div class="alert alert-success mb-5" role="alert">
+            <b>Congratulations!</b> Admissions are now closed and you've been accepted in batch4 of the LDSSA.
         </div>
-    {% elif state.admission_status.name == "rejected" %}
-        <div class="alert alert-danger" role="alert">
-            This application process is now closed and sadly you've not been accepted in batch4 of the LDSSA. We hope you try again next year!
+    {% elif state.selection_status == selection_status_values.REJECTED or state.selection_status == selection_status_values.NOT_SELECTED %}
+        <div class="alert alert-danger mb-5" role="alert">
+            Admissions are now closed and sadly you've not been accepted in batch4 of the LDSSA. We hope you try again next year!
         </div>
     {% endif %}
+    
+    <h4 class="pb-3">Welcome to the admissions for the Lisbon Data Science Starters Academy!</h4>
+    <p>
+        Thank you for your interest in participating in batch4 of the LDSSA.<br>
+        Before going anything else, please read all the details about the LDSSA <a href="https://github.com/LDSSA/wiki/wiki/Starters-Academy-(Course)">here</a>, about this admissions process <a href="https://github.com/LDSSA/wiki/wiki/Application-process">here</a>, and keep these main points in mind:
+    </p>
+
+    <ul>
+        <li class="pb-3">In order to get the most out of the experience, students should spend an average of <b>10h per week</b>, and no less than 5h per week, with the Starters Academy.</li>
+        <li class="pb-3">
+            <b>The Starters Academy will be remote this year.</b> This means that, until further notice, all events are scheduled to happen remotely.
+            In case it becomes safe, we may decide to have the later hackathons in person, but students may still join them remotely.
+        </li>
+        <li class="pb-3">
+            Since our Academy is based in Lisbon, all the Starter's Academy activities will happen during the day, Lisbon time.
+            This includes the bootcamp, hackathons, and instructors' availability to answer questions on Slack.
+            <b>Students are required to be online during the bootcamp and hackathons.</b>
+            For students who are in very different timezones, this probably means that they'll have to join us at unusual hours,
+            and that communicating with instructors will feel very async. So please take this in consideration when applying!
+        </li>
+        <li class="pb-3">
+            Everyone is expected to comply with this <a href="https://github.com/LDSSA/wiki/wiki/Code-of-Conduct">Code of Conduct</a> in all the interactions with the Lisbon Data Science Academy.
+            This includes the candidates applying to the Starters Academy.
+            During this admissions process, <b>we'll ask you to read and acknowledge this Code of Conduct and you'll only be allowed to continue if you agree with it.</b>
+        </li>
+    </ul>
 
     <h4 class="py-2">Your next steps</h2>
-    <div id="accordion">
+    <div id="accordion" class="mb-5">
         <!-- validate email -->
         <div class="card">
           <div class="card-header" id="headingOne">
