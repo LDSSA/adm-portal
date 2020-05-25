@@ -31,3 +31,7 @@ class Profile(models.Model):
 
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def name(self) -> str:
+        return self.full_name.split(" ")[0]

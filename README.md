@@ -1,5 +1,7 @@
 # Admissions Portal
 
+![CI/CD](https://github.com/Chi-Acci/adm-portal/workflows/CI/CD/badge.svg)
+
 ## Local development
 
 ### Install poetry

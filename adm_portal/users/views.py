@@ -51,7 +51,7 @@ def _post_signup_view(request: HttpRequest) -> HttpResponse:
     email_confirmation_url = (
         f"{request.get_host()}/account/confirm-email?token={UserConfirmEmail.objects.get(user=user).token}"
     )
-    interface.email_client.send_signup_email(to=user.email, email_confirmation_url=email_confirmation_url)
+    interface.email_client.send_signup_email(to_email=user.email, email_confirmation_url=email_confirmation_url)
     return HttpResponseRedirect("/candidate/home")
 
 
@@ -134,7 +134,7 @@ def start_reset_password_view(request: HttpRequest) -> HttpResponse:
         user = User.objects.get(email=email)
         reset_password, _ = UserResetPassword.objects.get_or_create(user=user)
         reset_password_url = f"{request.get_host()}/account/reset-password?token={reset_password.token}"
-        interface.email_client.send_reset_password_email(to=email, reset_password_url=reset_password_url)
+        interface.email_client.send_reset_password_email(to_email=email, reset_password_url=reset_password_url)
     except User.DoesNotExist:
         # we will not disclose that such email is not in our db
         pass
@@ -176,7 +176,9 @@ def send_confirmation_email_view(request: HttpRequest) -> HttpResponse:
         email_confirmation_url = (
             f"{request.get_host()}/account/confirm-email?token={UserConfirmEmail.objects.get(user=request.user).token}"
         )
-        interface.email_client.send_signup_email(to=request.user.email, email_confirmation_url=email_confirmation_url)
+        interface.email_client.send_signup_email(
+            to_email=request.user.email, email_confirmation_url=email_confirmation_url
+        )
     except UserConfirmEmail.DoesNotExist:
         if request.user.email_confirmed:
             logger.warning(
@@ -193,7 +195,7 @@ def send_confirmation_email_view(request: HttpRequest) -> HttpResponse:
                 f"{UserConfirmEmail.objects.create(user=request.user).token}"
             )
             interface.email_client.send_signup_email(
-                to=request.user.email, email_confirmation_url=email_confirmation_url
+                to_email=request.user.email, email_confirmation_url=email_confirmation_url
             )
 
     template = loader.get_template("./user_templates/confirmation-email.html")

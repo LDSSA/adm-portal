@@ -4,6 +4,7 @@ from django.test import TestCase
 
 from applications.models import Application, Submission, SubmissionTypes
 from interface import interface
+from profiles.models import Profile
 from selection.domain import SelectionDomain
 from selection.queries import SelectionQueries
 from selection.status import SelectionStatus
@@ -27,11 +28,22 @@ class TestEvents(TestCase):
         interface.feature_flag_client.set_applications_opening_date(self.aod - timedelta(minutes=60))
         interface.feature_flag_client.set_applications_closing_date(self.acd - timedelta(minutes=60))
 
-        a1 = Application.objects.create(user=User.objects.create(email="a1@test.com"))
-        a2 = Application.objects.create(user=User.objects.create(email="a2@test.com"))
-        a3 = Application.objects.create(user=User.objects.create(email="a3@test.com"))
+        u1 = User.objects.create(email="u1@test.com")
+        Profile.objects.create(user=u1)
+        a1 = Application.objects.create(user=u1)
 
-        a4 = Application.objects.create(user=User.objects.create(email="a4@test.com"))
+        u2 = User.objects.create(email="u2@test.com")
+        Profile.objects.create(user=u2)
+        a2 = Application.objects.create(user=u2)
+
+        u3 = User.objects.create(email="u3@test.com")
+        Profile.objects.create(user=u3)
+        a3 = Application.objects.create(user=u3)
+
+        u4 = User.objects.create(email="u4@test.com")
+        Profile.objects.create(user=u4)
+        a4 = Application.objects.create(user=u4)
+
         Submission.objects.create(application=a4, score=99, submission_type=SubmissionTypes.coding_test.uname)
         Submission.objects.create(application=a4, score=99, submission_type=SubmissionTypes.slu01.uname)
         Submission.objects.create(application=a4, score=99, submission_type=SubmissionTypes.slu02.uname)
@@ -103,15 +115,17 @@ class TestEvents(TestCase):
         interface.feature_flag_client.set_applications_opening_date(self.aod - timedelta(minutes=60))
         interface.feature_flag_client.set_applications_closing_date(self.acd - timedelta(minutes=60))
 
-        SelectionDomain.update_status(
-            SelectionDomain.create(user=User.objects.create(email="u1@test.com")), SelectionStatus.PASSED_TEST
-        )
-        SelectionDomain.update_status(
-            SelectionDomain.create(user=User.objects.create(email="u2@test.com")), SelectionStatus.ACCEPTED
-        )
-        SelectionDomain.update_status(
-            SelectionDomain.create(user=User.objects.create(email="u3@test.com")), SelectionStatus.REJECTED
-        )
+        u1 = User.objects.create(email="u1@test.com")
+        Profile.objects.create(user=u1)
+        SelectionDomain.update_status(SelectionDomain.create(user=u1), SelectionStatus.PASSED_TEST)
+
+        u2 = User.objects.create(email="u2@test.com")
+        Profile.objects.create(user=u2)
+        SelectionDomain.update_status(SelectionDomain.create(user=u2), SelectionStatus.ACCEPTED)
+
+        u3 = User.objects.create(email="u3@test.com")
+        Profile.objects.create(user=u3)
+        SelectionDomain.update_status(SelectionDomain.create(user=u3), SelectionStatus.REJECTED)
 
         self.assertEqual(SelectionQueries.filter_by_status_in([SelectionStatus.PASSED_TEST]).count(), 1)
         self.assertEqual(SelectionQueries.filter_by_status_in([SelectionStatus.ACCEPTED]).count(), 1)

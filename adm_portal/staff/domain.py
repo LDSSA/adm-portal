@@ -79,7 +79,9 @@ class Events:
             if selection_status == SelectionStatus.PASSED_TEST:
                 # this user was never selected
                 SelectionDomain.update_status(selection, SelectionStatus.NOT_SELECTED)
-                interface.email_client.send_admissions_are_over_not_selected(selection.user.email)
+                interface.email_client.send_admissions_are_over_not_selected(
+                    to_email=selection.user.email, to_name=selection.user.profile.name
+                )
 
             sent_count += 1
 

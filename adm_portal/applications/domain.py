@@ -154,12 +154,16 @@ class Domain:
 
         status = Domain.get_application_status(application)
         if status == ApplicationStatus.passed:
-            interface.email_client.send_application_is_over_passed(application.user.email)
+            interface.email_client.send_application_is_over_passed(
+                to_email=application.user.email, to_name=application.user.profile.name
+            )
             application.application_over_email_sent = "passed"
             application.save()
 
         else:
-            interface.email_client.send_application_is_over_failed(application.user.email)
+            interface.email_client.send_application_is_over_failed(
+                to_email=application.user.email, to_name=application.user.profile.name
+            )
             application.application_over_email_sent = "failed"
             application.save()
 

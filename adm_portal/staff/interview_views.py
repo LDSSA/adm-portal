@@ -64,10 +64,14 @@ def _post_staff_interview_view(request: HttpRequest, selection: Selection) -> Ht
         add_note(selection, msg, staff_user)
     elif action == "reject":
         SelectionDomain.manual_update_status(selection, SelectionStatus.REJECTED, staff_user, msg=msg)
-        interface.email_client.send_interview_failed_email(to=selection.user.email, message=msg)
+        interface.email_client.send_interview_failed_email(
+            to_email=selection.user.email, to_name=selection.user.profile.name, message=msg
+        )
     elif action == "accept":
         SelectionDomain.manual_update_status(selection, SelectionStatus.SELECTED, staff_user, msg=msg)
         load_payment_data(selection)
-        interface.email_client.send_interview_passed_email(to=selection.user.email)
+        interface.email_client.send_interview_passed_email(
+            to_email=selection.user.email, to_name=selection.user.profile.name
+        )
 
     return _get_staff_interview_view(request, selection, selection.user.id)
