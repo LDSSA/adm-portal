@@ -17,7 +17,7 @@ test-all:
 	@ flake8 adm_portal
 	@ mypy adm_portal
 	@ cd adm_portal && DJANGO_SETTINGS_MODULE=$(CI_SETTINGS) python manage.py makemigrations --check --dry-run && cd ..
-	@ cd adm_portal && DJANGO_SETTINGS_MODULE=$(CI_SETTINGS) python manage.py test --exclude-tag=integration && cd ..
+	@ cd adm_portal && DJANGO_SETTINGS_MODULE=$(CI_SETTINGS) python manage.py test  --verbosity=0 --exclude-tag=integration && cd ..
 
 dev-fixtures:
 	@ cd adm_portal && rm -f adm_portal/db.sqlite3

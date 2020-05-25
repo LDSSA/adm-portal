@@ -57,8 +57,13 @@ def candidate_coding_test_view(request: HttpRequest) -> HttpResponse:
 
 
 @require_http_methods(["GET"])
-def candidate_coding_test_download_view(request: HttpRequest) -> HttpResponse:
-    url = interface.storage_client.get_attachment_url("coding_test.ipynb", content_type="application/vnd.jupyter")
+def candidate_assignment_download_view(request: HttpRequest) -> HttpResponse:
+    try:
+        assignment_id = request.GET["assignment_id"]
+    except Exception:
+        raise Http404
+    key = f"candidate-dist/candidate.{assignment_id}.zip"
+    url = interface.storage_client.get_attachment_url(key, content_type="application/zip")
     application = Application.objects.get(user=request.user)
     if application.coding_test_started_at is None:
         application.coding_test_started_at = datetime.now()
@@ -93,7 +98,7 @@ def candidate_submission_upload_view(request: HttpRequest, submission_type: str)
     submission_result = interface.grader_client.grade(
         assignment_id=submission_type_.uname,
         user_uuid=request.user.uuid,
-        submission_s3_bucket=settings.STORAGE_CLIENT_NAMESPACE,
+        submission_s3_bucket=settings.STORAGE_BUCKET,
         submission_s3_key=upload_key,
     )
 

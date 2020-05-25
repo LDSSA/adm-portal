@@ -28,9 +28,9 @@ class _Interface:
     def new_storage_client(client_id: Optional[str] = None) -> StorageClient:
         client_id = client_id or settings.STORAGE_CLIENT
         if client_id == "S3":
-            return AWSS3StorageClient(bucket_name=settings.STORAGE_CLIENT_NAMESPACE)
+            return AWSS3StorageClient(bucket_name=settings.STORAGE_BUCKET)
         elif client_id == "LOCAL":
-            return LocalStorageClient(workspace=settings.STORAGE_CLIENT_NAMESPACE)
+            return LocalStorageClient(workspace=settings.STORAGE_LOCAL_DIR)
         raise InterfaceException(msg=f"No StorageClient implementation for `{client_id}`")
 
     @property
@@ -45,7 +45,7 @@ class _Interface:
         if client_id == "ELASTIC":
             return ElasticEmailClient(api_key=settings.ELASTIC_EMAIL_API_KEY, sender=settings.ELASTIC_EMAIL_SENDER)
         elif client_id == "LOCAL":
-            return LocalEmailClient(root=settings.LOCAL_EMAIL_CLIENT_ROOT)
+            return LocalEmailClient(root=settings.EMAIL_LOCAL_DIR)
         raise InterfaceException(msg=f"No EmailClient implementation for `{client_id}`")
 
     @property

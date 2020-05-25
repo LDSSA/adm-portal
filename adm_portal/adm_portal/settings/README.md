@@ -9,7 +9,7 @@ The Local Email Client doesn't actually send emails, it just dumps data in to th
 
 ```python
 EMAIL_CLIENT="LOCAL"
-LOCAL_EMAIL_CLIENT_ROOT = os.path.join(os.path.dirname(BASE_DIR), ".mailbox")
+EMAIL_LOCAL_DIR = os.path.join(os.path.dirname(BASE_DIR), ".mailbox")
 ```
 
 #### Elastic
@@ -33,7 +33,7 @@ The Local Storage Client saves files in the local disk and server them via http.
 
 ```python
 STORAGE_CLIENT = "LOCAL"
-STORAGE_CLIENT_NAMESPACE = os.path.join(os.path.dirname(BASE_DIR), ".storage")
+STORAGE_LOCAL_DIR = os.path.join(os.path.dirname(BASE_DIR), ".storage")
 ```
 
 
@@ -43,7 +43,7 @@ The S3 Storage Client uses AWS S3 to store and serve files.
 
 ```python
 STORAGE_CLIENT = "S3"
-STORAGE_CLIENT_NAMESPACE = "ldssa-adm-portal-601"
+STORAGE_BUCKET = "ldssa-adm-portal-601"
 ```
 
 

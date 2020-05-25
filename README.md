@@ -19,22 +19,25 @@ $ poetry install
 ### Run Tests & checks
 
 ```bash
-$ make test-all
+$ make
 ```
 
 ### Run Local Server
 
 ```bash
-$ export DJANGO_SETTINGS_MODULE=adm_portal.settings.dev
-$ cd adm_portal
-$ python manage.py runserver
+# make dev-run
 ```
 
 
-### `ldssa-adm-portal-601`bucket structure
+### s3 bucket structure
 
 ```
 ├── coding_test.ipynb
+├── candidate-dist
+│   ├── candidate.coding_test.zip`
+│   ├── candidate.slu01.zip
+│   ├── candidate.slu02.zip
+|   └── candidate.slu03.zip
 ├── profiles/id-card
 │   ├── user_1
 │   |       └── file_2

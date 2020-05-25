@@ -21,7 +21,7 @@ EMAIL_CLIENT = "LOCAL"
 LOCAL_EMAIL_CLIENT_ROOT = os.path.join(os.path.dirname(BASE_DIR), ".mailbox")  # noqa: F405
 
 STORAGE_CLIENT = "S3"
-STORAGE_CLIENT_NAMESPACE = "ldssa-adm-portal-601"
+STORAGE_BUCKET = "ldssa-adm-portal-601"
 
 FF_CLIENT = "DB"
 

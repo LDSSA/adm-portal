@@ -10,8 +10,8 @@ from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
 
 from candidate.application_views import (
+    candidate_assignment_download_view,
     candidate_before_coding_test_view,
-    candidate_coding_test_download_view,
     candidate_coding_test_view,
     candidate_slu_view,
     candidate_submission_download_view,
@@ -132,14 +132,14 @@ candidate_with_profile_routes = [
         name="before-candidate-coding-test",
     ),
     Route(route="candidate/coding-test", view=candidate_coding_test_view, name="candidate-coding-test"),
-    Route(
-        route="candidate/coding-test/download",
-        view=candidate_coding_test_download_view,
-        name="candidate-coding-test-download",
-    ),
     # slu
     Route(route="candidate/slu/<slug:submission_type>", view=candidate_slu_view, name="candidate-slu"),
     # submissions
+    Route(
+        route="candidate/assignment-download",
+        view=candidate_assignment_download_view,
+        name="candidate-assignment-download",
+    ),
     Route(
         route="candidate/submissions/upload/<slug:submission_type>",
         view=candidate_submission_upload_view,

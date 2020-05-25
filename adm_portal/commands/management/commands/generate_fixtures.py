@@ -24,7 +24,7 @@ ASSET_PAYMENT_PROOF_PNG = os.path.join(_assets, "payment-proof.png")
 ASSET_STUDENT_ID_PNG = os.path.join(_assets, "student-id.png")
 
 
-storage_cli = LocalStorageClient(settings.STORAGE_CLIENT_NAMESPACE, run_server=False)
+storage_cli = LocalStorageClient(settings.STORAGE_BUCKET, run_server=False)
 
 UserOption = Callable[[User], None]
 

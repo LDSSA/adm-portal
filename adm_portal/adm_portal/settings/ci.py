@@ -15,10 +15,10 @@ DATABASES = {
 
 # Custom Settings
 EMAIL_CLIENT = "LOCAL"
-LOCAL_EMAIL_CLIENT_ROOT = os.path.join(os.path.dirname(BASE_DIR), ".ci-mailbox")  # noqa: F405
+EMAIL_LOCAL_DIR = os.path.join(os.path.dirname(BASE_DIR), ".ci-mailbox")  # noqa: F405
 
 STORAGE_CLIENT = "LOCAL"
-STORAGE_CLIENT_NAMESPACE = os.path.join(os.path.dirname(BASE_DIR), ".ci-storage")  # noqa: F405
+STORAGE_LOCAL_DIR = os.path.join(os.path.dirname(BASE_DIR), ".ci-storage")  # noqa: F405
 
 FF_CLIENT = "MOCK"
 
