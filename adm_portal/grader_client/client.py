@@ -49,8 +49,10 @@ class GraderClientHttp(GraderClient):
         r: requests.Response = requests.post(url=url, headers=headers, json=body)
         if not r.ok:
             raise GraderClientException(f"response status error: {r.status_code} ({r.json()})")
+
         try:
             data = r.json()
+            logger.info(f"grade response: status_code={r.status_code}, data={data}")
             return SubmissionResult(
                 score=data["score"],
                 max_score=data["maxScore"],
