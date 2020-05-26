@@ -19,6 +19,22 @@
         {% endif %}
     </h2>
 
+    {% if s.status == selection_status.ACCEPTED %}
+    <div class="jumbotron py-3">
+        <p>
+            If you need an invoice for your payment, please write us an email to
+            <b>admissions@lisbondatascience.org</b> with the following details:
+        </p>
+
+        <ul>
+            <li>Name</li>
+            <li>VAT number (NIF)</li>
+            <li>Address</li>
+            <li>Postcode</li>
+        </ul>
+    </div>
+    {% endif %}
+
     <div class="row">
         <div class="col-md-4 order-md-2 mb-4">
         <h4 class="d-flex justify-content-between align-items-center mb-3">
