@@ -29,6 +29,7 @@ from candidate.views import candidate_code_of_conduct_view, candidate_home_view,
 from staff.application_views import staff_applications_view
 from staff.candidates_views import staff_candidate_view, staff_candidates_view
 from staff.events_view import staff_events_view
+from staff.exports_views import export_candidates_view, staff_exports_view
 from staff.interview_views import staff_interview_view, staff_interviews_view
 from staff.payment_views import reset_payment_view, staff_payment_view, staff_payments_view
 from staff.selection_views import (
@@ -105,6 +106,8 @@ staff_routes = [
     Route(route="staff/payments", view=staff_payments_view, name="staff-payments-list"),
     Route(route="staff/payments/<int:user_id>", view=staff_payment_view, name="staff-payment"),
     Route(route="staff/payments/<int:user_id>/reset", view=reset_payment_view, name="staff-reset-payment"),
+    Route(route="staff/exports", view=staff_exports_view, name="staff-exports"),
+    Route(route="staff/export-candidates", view=export_candidates_view, name="staff-export-candidates"),
 ]
 
 candidate_routes = [Route(route="candidate/home", view=candidate_home_view, name="candidate-home")]

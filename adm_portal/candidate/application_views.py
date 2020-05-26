@@ -62,13 +62,13 @@ def candidate_assignment_download_view(request: HttpRequest) -> HttpResponse:
         assignment_id = request.GET["assignment_id"]
     except Exception:
         raise Http404
+
+    application = Application.objects.get(user=request.user)
+    if assignment_id == SubmissionTypes.coding_test.uname and application.coding_test_started_at is None:
+        raise Http404
+
     key = Domain.get_candidate_release_zip(assignment_id)
     url = interface.storage_client.get_attachment_url(key, content_type="application/zip")
-    application = Application.objects.get(user=request.user)
-    if application.coding_test_started_at is None:
-        application.coding_test_started_at = datetime.now()
-        application.save()
-
     return HttpResponseRedirect(url)
 
 

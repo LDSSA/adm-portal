@@ -31,11 +31,6 @@ GRADER_CLIENT_AUTH_TOKEN = os.environ.get("ADM_GRADER_AUTH_TOKEN", "dev-secret")
 
 
 # Custom Integrations
-
-sentry_sdk.init(
-    dsn=os.environ.get(  # noqa: F405
-        "SENTRY_URL", "https://9fe1b8314c104a5c96dbad2a68dd0f57@o397381.ingest.sentry.io/5251772"
-    ),
-    integrations=[DjangoIntegration()],
-    send_default_pii=True,
-)
+SENTRY_URL = os.environ.get("SENTRY_URL", None)  # noqa: F405
+if SENTRY_URL is not None:
+    sentry_sdk.init(dsn=SENTRY_URL, integrations=[DjangoIntegration()], send_default_pii=True)

@@ -18,13 +18,13 @@ from users.models import User
 
 logger = getLogger(__name__)
 
-_assets = os.path.join(".", "commands", "assets")
+_assets = os.path.join(".", "common", "assets")
 ASSET_SUBMISSION_FEEDBACK_HTML = os.path.join(_assets, "submission-feedback.html")
 ASSET_PAYMENT_PROOF_PNG = os.path.join(_assets, "payment-proof.png")
 ASSET_STUDENT_ID_PNG = os.path.join(_assets, "student-id.png")
 
 
-storage_cli = LocalStorageClient(settings.STORAGE_BUCKET, run_server=False)
+storage_cli = LocalStorageClient(settings.STORAGE_BUCKET)
 
 UserOption = Callable[[User], None]
 

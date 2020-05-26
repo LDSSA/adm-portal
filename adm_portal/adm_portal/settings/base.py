@@ -23,7 +23,7 @@ INSTALLED_APPS = [
     "profiles",
     "email_client",
     "applications",
-    "commands",
+    "common",
     "selection",
 ]
 
