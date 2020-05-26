@@ -62,7 +62,7 @@ def candidate_assignment_download_view(request: HttpRequest) -> HttpResponse:
         assignment_id = request.GET["assignment_id"]
     except Exception:
         raise Http404
-    key = f"candidate-dist/candidate.{assignment_id}.zip"
+    key = Domain.get_candidate_release_zip(assignment_id)
     url = interface.storage_client.get_attachment_url(key, content_type="application/zip")
     application = Application.objects.get(user=request.user)
     if application.coding_test_started_at is None:

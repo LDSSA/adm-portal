@@ -1,5 +1,5 @@
 from logging import getLogger
-from typing import NamedTuple, Optional
+from typing import NamedTuple
 
 from django.db import models
 
@@ -10,14 +10,13 @@ class SubmissionType(NamedTuple):
     uname: str
     max_score: int
     pass_score: int
-    repo: Optional[str]
 
 
 class SubmissionTypes:
-    coding_test = SubmissionType(uname="coding_test", max_score=20, pass_score=16, repo=None)
-    slu01 = SubmissionType(uname="slu01", max_score=20, pass_score=16, repo="https://github.com/Chi-Acci/adm-portal")
-    slu02 = SubmissionType(uname="slu02", max_score=20, pass_score=16, repo="https://github.com/Chi-Acci/adm-portal")
-    slu03 = SubmissionType(uname="slu03", max_score=20, pass_score=16, repo="https://github.com/Chi-Acci/adm-portal")
+    coding_test = SubmissionType(uname="coding_test", max_score=20, pass_score=16)
+    slu01 = SubmissionType(uname="slu01", max_score=20, pass_score=16)
+    slu02 = SubmissionType(uname="slu02", max_score=20, pass_score=16)
+    slu03 = SubmissionType(uname="slu03", max_score=20, pass_score=16)
 
     all = [coding_test, slu01, slu02, slu03]
 

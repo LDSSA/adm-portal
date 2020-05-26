@@ -41,7 +41,7 @@
                 <div class="form-group">
                     <label for="id_gender">Gender</label>
                     <select class="form-control" name="gender" id="id_gender" required>
-                        <option value="" {% if profile.gender == "" %}selected{% endif %}>---------</option>
+                        <option value="" {% if not profile.gender %}selected{% endif %}>---------</option>
                         <option value="{{profile_genders.female}}" {% if profile.gender == profile_genders.female %}selected{% endif %}>{{profile_genders.female}}</option>
                         <option value="{{profile_genders.male}}" {% if profile.gender == profile_genders.male %}selected{% endif %}>{{profile_genders.male}}</option>
                         <option value="{{profile_genders.other}}" {% if profile.gender == profile_genders.other %}selected{% endif %}>{{profile_genders.other}}</option>
@@ -50,12 +50,12 @@
 
                 {% if not applying_for_scholarship %}
                 <div class="form-group">
-                    <label for="id_ticket_type">Ticket type</label>
+                    <label for="id_ticket_type">Ticket type</label> <i class="far fa-question-circle" data-toggle="tooltip" data-placement="right" title="todo @ chi"></i>
                     <select class="form-control" name="ticket_type" id="id_ticket_type"required>
-                        <option value="" {% if profile.ticket_type == "" %}selected{% endif %}>---------</option>
-                        <option value="{{profile_ticket_types.student}}" {% if profile_ticket_type == profile_ticket_types.student %}selected{% endif %}>{{profile_ticket_types.student}}</option>
-                        <option value="{{profile_ticket_types.regular}}" {% if profile_ticket_type == profile_ticket_types.regular %}selected{% endif %}>{{profile_ticket_types.regular}}</option>
-                        <option value="{{profile_ticket_types.company}}" {% if profile_ticket_type == profile_ticket_types.company %}selected{% endif %}>{{profile_ticket_types.company}}</option>
+                        <option value="" {% if not profile.ticket_type %}selected{% endif %}>---------</option>
+                        <option value="{{profile_ticket_types.student}}" {% if profile.ticket_type == profile_ticket_types.student %}selected{% endif %}>{{profile_ticket_types.student}}</option>
+                        <option value="{{profile_ticket_types.regular}}" {% if profile.ticket_type == profile_ticket_types.regular %}selected{% endif %}>{{profile_ticket_types.regular}}</option>
+                        <option value="{{profile_ticket_types.company}}" {% if profile.ticket_type == profile_ticket_types.company %}selected{% endif %}>{{profile_ticket_types.company}}</option>
                     </select>
                 </div>
                 {% endif %}
@@ -66,9 +66,9 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="id_card_file">Upload identification document</label>
+                    <label for="id_card_file">Identification document</label> <i class="far fa-question-circle" data-toggle="tooltip" data-placement="right" title="todo @ chi"></i>
                     <div class="custom-file mb-3">
-                        <input type="file" class="custom-file-input" id="id_card_file" name="id_card" required>
+                        <input type="file" class="custom-file-input" id="id_card_file" name="id_card" {% if not id_card_url %} required {% endif %} >
                         <label class="custom-file-label" for="id_card_file">Choose file</label>
                     </div>
                 </div>
@@ -78,6 +78,14 @@
                         $(this).next('.custom-file-label').html(fileName);
                     })
                 </script>
+
+                {% if id_card_url %}
+                <div class="row justify-content-md-center">
+                    <div class="col col-sm-10 col-md-8 col-lg-6">
+                        <img src="{{ id_card_url }}" class="img-fluid" alt="Failed to display image...">
+                    </div>
+                </div>
+                {% endif %}
 
                 <button type="submit" class="btn btn-primary">{% if profile_exists %}Update profile{% else %}Create Profile{% endif %}</button>
             </form>

@@ -167,6 +167,10 @@ class Domain:
             application.application_over_email_sent = "failed"
             application.save()
 
+    @staticmethod
+    def get_candidate_release_zip(sub_type_uname: str) -> str:
+        return f"candidate-dist/candidate-release-{sub_type_uname}.zip"
+
 
 class DomainQueries:
     @staticmethod
