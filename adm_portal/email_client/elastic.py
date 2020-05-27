@@ -110,19 +110,19 @@ class ElasticEmailClient(EmailClient):
         self._send_email(to_email, template_id, subject, merge=merge)
 
     def send_interview_passed_email(self, to_email: str, to_name: str) -> None:
-        subject = "Subject (todo)"
+        subject = "The results are out - You’ve made it!"
         template_id = 3766
         merge = {"to_name": to_name}
         self._send_email(to_email, template_id, subject, merge=merge)
 
     def send_interview_failed_email(self, to_email: str, to_name: str, *, message: str) -> None:
-        subject = "Subject (todo)"
+        subject = "Update on your LDSSA scholarship interview"
         template_id = 3767
         merge = {"to_name": to_name, "message": message}
         self._send_email(to_email, template_id, subject, merge=merge)
 
     def send_selected_interview_details(self, to_email: str, to_name: str) -> None:
-        subject = "Subject (todo)"
+        subject = "LDSSA scholarship interview details"
         template_id = 3765
         merge = {"to_name": to_name}
         self._send_email(to_email, template_id, subject, merge=merge)
