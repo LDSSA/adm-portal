@@ -1,0 +1,31 @@
+{% extends './base.html' %}
+
+{% block content %}
+
+<div class="container">
+    <h2 class="py-5">Contact Us</h2>
+    <div class="row justify-content-md-center">
+<div class="col-md-8 order-md-8 mb-8 text-center">
+    <p>Have you found a bug? Something is not working?</p>
+
+    <p>Use the form bellow to get support from us!</p>
+    Please <strong>provide as much information as you can</strong> about the found problem so we can fix it asap!
+    <br>
+    <br>
+</div>
+        </div>
+    <div class="row justify-content-md-center">
+        <div class="col-md-8 order-md-8 mb-8 text-center">
+            <form method="post">
+                {% csrf_token %}
+                <textarea class="form-control" id="message" name="message" rows="8" required></textarea>
+                <br>
+                <button type="submit" class="btn btn-secondary">Send Message</button>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+
+{% endblock %}

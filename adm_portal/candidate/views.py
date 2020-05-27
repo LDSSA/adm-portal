@@ -6,6 +6,7 @@ from django.views.decorators.http import require_http_methods
 
 from applications.domain import Status
 from interface import interface
+from profiles.models import Profile
 from selection.status import SelectionStatus
 
 from .domain import Domain
@@ -94,3 +95,28 @@ def candidate_scholarship_view(request: HttpRequest) -> HttpResponse:
     user.save()
 
     return HttpResponseRedirect("/candidate/home")
+
+
+@require_http_methods(["GET", "POST"])
+def candidate_contactus_view(request: HttpRequest) -> HttpResponse:
+    user = request.user
+    if request.method == "GET":
+        template = loader.get_template("./candidate_templates/contactus.html")
+        ctx = build_context(request.user)
+        return HttpResponse(template.render(ctx, request))
+
+    user_url = f"{request.get_host()}/staff/candidates/{user.id}/"
+    message = request.POST["message"]
+    try:
+        user_name = user.profile.full_name
+    except Profile.DoesNotExist:
+        user_name = "-"
+
+    interface.email_client.send_contact_us_email(
+        from_email=user.email, user_name=user_name, user_url=user_url, message=message
+    )
+    user.save()
+
+    template = loader.get_template("./candidate_templates/contactus-success.html")
+    ctx = build_context(request.user)
+    return HttpResponse(template.render(ctx, request))

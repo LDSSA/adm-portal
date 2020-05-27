@@ -60,3 +60,8 @@ class EmailClient(ABC):
     @abstractmethod
     def send_admissions_are_over_not_selected(self, to_email: str, to_name: str) -> None:
         pass
+
+    # from candidates to admin! "contact us" email
+    @abstractmethod
+    def send_contact_us_email(self, from_email: str, user_name: str, user_url: str, message: str) -> None:
+        pass

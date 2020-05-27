@@ -25,7 +25,12 @@ from candidate.payments_views import (
     candidate_student_id_upload_view,
 )
 from candidate.profile_views import candidate_profile_view
-from candidate.views import candidate_code_of_conduct_view, candidate_home_view, candidate_scholarship_view
+from candidate.views import (
+    candidate_code_of_conduct_view,
+    candidate_contactus_view,
+    candidate_home_view,
+    candidate_scholarship_view,
+)
 from staff.application_views import staff_applications_view
 from staff.candidates_views import staff_candidate_view, staff_candidates_view
 from staff.events_view import staff_events_view
@@ -93,7 +98,6 @@ staff_routes = [
     Route(route="staff/applications", view=staff_applications_view, name="staff-applications-list"),
     Route(route="staff/applications/<int:user_id>", view=todo_view, name="staff-application"),
     Route(route="staff/selections/", view=staff_selection_candidates_view, name="staff-selections"),
-    Route(route="staff/selections-selected/", view=todo_view, name="staff-selections-selected"),
     Route(route="staff/selections/draw", view=staff_draw_candidates_view, name="staff-selections-draw"),
     Route(
         route="staff/selections/reject-draw/<int:candidate_id>",
@@ -110,7 +114,10 @@ staff_routes = [
     Route(route="staff/export-candidates", view=export_candidates_view, name="staff-export-candidates"),
 ]
 
-candidate_routes = [Route(route="candidate/home", view=candidate_home_view, name="candidate-home")]
+candidate_routes = [
+    Route(route="candidate/home", view=candidate_home_view, name="candidate-home"),
+    Route(route="candidate/contact-us", view=candidate_contactus_view, name="contact-us"),
+]
 
 confirmed_candidate_routes = [
     # code of conduct

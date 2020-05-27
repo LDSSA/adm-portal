@@ -19,7 +19,7 @@ class ElasticEmailClient(EmailClient):
     def __init__(self, api_key: str, sender: str) -> None:
         self.api_key = api_key
         self.url = ELASTIC_EMAIL_URL
-        self.sender = sender
+        self.sender = sender  # sender email address
 
     def _send_email(
         self, receiver: str, template_id: int, subject: str, *, merge: Optional[Dict[str, Any]] = None
@@ -126,3 +126,9 @@ class ElasticEmailClient(EmailClient):
         template_id = 3765
         merge = {"to_name": to_name}
         self._send_email(to_email, template_id, subject, merge=merge)
+
+    def send_contact_us_email(self, from_email: str, user_name: str, user_url: str, message: str) -> None:
+        subject = f"[Admissions Portal] Support request from {from_email}"
+        template_id = 7470
+        merge = {"from_email": from_email, "user_name": user_name, "user_url": user_url, "message": message}
+        self._send_email(self.sender, template_id, subject, merge=merge)

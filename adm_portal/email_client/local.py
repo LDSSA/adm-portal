@@ -7,9 +7,10 @@ from .client import EmailClient
 
 
 class LocalEmailClient(EmailClient):
-    def __init__(self, root: str) -> None:
+    def __init__(self, root: str, sender: str = "admin@admissions.org") -> None:
         os.makedirs(root, exist_ok=True)
         self.root = root
+        self.sender = sender
 
     def _dump_locally(self, f_name: str, *, to_email: str, **kwargs: Any) -> None:
         directory = os.path.join(self.root, f_name)
@@ -64,3 +65,13 @@ class LocalEmailClient(EmailClient):
 
     def send_admissions_are_over_not_selected(self, to_email: str, to_name: str) -> None:
         self._dump_locally("send_admissions_are_over_not_selected", to_email=to_email, to_name=to_name)
+
+    def send_contact_us_email(self, from_email: str, user_name: str, user_url: str, message: str) -> None:
+        self._dump_locally(
+            "send_contact_us_email",
+            to_email=self.sender,
+            from_email=from_email,
+            user_name=user_name,
+            user_url=user_url,
+            message=message,
+        )
