@@ -12,18 +12,17 @@ from users.models import User
 
 
 class CandidateState(NamedTuple):
-    signed_up: bool = False
-    confirmed_email: bool = False
-    accepted_coc: bool = False
-    decided_scholarship: bool = False
-    applying_for_scholarship: Optional[bool] = None
-    created_profile: bool = False
-    application_status: Optional[ApplicationStatus] = None
-    coding_test_status: Optional[SubmissionStatus] = None
-    slu01_status: Optional[SubmissionStatus] = None
-    slu02_status: Optional[SubmissionStatus] = None
-    slu03_status: Optional[SubmissionStatus] = None
-    selection_status: Optional[SelectionStatusType] = None
+    confirmed_email: bool
+    accepted_coc: bool
+    decided_scholarship: bool
+    applying_for_scholarship: Optional[bool]
+    created_profile: bool
+    application_status: Optional[ApplicationStatus]
+    coding_test_status: Optional[SubmissionStatus]
+    slu01_status: Optional[SubmissionStatus]
+    slu02_status: Optional[SubmissionStatus]
+    slu03_status: Optional[SubmissionStatus]
+    selection_status: Optional[SelectionStatusType]
 
 
 class DomainException(Exception):
@@ -33,15 +32,11 @@ class DomainException(Exception):
 class Domain:
     @staticmethod
     def get_candidate_state(candidate: User) -> CandidateState:
-        state = CandidateState()._asdict()
-        if candidate.id is not None:
-            state["signed_up"] = True
+        state = {}
 
-        if candidate.email_confirmed:
-            state["confirmed_email"] = True
+        state["confirmed_email"] = candidate.email_confirmed
 
-        if candidate.code_of_conduct_accepted:
-            state["accepted_coc"] = True
+        state["accepted_coc"] = candidate.code_of_conduct_accepted
 
         state["decided_scholarship"] = candidate.applying_for_scholarship is not None
         state["applying_for_scholarship"] = candidate.applying_for_scholarship
@@ -50,25 +45,21 @@ class Domain:
             _ = candidate.profile
             state["created_profile"] = True
         except Profile.DoesNotExist:
-            pass
+            state["created_profile"] = False
 
-        try:
-            application = candidate.application
-            status = ApplicationsDomain.get_application_detailed_status(application)
-            state["application_status"] = status["application"]
-            state["coding_test_status"] = status[SubmissionTypes.coding_test.uname]
-            state["slu01_status"] = status[SubmissionTypes.slu01.uname]
-            state["slu02_status"] = status[SubmissionTypes.slu02.uname]
-            state["slu03_status"] = status[SubmissionTypes.slu03.uname]
-
-        except Application.DoesNotExist:
-            pass
+        application, _ = Application.objects.get_or_create(user=candidate)
+        status = ApplicationsDomain.get_application_detailed_status(application)
+        state["application_status"] = status["application"]
+        state["coding_test_status"] = status[SubmissionTypes.coding_test.uname]
+        state["slu01_status"] = status[SubmissionTypes.slu01.uname]
+        state["slu02_status"] = status[SubmissionTypes.slu02.uname]
+        state["slu03_status"] = status[SubmissionTypes.slu03.uname]
 
         try:
             state["selection_status"] = SelectionDomain.get_status(candidate.selection)
 
         except Selection.DoesNotExist:
-            pass
+            state["selection_status"] = None
 
         return CandidateState(**state)
 

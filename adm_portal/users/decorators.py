@@ -39,13 +39,15 @@ def requires_candidate_confirmed(f: Callable[..., Any]) -> Callable[..., Any]:
     return user_passes_test(
         lambda u: u_confirmed_email(u) and not is_staff_or_admin(u),
         redirect_field_name=None,
-        login_url="/candidate/home",
+        login_url="/candidate/home#next",
     )(f)
 
 
 def requires_candidate_coc(f: Callable[..., Any]) -> Callable[..., Any]:
     return user_passes_test(
-        lambda u: u_accepted_coc(u) and not is_staff_or_admin(u), redirect_field_name=None, login_url="/candidate/home"
+        lambda u: u_accepted_coc(u) and not is_staff_or_admin(u),
+        redirect_field_name=None,
+        login_url="/candidate/home#next",
     )(f)
 
 
@@ -53,13 +55,15 @@ def requires_scholarship_decision(f: Callable[..., Any]) -> Callable[..., Any]:
     return user_passes_test(
         lambda u: u_decided_scholarship(u) and not is_staff_or_admin(u),
         redirect_field_name=None,
-        login_url="/candidate/home",
+        login_url="/candidate/home#next",
     )(f)
 
 
 def requires_candidate_profile(f: Callable[..., Any]) -> Callable[..., Any]:
     return user_passes_test(
-        lambda u: u_has_profile(u) and not is_staff_or_admin(u), redirect_field_name=None, login_url="/candidate/home"
+        lambda u: u_has_profile(u) and not is_staff_or_admin(u),
+        redirect_field_name=None,
+        login_url="/candidate/home#next",
     )(f)
 
 

@@ -4,7 +4,7 @@
 
 <div class="container">
 
-    <h1 class="py-5">Hello{% if first_name %} {{ first_name }}{% endif %}</h2>
+    <h1 class="py-5">Hello {% if first_name %}{{ first_name }}{% else %}future data scientist{% endif %}!</h1>
 
     {% if state.selection_status == selection_status_values.ACCEPTED %}
         <div class="alert alert-success mb-5" role="alert">
@@ -42,7 +42,8 @@
         </li>
     </ul>
 
-    <h4 class="py-2">Your next steps</h2>
+    <h4 class="py-2" id="next">Your next steps</h4>
+    <p>(You have to complete them in order!)</p>
     <div id="accordion" class="mb-5">
         <!-- validate email -->
         <div class="card">
@@ -172,21 +173,11 @@
                     <p>The admission tests will open on the <b>{{ applications_open_datetime }}</b>.</p>
                     <p>Come back then to start working on the tests!</p>
                 {% else %}
-
                     {% if state.application_status.name == "passed" %}
                         Congratulations! You've passed the admission test.
                         From the {{ applications_close_date }}, we'll let you know if you've been (randomly) selected to participate in this batch of the LDSSA.
-                    {% elif state.application_status.name == "failed" %}
-                        <p>We're sorry, but you didn't pass the admission test...</p>
 
-                        <p>Remember that all the contents used in the Academy are available in our <a href="https://github.com/LDSSA/batch4-students">GitHub</a>, for free.</p>
-
-                        <p>
-                            If you want to give it another try next year, we hope that you have better luck.
-                            Check our <a href="https://www.lisbondatascience.org/">website</a> for updates about our courses.
-                        </p>
-
-                    {% elif is_applications_open %}
+                    {% elif state.application_status.name == "ongoing" %}
                         <p>You have until <b>{{ applications_close_datetime }}</b> to pass all the assignments.</p>
 
                         <p>For the SLUs, you can start them at any time, submit them for grading as many times as you want, and the due date will always be the {{ applications_close_datetime }}.
@@ -196,8 +187,15 @@
                         Also, we suggest that you complete SLU01 before doing the coding test.
                         This way, you'll first get familiar with the grading system, and will be better prepared to face the coding test's time constraints.</p>
 
-                    {% else %}
-                        ERROR!!
+                    {% elif state.application_status.name == "failed" %}
+                        <p>We're sorry, but you didn't pass the admission test...</p>
+
+                        <p>Remember that all the contents used in the Academy are available in our <a href="https://github.com/LDSSA/batch4-students">GitHub</a>, for free.</p>
+
+                        <p>
+                            If you want to give it another try next year, we hope that you have better luck.
+                            Check our <a href="https://www.lisbondatascience.org/">website</a> for updates about our courses.
+                        </p>
                     {% endif %}
 
                     <ul class="list-group list-group-flush pt-3">
