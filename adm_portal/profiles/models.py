@@ -27,8 +27,6 @@ class Profile(models.Model):
 
     company = models.CharField(null=False, default="", max_length=40)
 
-    id_card_location = models.CharField(null=True, default=None, max_length=200)
-
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

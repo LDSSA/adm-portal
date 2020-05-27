@@ -1,13 +1,9 @@
-from typing import Optional
-
 from django.http import Http404, HttpRequest, HttpResponse
 from django.template import loader
 from django.views.decorators.http import require_http_methods
 
 from applications.domain import Domain as ApplicationDomain
 from applications.models import Application, Submission, SubmissionTypes
-from interface import interface
-from profiles.models import Profile
 from users.models import User
 
 
@@ -17,16 +13,6 @@ def staff_candidate_view(request: HttpRequest, user_id: int) -> HttpResponse:
         user = User.objects.filter(is_staff=False).filter(is_admin=False).get(id=user_id)
     except User.DoesNotExist:
         raise Http404
-
-    id_card_url: Optional[str] = None
-    try:
-        id_card_url = (
-            interface.storage_client.get_url(user.profile.id_card_location, content_type="image")
-            if user.profile.id_card_location is not None
-            else None
-        )
-    except Profile.DoesNotExist:
-        pass
 
     try:
         application = user.application
@@ -43,12 +29,7 @@ def staff_candidate_view(request: HttpRequest, user_id: int) -> HttpResponse:
         total_submissions = 0
         application_best_scores = {}
 
-    ctx = {
-        "user": user,
-        "total_submissions": total_submissions,
-        "application_best_scores": application_best_scores,
-        "id_card_url": id_card_url,
-    }
+    ctx = {"user": user, "total_submissions": total_submissions, "application_best_scores": application_best_scores}
     template = loader.get_template("./staff_templates/candidate.html")
     return HttpResponse(template.render(ctx, request))
 

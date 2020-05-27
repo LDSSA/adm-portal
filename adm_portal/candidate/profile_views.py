@@ -4,7 +4,6 @@ from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.views.decorators.http import require_http_methods
 
-from interface import interface
 from profiles.models import Profile, ProfileGenders, ProfileTicketTypes
 
 from .helpers import build_context
@@ -20,9 +19,6 @@ def _get_candidate_profile_view(request: HttpRequest, profile: Optional[Profile]
             "profile_genders": ProfileGenders,
             "profile_ticket_types": ProfileTicketTypes,
             "applying_for_scholarship": request.user.applying_for_scholarship,
-            "id_card_url": interface.storage_client.get_url(profile.id_card_location, content_type="image")
-            if profile
-            else None,
         },
     )
 
@@ -41,13 +37,6 @@ def _post_candidate_profile_view(request: HttpRequest, profile: Optional[Profile
         else ProfileTicketTypes.scholarship
     )
     profile.company = request.POST["company"] if request.user.applying_for_scholarship is False else ""
-
-    f = request.FILES.get("id_card", None)
-    if f is not None:
-        upload_key = f"profiles/id-card/{request.user.uuid}/{f.name}"
-        profile.id_card_location = interface.storage_client.key_append_uuid(upload_key)
-
-        interface.storage_client.save(profile.id_card_location, f)
 
     profile.save()
     return HttpResponseRedirect("/candidate/home")
