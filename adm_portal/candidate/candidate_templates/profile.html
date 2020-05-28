@@ -6,7 +6,7 @@
     <h2 class="py-5">Profile</h2>
 
     <div class="row">
-        <div class="col-md-6 order-md-6 mb-6">
+        <div class="col-md-8 order-md-8 mb-6">
 
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
@@ -32,7 +32,12 @@
 
                 {% if not applying_for_scholarship %}
                 <div class="form-group">
-                    <label for="id_ticket_type">Ticket type</label> <i class="far fa-question-circle" data-toggle="tooltip" data-placement="right" title="If you chose a student ticket, you'll need to show us a valid student card"></i>
+                    <label for="id_ticket_type">Ticket type</label>
+                    <p class="text-muted"><i>
+                        If you chose a student ticket, you'll need to show us a valid student card at payment time.<br>
+                        To issue an invoice to a company, you must select the company ticket.<br>
+                        Find all the information about our fees <a href="https://github.com/LDSSA/wiki/wiki/Application-process#fees">here</a>.
+                    </i></p>
                     <select class="form-control" name="ticket_type" id="id_ticket_type"required>
                         <option value="" {% if not profile.ticket_type %}selected{% endif %}>---------</option>
                         <option value="{{profile_ticket_types.student}}" {% if profile.ticket_type == profile_ticket_types.student %}selected{% endif %}>{{profile_ticket_types.student}}</option>
