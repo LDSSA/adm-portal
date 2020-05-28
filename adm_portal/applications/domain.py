@@ -6,6 +6,7 @@ from typing import Any, Dict, Optional
 from django.db import models
 
 from interface import interface
+from profiles.models import Profile
 
 from .models import Application, Submission, SubmissionType, SubmissionTypes
 
@@ -152,18 +153,19 @@ class Domain:
         if application.application_over_email_sent is not None:
             raise DomainException("email was already sent")
 
+        try:
+            to_name = application.user.profile.name
+        except Profile.DoesNotExist:
+            to_name = "candidate"
+
         status = Domain.get_application_status(application)
         if status == ApplicationStatus.passed:
-            interface.email_client.send_application_is_over_passed(
-                to_email=application.user.email, to_name=application.user.profile.name
-            )
+            interface.email_client.send_application_is_over_passed(to_email=application.user.email, to_name=to_name)
             application.application_over_email_sent = "passed"
             application.save()
 
         else:
-            interface.email_client.send_application_is_over_failed(
-                to_email=application.user.email, to_name=application.user.profile.name
-            )
+            interface.email_client.send_application_is_over_failed(to_email=application.user.email, to_name=to_name)
             application.application_over_email_sent = "failed"
             application.save()
 
