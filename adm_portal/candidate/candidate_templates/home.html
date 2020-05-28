@@ -108,7 +108,7 @@
           </div>
         </div>
 
-        <!-- scholarship -->
+        <!-- scholarships -->
         <div class="card">
           <div class="card-header" id="headingTwoHalf">
             <h5 class="mb-0">
@@ -118,19 +118,23 @@
                 {% else %}
                     <i class="far fa-circle"></i>
                 {% endif %}
-                Scholarship
+                Scholarships
               </button>
             </h5>
           </div>
           <div id="collapseTwoHalf" class="collapse {% if action_point == 'decided_scholarship' %} show {% endif %}" aria-labelledby="headingTwoHalf" data-parent="#accordion">
             <div class="card-body">
                 {% if not state.decided_scholarship %}
-<!--                todo: @chi scholarships copy-->
-                    Bla bla bla
-                    You can bla bla bla here <a href="/candidate/scholarship">here</a>.
+                <p>
+                    Read our Scholarships Terms & Conditions carefully and decide whether you want to apply for one <a href="/candidate/scholarship">here</a>.
+                </p>
+                <p>
+                    If you don't want to apply for a scholarship, you'll have to explicitly tell us that.
+                    You won't be able to move forwards in your application before this confirmation.
+                </p>
                 {% else %}
                     {% if state.applying_for_scholarship %}
-                        You are applying for a scholarship.
+                        You are applying for a scholarship!
                     {% else %}
                         You not are applying for a scholarship.
                     {% endif %}
