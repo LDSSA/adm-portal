@@ -56,13 +56,12 @@
     </ul>
 
     <h4 class="py-2" id="next">Your next steps</h4>
-    <p>(You have to complete them in order!)</p>
     <div id="accordion" class="mb-5">
         <!-- validate email -->
         <div class="card">
           <div class="card-header" id="headingOne">
             <h5 class="mb-0">
-              <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-controls="collapseOne">
+              <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-controls="collapseOne" {% if not accordion_enabled_status.confirmed_email %} disabled {% endif %}>
                 {% if state.confirmed_email %}
                     <i class="fas fa-check-circle"></i>
                 {% else %}
@@ -88,7 +87,7 @@
         <div class="card">
           <div class="card-header" id="headingTwo">
             <h5 class="mb-0">
-              <button class="btn btn-link" data-toggle="collapse" data-target="#collapseTwo" aria-controls="collapseTwo">
+              <button class="btn btn-link" data-toggle="collapse" data-target="#collapseTwo" aria-controls="collapseTwo" {% if not accordion_enabled_status.accepted_coc %} disabled {% endif %}>
                 {% if state.accepted_coc %}
                     <i class="fas fa-check-circle"></i>
                 {% else %}
@@ -112,7 +111,7 @@
         <div class="card">
           <div class="card-header" id="headingTwoHalf">
             <h5 class="mb-0">
-              <button class="btn btn-link" data-toggle="collapse" data-target="#collapseTwoHalf" aria-controls="collapseTwoHalf">
+              <button class="btn btn-link" data-toggle="collapse" data-target="#collapseTwoHalf" aria-controls="collapseTwoHalf" {% if not accordion_enabled_status.decided_scholarship %} disabled {% endif %}>
                 {% if state.decided_scholarship %}
                     <i class="fas fa-check-circle"></i>
                 {% else %}
@@ -148,7 +147,7 @@
         <div class="card">
           <div class="card-header" id="headingThree">
             <h5 class="mb-0">
-              <button class="btn btn-link" data-toggle="collapse" data-target="#collapseThree" aria-controls="collapseThree">
+              <button class="btn btn-link" data-toggle="collapse" data-target="#collapseThree" aria-controls="collapseThree" {% if not accordion_enabled_status.created_profile %} disabled {% endif %}>
                 {% if state.created_profile %}
                     <i class="fas fa-check-circle"></i>
                 {% else %}
@@ -172,7 +171,7 @@
         <div class="card">
             <div class="card-header" id="headingFour">
               <h5 class="mb-0">
-                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseFour" aria-controls="collapseFour">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseFour" aria-controls="collapseFour" {% if not accordion_enabled_status.admission_test %} disabled {% endif %}>
                     {% if state.application_status.name == "passed" %}
                         <i class="fas fa-check-circle"></i>
                     {% elif state.application_status.name == "failed" %}
@@ -268,7 +267,7 @@
             <div class="card">
                 <div class="card-header" id="headingFive">
                 <h5 class="mb-0">
-                    <button class="btn btn-link" data-toggle="collapse" data-target="#collapseFive" aria-controls="collapseFive">
+                    <button class="btn btn-link" data-toggle="collapse" data-target="#collapseFive" aria-controls="collapseFive" {% if not accordion_enabled_status.selection_results %} disabled {% endif %}>
                         {% if state.selection_status in selection_status_values.SELECTION_POSITIVE_STATUS %}
                             <i class="fas fa-check-circle"></i>
                         {% elif state.selection_status in selection_status_values.SELECTION_NEGATIVE_STATUS %}
@@ -319,7 +318,7 @@
             <div class="card">
                 <div class="card-header" id="headingSix">
                 <h5 class="mb-0">
-                    <button class="btn btn-link" data-toggle="collapse" data-target="#collapseSix" aria-controls="collapseSix">
+                    <button class="btn btn-link" data-toggle="collapse" data-target="#collapseSix" aria-controls="collapseSix" {% if not accordion_enabled_status.payment %} disabled {% endif %}>
                         {% if state.selection_status == selection_status_values.ACCEPTED %}
                             <i class="fas fa-check-circle"></i>
                         {% elif state.selection_status == selection_status_values.REJECTED %}

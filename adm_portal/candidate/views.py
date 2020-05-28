@@ -18,22 +18,68 @@ def candidate_home_view(request: HttpRequest) -> HttpResponse:
     template = loader.get_template("./candidate_templates/home.html")
     state = Domain.get_candidate_state(request.user)
 
+    # the action_point is the first open section in the steps accordion
+    # accordion_enabled_status say whether each accordion section should be enabled
+    accordion_enabled_status = {
+        "confirmed_email": False,
+        "accepted_coc": False,
+        "decided_scholarship": False,
+        "created_profile": False,
+        "admission_test": False,
+        "selection_results": False,
+        "payment": False,
+    }
+
     if not state.confirmed_email:
         action_point = "confirmed_email"
+        accordion_enabled_status["confirmed_email"] = True
+
     elif not state.accepted_coc:
         action_point = "accepted_coc"
+        accordion_enabled_status["confirmed_email"] = True
+        accordion_enabled_status["accepted_coc"] = True
+
     elif not state.decided_scholarship:
         action_point = "decided_scholarship"
+        accordion_enabled_status["confirmed_email"] = True
+        accordion_enabled_status["accepted_coc"] = True
+        accordion_enabled_status["decided_scholarship"] = True
+
     elif not state.created_profile:
         action_point = "created_profile"
+        accordion_enabled_status["confirmed_email"] = True
+        accordion_enabled_status["accepted_coc"] = True
+        accordion_enabled_status["decided_scholarship"] = True
+        accordion_enabled_status["created_profile"] = True
+
     elif state.application_status != Status.passed or state.selection_status is None:
         action_point = "admission_test"
+        accordion_enabled_status["confirmed_email"] = True
+        accordion_enabled_status["accepted_coc"] = True
+        accordion_enabled_status["decided_scholarship"] = True
+        accordion_enabled_status["created_profile"] = True
+        accordion_enabled_status["admission_test"] = True
+
     elif (
         state.selection_status is not None and state.selection_status not in SelectionStatus.SELECTION_POSITIVE_STATUS
     ):
         action_point = "selection_results"
+        accordion_enabled_status["confirmed_email"] = True
+        accordion_enabled_status["accepted_coc"] = True
+        accordion_enabled_status["decided_scholarship"] = True
+        accordion_enabled_status["created_profile"] = True
+        accordion_enabled_status["admission_test"] = True
+        accordion_enabled_status["selection_results"] = True
+
     else:
         action_point = "payment"
+        accordion_enabled_status["confirmed_email"] = True
+        accordion_enabled_status["accepted_coc"] = True
+        accordion_enabled_status["decided_scholarship"] = True
+        accordion_enabled_status["created_profile"] = True
+        accordion_enabled_status["admission_test"] = True
+        accordion_enabled_status["selection_results"] = True
+        accordion_enabled_status["payment"] = True
 
     first_name = None
     if state.created_profile:
@@ -58,6 +104,7 @@ def candidate_home_view(request: HttpRequest) -> HttpResponse:
                 "%Y-%m-%d"
             ),
             "coding_test_duration": interface.feature_flag_client.get_coding_test_duration() / 60,
+            "accordion_enabled_status": accordion_enabled_status,
         },
     )
     return HttpResponse(template.render(ctx, request))
