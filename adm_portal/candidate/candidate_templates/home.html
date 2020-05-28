@@ -74,10 +74,17 @@
 
           <div id="collapseOne" class="collapse {% if action_point == 'confirmed_email' %} show {% endif %}" aria-labelledby="headingOne" data-parent="#accordion">
             <div class="card-body">
-                We've sent an email requesting you to validate your email address.<p>
-                You'll need to validate your email address before going further in this application process.<p>
+                <p>
+                    We've sent an email requesting you to validate your email address.<br>
+                    You'll need to validate your email address before going further in this application process.
+                </p>
                 {% if not state.confirmed_email %}
-                Can't find the email in your inbox? <a href="/account/send-confirmation-email">Resend it</a>.
+                <p>
+                    If you can't find the email in your inbox, please <strong>check your spam folder</strong> and promotions tab.
+                </p>
+                <p>
+                    Still not there? <a href="/account/send-confirmation-email">Resend it</a>.
+                </p>
                 {% endif %}
             </div>
           </div>
