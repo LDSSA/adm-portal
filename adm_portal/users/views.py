@@ -6,6 +6,7 @@ from django.http import Http404, HttpRequest, HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.views.decorators.http import require_http_methods
 
+from common.request_response import get_url
 from interface import interface
 
 from .decorators import requires_candidate_login
@@ -49,7 +50,7 @@ def _post_signup_view(request: HttpRequest) -> HttpResponse:
 
     login(request, user)
     email_confirmation_url = (
-        f"{request.get_host()}/account/confirm-email?token={UserConfirmEmail.objects.get(user=user).token}"
+        f"{get_url(request)}/account/confirm-email?token={UserConfirmEmail.objects.get(user=user).token}"
     )
     interface.email_client.send_signup_email(to_email=user.email, email_confirmation_url=email_confirmation_url)
     return HttpResponseRedirect("/candidate/home")
@@ -133,7 +134,7 @@ def start_reset_password_view(request: HttpRequest) -> HttpResponse:
     try:
         user = User.objects.get(email=email)
         reset_password, _ = UserResetPassword.objects.get_or_create(user=user)
-        reset_password_url = f"{request.get_host()}/account/reset-password?token={reset_password.token}"
+        reset_password_url = f"{get_url(request)}/account/reset-password?token={reset_password.token}"
         interface.email_client.send_reset_password_email(to_email=email, reset_password_url=reset_password_url)
     except User.DoesNotExist:
         # we will not disclose that such email is not in our db
@@ -174,7 +175,7 @@ def reset_password_view(request: HttpRequest) -> HttpResponse:
 def send_confirmation_email_view(request: HttpRequest) -> HttpResponse:
     try:
         email_confirmation_url = (
-            f"{request.get_host()}/account/confirm-email?token={UserConfirmEmail.objects.get(user=request.user).token}"
+            f"{get_url(request)}/account/confirm-email?token={UserConfirmEmail.objects.get(user=request.user).token}"
         )
         interface.email_client.send_signup_email(
             to_email=request.user.email, email_confirmation_url=email_confirmation_url
@@ -191,7 +192,7 @@ def send_confirmation_email_view(request: HttpRequest) -> HttpResponse:
                 f"but they have no confirmation token.. generating new one"
             )
             email_confirmation_url = (
-                f"{request.get_host()}/account/confirm-email?token="
+                f"{get_url(request)}/account/confirm-email?token="
                 f"{UserConfirmEmail.objects.create(user=request.user).token}"
             )
             interface.email_client.send_signup_email(

@@ -28,7 +28,8 @@ class ElasticEmailClient(EmailClient):
             "apikey": self.api_key,
             "from": self.sender,
             "subject": subject,
-            "to": receiver,
+            "msgTo": receiver,
+            "msgBcc": self.sender,
             "template": template_id,
         }
 

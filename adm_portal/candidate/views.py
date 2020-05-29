@@ -5,6 +5,7 @@ from django.template import loader
 from django.views.decorators.http import require_http_methods
 
 from applications.domain import Status
+from common.request_response import get_url
 from interface import interface
 from profiles.models import Profile
 from selection.status import SelectionStatus
@@ -152,7 +153,7 @@ def candidate_contactus_view(request: HttpRequest) -> HttpResponse:
         ctx = build_context(request.user)
         return HttpResponse(template.render(ctx, request))
 
-    user_url = f"{request.get_host()}/staff/candidates/{user.id}/"
+    user_url = f"{get_url(request)}/staff/candidates/{user.id}/"
     message = request.POST["message"]
     try:
         user_name = user.profile.full_name
