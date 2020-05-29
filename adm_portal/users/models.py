@@ -63,6 +63,13 @@ class User(AbstractBaseUser):
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    # because of django-admin
+    def has_perm(self, perm: Any, obj: Any = None):
+        return self.is_admin
+
+    def has_module_perms(self, app_label: Any):
+        return self.is_admin
+
 
 class UserToken(models.Model):
     user = models.OneToOneField("users.User", on_delete=models.CASCADE)
