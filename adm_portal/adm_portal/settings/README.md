@@ -23,6 +23,12 @@ ELASTIC_EMAIL_API_KEY = os.environ["ELASTIC_EMAIL_API_KEY"]
 ELASTIC_EMAIL_SENDER = "sender@adm.org"
 ```
 
+#### AWS SES (Backup)
+
+```python
+EMAIL_CLIENT = "AWS_SES"
+AWS_SES_EMAIL_SENDER = "sender@adm.org"
+```
 
 ## Storage
 

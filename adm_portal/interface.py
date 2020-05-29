@@ -2,7 +2,7 @@ from typing import Optional
 
 from django.conf import settings
 
-from email_client import ElasticEmailClient, EmailClient, LocalEmailClient
+from email_client import ElasticEmailClient, EmailClient, LocalEmailClient, AWSSESEmailClient
 from feature_flags_client import DBFeatureFlagsClient, FeatureFlagsClient, MockFeatureFlagsClient
 from flags.domain import FlagsGetSet
 from grader_client import GraderClient, GraderClientFakeScores, GraderClientHttp
@@ -46,6 +46,8 @@ class _Interface:
         client_id = client_id or settings.EMAIL_CLIENT
         if client_id == "ELASTIC":
             return ElasticEmailClient(api_key=settings.ELASTIC_EMAIL_API_KEY, sender=settings.ELASTIC_EMAIL_SENDER)
+        elif client_id == "AWS_SES":
+            return AWSSESEmailClient(sender=settings.AWS_SES_EMAIL_SENDER)
         elif client_id == "LOCAL":
             return LocalEmailClient(root=settings.EMAIL_LOCAL_DIR)
         raise InterfaceException(msg=f"No EmailClient implementation for `{client_id}`")
