@@ -28,11 +28,21 @@ ELASTIC_EMAIL_SENDER = "sender@adm.org"
 
 #### Local
 
-The Local Storage Client saves files in the local disk and server them via http.
+The Local Storage Client saves files in the local disk (you are expected to run an deal with serving the files yourself).
 **DO NOT USE THIS IN PRODUCTION**
 
 ```python
 STORAGE_CLIENT = "LOCAL"
+STORAGE_LOCAL_DIR = os.path.join(os.path.dirname(BASE_DIR), ".storage")
+```
+
+#### Local Server
+
+The Local Storage Client saves files in the local disk and serves them via http.
+**DO NOT USE THIS IN PRODUCTION**
+
+```python
+STORAGE_CLIENT = "LOCALSERVER"
 STORAGE_LOCAL_DIR = os.path.join(os.path.dirname(BASE_DIR), ".storage")
 ```
 

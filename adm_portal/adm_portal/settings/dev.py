@@ -20,8 +20,8 @@ DATABASES = {
 EMAIL_CLIENT = "LOCAL"
 EMAIL_LOCAL_DIR = os.path.join(os.path.dirname(BASE_DIR), ".mailbox")  # noqa: F405
 
-STORAGE_CLIENT = "S3"
-STORAGE_BUCKET = "ldssa-adm-portal-601"
+STORAGE_CLIENT = "LOCALSERVER"
+STORAGE_LOCAL_DIR = os.path.join(os.path.dirname(BASE_DIR), ".storage")  # noqa: F405
 
 FF_CLIENT = "DB"
 
