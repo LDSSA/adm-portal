@@ -18,6 +18,10 @@
             So make sure you're free for the next {{ coding_test_duration_hours|floatformat }} hours!
         </p>
 
+        <p><b>
+            Please complete the setup from SLU01 before starting the coding test, or you'll be wasting test time preparing your setup!!!
+        </b></p>
+
         <form method="post" class="pt-4">
             {% csrf_token %}
             <button type="submit" class="btn btn-primary">Understood & I'm ready!</button>
