@@ -209,8 +209,9 @@
                         For the coding test, you can also submit it for grading as many times as you want, but once you start it, <b>you only have {{ coding_test_duration|floatformat }} hours to finish it</b>.</p>
 
                         <p>Make sure that you only start the coding test when you have enough free and uninterrupted time to spend.
-                        Also, we suggest that you complete SLU01 before doing the coding test.
-                        This way, you'll first get familiar with the grading system, and will be better prepared to face the coding test's time constraints.</p>
+                        Also, we <strong>strongly suggest that you complete SLU01 before doing the coding test</strong>.
+                        This way, you'll setup up your local environment without any time constraints and get familiar with the grading system.
+                        This will make you better prepared to face the coding test!</p>
 
                     {% elif state.application_status.name == "failed" %}
                         <p>We're sorry, but you didn't pass the admission test...</p>
