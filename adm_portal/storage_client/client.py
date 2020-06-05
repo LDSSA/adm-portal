@@ -27,5 +27,7 @@ class StorageClient(ABC):
         pass
 
     @abstractmethod
-    def get_attachment_url(self, key: str, *, content_type: Optional[str] = None) -> str:
+    def get_attachment_url(
+        self, key: str, *, content_type: Optional[str] = None, filename: Optional[str] = None
+    ) -> str:
         pass

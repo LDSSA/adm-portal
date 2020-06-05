@@ -68,7 +68,9 @@ def staff_submission_download_view(request: HttpRequest, submission_id: int) -> 
     except Submission.DoesNotExist:
         raise Http404
 
-    url = interface.storage_client.get_attachment_url(submission.file_location, content_type="application/vnd.jupyter")
+    url = interface.storage_client.get_attachment_url(
+        submission.file_location, content_type="application/vnd.jupyter", filename=f"{submission.id}.ipynb"
+    )
 
     return HttpResponseRedirect(url)
 

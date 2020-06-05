@@ -32,7 +32,9 @@ class LocalStorageClient(StorageClient):
     def get_url(self, key: str, *, content_type: Optional[str] = None) -> str:
         return f"http://{self.ip}:{self.port}/{key}"
 
-    def get_attachment_url(self, key: str, *, content_type: Optional[str] = None) -> str:
+    def get_attachment_url(
+        self, key: str, *, content_type: Optional[str] = None, filename: Optional[str] = None
+    ) -> str:
         return self.get_url(key=key, content_type=content_type)
 
     def copy(self, src: str) -> None:
