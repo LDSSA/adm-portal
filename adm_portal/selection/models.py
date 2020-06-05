@@ -8,12 +8,12 @@ from .status import SelectionStatus
 class Selection(models.Model):
     user = models.OneToOneField("users.User", on_delete=models.CASCADE, editable=False)
 
-    status = models.CharField(default=SelectionStatus.PASSED_TEST, null=False, max_length=20)
+    status = models.CharField(default=SelectionStatus.PASSED_TEST, null=False, max_length=40)
 
     draw_rank = models.IntegerField(null=True, default=None)
 
     payment_value = models.FloatField(null=True, default=None)
-    ticket_type = models.CharField(null=True, default=None, max_length=25)
+    ticket_type = models.CharField(null=True, default=None, max_length=40)
     payment_due_date = models.DateTimeField(null=True, default=None)
 
     updated_at = models.DateTimeField(auto_now=True)

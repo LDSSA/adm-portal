@@ -230,7 +230,7 @@ class Command(BaseCommand):
         # random - profiles
         profiles: List[Profile] = []
         for prof_u in users:
-            gender = random.choice([ProfileGenders.female, ProfileGenders.male, ProfileGenders.other])[0]
+            gender = random.choice([ProfileGenders.female, ProfileGenders.male, ProfileGenders.other])
             ticket_type = random.choice(
                 [ProfileTicketTypes.regular, ProfileTicketTypes.company, ProfileTicketTypes.student]
             )

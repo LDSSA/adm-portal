@@ -25,7 +25,7 @@ class Profile(models.Model):
 
     ticket_type = models.CharField(null=False, max_length=25)
 
-    company = models.CharField(null=False, default="", max_length=40)
+    company = models.CharField(null=False, default="", max_length=100)
 
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
