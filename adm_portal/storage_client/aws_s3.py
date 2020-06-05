@@ -1,4 +1,5 @@
 import logging
+import uuid
 from typing import Any, Optional
 
 import boto3
@@ -34,13 +35,18 @@ class AWSS3StorageClient(StorageClient):
 
     def get_attachment_url(self, key: str, *, content_type: Optional[str] = None) -> str:
         content_type = content_type or "application/octet-stream"
+
+        filename = uuid.uuid4().hex[:8]
+        if content_type == "application/vnd.jupyter":
+            filename = f"{filename}.ipynb"
+
         try:
             return boto3.client("s3").generate_presigned_url(
                 ClientMethod="get_object",
                 Params={
                     "Bucket": self.bucket_name,
                     "Key": key,
-                    "ResponseContentDisposition": f"attachment; filename={key}",
+                    "ResponseContentDisposition": f"attachment; filename={filename}",
                     "ResponseContentType": content_type,
                 },
                 ExpiresIn=30,

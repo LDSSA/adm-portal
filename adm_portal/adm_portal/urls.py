@@ -31,7 +31,12 @@ from candidate.views import (
     candidate_home_view,
     candidate_scholarship_view,
 )
-from staff.application_views import staff_applications_view
+from staff.application_views import (
+    staff_applications_view,
+    staff_submission_download_view,
+    staff_submission_feedback_download_view,
+    staff_submissions_view,
+)
 from staff.candidates_views import staff_candidate_view, staff_candidates_view
 from staff.events_view import staff_events_view
 from staff.exports_views import export_candidates_view, staff_exports_view
@@ -96,6 +101,17 @@ staff_routes = [
     Route(route="staff/candidates", view=staff_candidates_view, name="staff-profiles-list"),
     Route(route="staff/candidates/<int:user_id>/", view=staff_candidate_view, name="staff-profile"),
     Route(route="staff/applications", view=staff_applications_view, name="staff-applications-list"),
+    Route(route="staff/submissions", view=staff_submissions_view, name="staff-submissions-list"),
+    Route(
+        route="staff/submissions/download/<int:submission_id>",
+        view=staff_submission_download_view,
+        name="staff-submissions-download",
+    ),
+    Route(
+        route="staff/submissions/download-feedback/<int:submission_id>",
+        view=staff_submission_feedback_download_view,
+        name="staff-submissions-download-feedback",
+    ),
     Route(route="staff/applications/<int:user_id>", view=todo_view, name="staff-application"),
     Route(route="staff/selections/", view=staff_selection_candidates_view, name="staff-selections"),
     Route(route="staff/selections/draw", view=staff_draw_candidates_view, name="staff-selections-draw"),

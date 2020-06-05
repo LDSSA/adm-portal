@@ -1,12 +1,13 @@
 from collections import defaultdict
 from typing import Any, Dict
 
-from django.http import HttpRequest, HttpResponse
+from django.http import Http404, HttpRequest, HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.views.decorators.http import require_http_methods
 
 from applications.domain import Domain, Status
-from applications.models import Application, SubmissionTypes
+from applications.models import Application, Submission, SubmissionTypes
+from interface import interface
 
 
 @require_http_methods(["GET"])
@@ -38,3 +39,46 @@ def staff_applications_view(request: HttpRequest) -> HttpResponse:
 
     template = loader.get_template("./staff_templates/applications.html")
     return HttpResponse(template.render(ctx, request))
+
+
+@require_http_methods(["GET"])
+def staff_submissions_view(request: HttpRequest) -> HttpResponse:
+    query = Submission.objects.all().order_by("-created_at")
+
+    user_email = request.GET.get("user_email", None)
+    if user_email is not None:
+        query = query.filter(application__user__email__contains=user_email)
+    else:
+        query = query[:25]
+
+    ctx = {
+        "submissions": query.values(
+            "id", "application__user__id", "application__user__email", "submission_type", "score"
+        )
+    }
+
+    template = loader.get_template("./staff_templates/submissions.html")
+    return HttpResponse(template.render(ctx, request))
+
+
+@require_http_methods(["GET"])
+def staff_submission_download_view(request: HttpRequest, submission_id: int) -> HttpResponse:
+    try:
+        submission: Submission = Submission.objects.get(id=submission_id)
+    except Submission.DoesNotExist:
+        raise Http404
+
+    url = interface.storage_client.get_attachment_url(submission.file_location, content_type="application/vnd.jupyter")
+
+    return HttpResponseRedirect(url)
+
+
+@require_http_methods(["GET"])
+def staff_submission_feedback_download_view(request: HttpRequest, submission_id: int) -> HttpResponse:
+    try:
+        submission: Submission = Submission.objects.get(id=submission_id)
+    except Submission.DoesNotExist:
+        raise Http404
+    url = interface.storage_client.get_url(submission.feedback_location, content_type="text/html")
+
+    return HttpResponseRedirect(url)
