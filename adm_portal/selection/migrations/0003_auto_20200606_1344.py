@@ -5,14 +5,10 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('selection', '0002_auto_20200605_1957'),
-    ]
+    dependencies = [("selection", "0002_auto_20200605_1957")]
 
     operations = [
         migrations.AlterField(
-            model_name='selectionlogs',
-            name='event',
-            field=models.CharField(editable=False, max_length=40),
-        ),
+            model_name="selectionlogs", name="event", field=models.CharField(editable=False, max_length=40)
+        )
     ]
