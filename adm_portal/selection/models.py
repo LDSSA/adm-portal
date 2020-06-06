@@ -45,7 +45,7 @@ class SelectionDocument(models.Model):
 class SelectionLogs(models.Model):
     selection = models.ForeignKey("selection.Selection", on_delete=models.CASCADE, related_name="logs", editable=False)
 
-    event = models.CharField(null=False, max_length=20, editable=False)
+    event = models.CharField(null=False, max_length=40, editable=False)
     message = models.TextField(null=False, editable=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
