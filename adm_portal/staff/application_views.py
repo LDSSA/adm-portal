@@ -1,4 +1,3 @@
-from collections import defaultdict
 from typing import Any, Dict
 
 from django.http import Http404, HttpRequest, HttpResponse, HttpResponseRedirect
@@ -17,25 +16,48 @@ def staff_applications_view(request: HttpRequest) -> HttpResponse:
     filter_by_application_status = request.GET.get("application_status")
 
     applications = []
-    count: Dict[Any, int] = defaultdict(int)
+    count_by_type: Dict[Any, Any] = {
+        "application": {
+            s: 0 for s in [Status.not_started.name, Status.ongoing.name, Status.passed.name, Status.failed.name]
+        },
+        SubmissionTypes.coding_test.uname: {
+            s: 0 for s in [Status.not_started.name, Status.ongoing.name, Status.passed.name, Status.failed.name]
+        },
+        SubmissionTypes.slu01.uname: {
+            s: 0 for s in [Status.not_started.name, Status.ongoing.name, Status.passed.name, Status.failed.name]
+        },
+        SubmissionTypes.slu02.uname: {
+            s: 0 for s in [Status.not_started.name, Status.ongoing.name, Status.passed.name, Status.failed.name]
+        },
+        SubmissionTypes.slu03.uname: {
+            s: 0 for s in [Status.not_started.name, Status.ongoing.name, Status.passed.name, Status.failed.name]
+        },
+    }
     for a in query:
-        application_status = Domain.get_application_status(a)
-        count[application_status.value] += 1
-        if filter_by_application_status is not None and application_status.name != filter_by_application_status:
+        application_det_status = Domain.get_application_detailed_status(a)
+        for sub_type, sub_status in application_det_status.items():
+            count_by_type[sub_type][sub_status.name] += 1
+
+        if (
+            filter_by_application_status is not None
+            and application_det_status["application"].name != filter_by_application_status
+        ):
             continue
 
         applications.append(
             {
                 "ref": a,
                 "status_list": [
-                    application_status,
+                    application_det_status["application"],
                     *[Domain.get_sub_type_status(a, sub_type) for sub_type in SubmissionTypes.all],
                 ],
             }
         )
 
-    status_enum = {s.name: {"name": s.name, "value": s.value, "count": count[s.value]} for s in Status}
-    ctx = {"status_enum": status_enum, "applications": applications}
+    status_enum = {
+        s.name: {"name": s.name, "value": s.value, "count": count_by_type["application"][s.name]} for s in Status
+    }
+    ctx = {"status_enum": status_enum, "applications": applications, "summary": count_by_type}
 
     template = loader.get_template("./staff_templates/applications.html")
     return HttpResponse(template.render(ctx, request))

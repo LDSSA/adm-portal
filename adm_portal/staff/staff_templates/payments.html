@@ -30,9 +30,9 @@
                         {% elif s.status == selection_status.REJECTED %}
                         <span class="badge badge-danger">{{ s.status }}</span>
                         {% elif s.status == selection_status.SELECTED %}
-                        <span class="badge badge-info">{{ s.status }}</span>
-                        {% else %}
                         <span class="badge badge-warning">{{ s.status }}</span>
+                        {% else %}
+                        <span class="badge badge-info">{{ s.status }}</span>
                         {% endif %}
                     </a></td>
                     <td>{{ s.updated_at }}</td>

@@ -75,8 +75,9 @@ def _get_staff_payment_view(request: HttpRequest, selection: Selection, candidat
             {
                 "url": interface.storage_client.get_url(doc.file_location, content_type="image"),
                 "doc_type": doc.doc_type,
+                "created_at": doc.created_at.strftime("%Y-%m-%d %H:%M:%S"),
             }
-            for doc in selection.documents.all()
+            for doc in selection.documents.all().order_by("-created_at")
         ],
         "logs": get_selection_logs(selection),
     }

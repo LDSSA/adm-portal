@@ -11,11 +11,11 @@
         {% elif s.status == selection_status.REJECTED %}
         <span class="badge badge-danger">{{ s.status }}</span>
         {% elif s.status == selection_status.SELECTED %}
-        <span class="badge badge-info">{{ s.status }}</span>
+        <span class="badge badge-warning">{{ s.status }}</span>
         {% elif s.status == selection_status.TO_BE_ACCEPTED %}
         <span class="badge badge-info">{{ s.status }}</span>
         {% else %}
-        <span class="badge badge-warning">{{ s.status }}</span>
+        <span class="badge badge-dark">{{ s.status }}</span>
         {% endif %}
     </h2>
 
@@ -146,19 +146,10 @@
         {% endif %}
 
         {% if can_update %}
-        <div class="card mb-4">
-            <div class="card-body">
-            <p>
-                When you've uploaded all your documents and you're ready for
-                us to review them, click the "Submit" button below.
-            </p>
-
-            <form method="post" class="mb-0">
+        <form method="post" class="mb-0">
             {% csrf_token %}
-                <button type="submit" class="btn btn-primary" {% if not can_update %} disabled {% endif %}>Submit</button>
-            </form>
-            </div>
-        </div>
+            <button type="submit" class="btn btn-primary" {% if not can_update %} disabled {% endif %}>Submit</button>
+        </form>
         {% endif %}
 
         </div>
