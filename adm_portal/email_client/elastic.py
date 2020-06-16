@@ -110,10 +110,12 @@ class ElasticEmailClient(EmailClient):
         merge = {"to_name": to_name, "message": message}
         self._send_email(to_email, template_id, subject, merge=merge)
 
-    def send_interview_passed_email(self, to_email: str, to_name: str) -> None:
+    def send_interview_passed_email(
+        self, to_email: str, to_name: str, *, payment_value: int, payment_due_date: str
+    ) -> None:
         subject = "The results are out - You’ve made it!"
         template_id = 3766
-        merge = {"to_name": to_name}
+        merge = {"to_name": to_name, "payment_value": payment_value, "payment_due_date": payment_due_date}
         self._send_email(to_email, template_id, subject, merge=merge)
 
     def send_interview_failed_email(self, to_email: str, to_name: str, *, message: str) -> None:

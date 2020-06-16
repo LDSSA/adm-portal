@@ -82,7 +82,7 @@
 
             {% if payment_proofs %}
             <div class="card-body">
-                <h5 class="card-title">Submitted</h5>
+                <h5 class="card-title">Uploaded</h5>
                 {% for doc in payment_proofs %}
                 <p><a href="/candidate/payment/download-document/{{ doc.id }}" class="card-link">{{ doc.filename }}</a></p>
                 {% endfor %}
@@ -91,7 +91,7 @@
 
             {% if can_update %}
             <div class="card-body">
-                <h5 class="card-title">Submit new</h5>
+                <h5 class="card-title">Upload new</h5>
                 <form action="/candidate/payment/upload-payment-proof" enctype="multipart/form-data" method="POST" class="mb-0">
                     {% csrf_token %}
                     <div class="custom-file mb-3">
@@ -104,7 +104,7 @@
                             $(this).next('.custom-file-label').html(fileName);
                         })
                     </script>
-                    <button class="btn btn-primary" type="submit" {% if not can_update %} disabled {% endif %}>Upload file</button>
+                    <button class="btn btn-secondary" type="submit" {% if not can_update %} disabled {% endif %}>Upload file</button>
                 </form>
             </div>
             {% endif %}
@@ -116,7 +116,7 @@
 
             {% if student_ids %}
             <div class="card-body">
-                <h5 class="card-title">Submitted</h5>
+                <h5 class="card-title">Uploaded</h5>
                 {% for doc in student_ids %}
                 <p><a href="/candidate/payment/download-document/{{ doc.id }}" class="card-link">{{ doc.filename }}</a></p>
                 {% endfor %}
@@ -125,7 +125,7 @@
 
             {% if can_update %}
             <div class="card-body">
-                <h5 class="card-title">Submit new</h5>
+                <h5 class="card-title">Upload new</h5>
                 <form action="/candidate/payment/upload-student-id" enctype="multipart/form-data" method="POST" class="mb-0">
                     {% csrf_token %}
                     <div class="custom-file mb-3">
@@ -138,7 +138,7 @@
                             $(this).next('.custom-file-label').html(fileName);
                         })
                     </script>
-                    <button class="btn btn-primary" type="submit" {% if not can_update %} disabled {% endif %}>Upload file</button>
+                    <button class="btn btn-secondary" type="submit" {% if not can_update %} disabled {% endif %}>Upload file</button>
                 </form>
             </div>
             {% endif %}
@@ -146,9 +146,9 @@
         {% endif %}
 
         {% if can_update %}
-        <form method="post" class="mb-0">
+        <form method="post" class="mb-4">
             {% csrf_token %}
-            <button type="submit" class="btn btn-primary" {% if not can_update %} disabled {% endif %}>Submit</button>
+            <button type="submit" class="btn btn-primary" {% if not can_update %} disabled {% endif %}>Submit payment proof</button>
         </form>
         {% endif %}
 

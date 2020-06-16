@@ -70,8 +70,13 @@ def _post_staff_interview_view(request: HttpRequest, selection: Selection) -> Ht
     elif action == "accept":
         SelectionDomain.manual_update_status(selection, SelectionStatus.SELECTED, staff_user, msg=msg)
         load_payment_data(selection)
+
+        payment_due_date = selection.payment_due_date.strftime("%Y-%m-%d")
         interface.email_client.send_interview_passed_email(
-            to_email=selection.user.email, to_name=selection.user.profile.name
+            to_email=selection.user.email,
+            to_name=selection.user.profile.name,
+            payment_value=selection.payment_value,
+            payment_due_date=payment_due_date,
         )
 
     return _get_staff_interview_view(request, selection, selection.user.id)

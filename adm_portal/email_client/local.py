@@ -26,8 +26,16 @@ class LocalEmailClient(EmailClient):
     def send_reset_password_email(self, to_email: str, *, reset_password_url: str) -> None:
         self._dump_locally("send_reset_password_email", to_email=to_email, reset_password_url=reset_password_url)
 
-    def send_interview_passed_email(self, to_email: str, to_name: str) -> None:
-        self._dump_locally("send_interview_passed_email", to_email=to_email, to_name=to_name)
+    def send_interview_passed_email(
+        self, to_email: str, to_name: str, *, payment_value: int, payment_due_date: str
+    ) -> None:
+        self._dump_locally(
+            "send_interview_passed_email",
+            to_email=to_email,
+            to_name=to_name,
+            payment_value=payment_value,
+            payment_due_date=payment_due_date,
+        )
 
     def send_interview_failed_email(self, to_email: str, to_name: str, *, message: str) -> None:
         self._dump_locally("send_interview_failed_email", to_email=to_email, to_name=to_name)

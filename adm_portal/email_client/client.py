@@ -14,7 +14,9 @@ class EmailClient(ABC):
 
     # interviews
     @abstractmethod
-    def send_interview_passed_email(self, to_email: str, to_name: str) -> None:
+    def send_interview_passed_email(
+        self, to_email: str, to_name: str, *, payment_value: int, payment_due_date: str
+    ) -> None:
         pass
 
     @abstractmethod
