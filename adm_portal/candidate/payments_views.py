@@ -57,7 +57,7 @@ def candidate_document_download_view(request: HttpRequest, document_id: int) -> 
     try:
         selection = request.user.selection
         document = SelectionDocument.objects.get(selection=selection, id=document_id)
-    except (Selection.DoesNotExist, SelectionDocument):
+    except (Selection.DoesNotExist, SelectionDocument.DoesNotExist):
         raise Http404
     url = interface.storage_client.get_attachment_url(document.file_location)
 
